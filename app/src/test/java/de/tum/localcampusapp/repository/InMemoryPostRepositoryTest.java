@@ -38,11 +38,11 @@ public class InMemoryPostRepositoryTest {
         PostRepository repository = new InMemoryPostRepository();
         Post post1 = new Post();
         post1.setId(1);
-        post1.setUUID(uuid);
+        post1.setUuid(uuid);
         repository.addPost(post1);
         Post post2 = new Post();
         post2.setId(2);
-        post2.setUUID(uuid2);
+        post2.setUuid(uuid2);
         repository.addPost(post2);
         LiveData<Post> single_result = repository.getPostByUUID(uuid);
         assert (LiveDataHelper.getValue(single_result).equals(post1));

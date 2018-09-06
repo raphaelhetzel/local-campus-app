@@ -12,6 +12,7 @@ import java.util.List;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 import static org.junit.Assert.assertArrayEquals;
 

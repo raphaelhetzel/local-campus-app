@@ -34,7 +34,7 @@ public class InMemoryPostRepository implements PostRepository {
     @Override
     public LiveData<Post> getPostByUUID(String uuid) throws DatabaseException {
         return Transformations.map(posts, posts -> {
-            List<Post> items = posts.stream().filter(p -> p.getUUID().equals(uuid)).collect(Collectors.toList());
+            List<Post> items = posts.stream().filter(p -> p.getUuid().equals(uuid)).collect(Collectors.toList());
             if (items.size() == 1) {
                 return items.get(0);
             }

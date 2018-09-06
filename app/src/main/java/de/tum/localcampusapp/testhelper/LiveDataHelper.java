@@ -1,4 +1,4 @@
-package de.tum.localcampusapp.repository;
+package de.tum.localcampusapp.testhelper;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -17,7 +17,7 @@ public class LiveDataHelper {
             public void onChanged(@Nullable T o) {
                 data[0] = o;
                 latch.countDown();
-                liveData.removeObserver(this);
+                //liveData.removeObserver(this);
             }
         };
         liveData.observeForever(observer);

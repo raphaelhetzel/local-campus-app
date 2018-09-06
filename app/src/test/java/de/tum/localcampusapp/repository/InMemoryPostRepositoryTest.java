@@ -2,22 +2,17 @@ package de.tum.localcampusapp.repository;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 public class InMemoryPostRepositoryTest {
     @Rule

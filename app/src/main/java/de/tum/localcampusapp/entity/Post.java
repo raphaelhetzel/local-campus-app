@@ -10,7 +10,9 @@ import java.util.Objects;
 
 @Entity(tableName = "posts", foreignKeys = @ForeignKey(entity = Topic.class,
         parentColumns = "id",
-        childColumns = "topic_id"))
+        childColumns = "topic_id",
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.NO_ACTION))
 public class Post {
 
     @PrimaryKey(autoGenerate = true)
@@ -52,11 +54,11 @@ public class Post {
         this.id = id;
     }
 
-    public String getUUID() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUUID(String uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 

@@ -1,15 +1,25 @@
 package de.tum.localcampusapp.entity;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity
+@Entity(tableName = "topics")
 public class Topic {
     @PrimaryKey(autoGenerate = true)
     private long id;
-    private String topic_name;
+    @ColumnInfo(name = "topic_name")
+    private String topicName;
+
+    public Topic() {
+    }
+
+    public Topic(long id, String topicName) {
+        this.id = id;
+        this.topicName = topicName;
+    }
 
     public long getId() {
         return id;
@@ -19,11 +29,11 @@ public class Topic {
         this.id = id;
     }
 
-    public String getTopic_name() {
-        return topic_name;
+    public String getTopicName() {
+        return topicName;
     }
 
-    public void setTopic_name(String topic_name) {
-        this.topic_name = topic_name;
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
     }
 }

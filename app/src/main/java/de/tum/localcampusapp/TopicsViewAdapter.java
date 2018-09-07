@@ -22,19 +22,10 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
     private static final String TAG = "TopicsViewAdapter";
 
-    private ArrayList<String> mImageNames = new ArrayList<String>();
-    private ArrayList<String> mImages = new ArrayList<String>();
-    private Context mContext;
-
     private List<Topic> topicList;
-
     private View.OnLongClickListener longClickListener;
+    private long selectedTopicId;
 
-    LiveData<Topic> topics;
-
-    public void init(long id, String topicName){
-
-    }
 
     public TopicsViewAdapter(List<Topic> topicList, View.OnLongClickListener longClickListener) {
         this.topicList = topicList;
@@ -52,18 +43,24 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Log.d(TAG, "onBindViewHolder called");
-        //Bind the images into ImageView
-       // holder.imageName.setText(mImageNames.get(position));
+
         Topic topic = topicList.get(position);
         holder.imageName.setText(topic.getTopicName());
+        holder.itemView.setOnLongClickListener(longClickListener);
+
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedTopicId = topic.getId();
                 Log.d(TAG, "onClick clicked, element: "+ topic.getTopicName() + " topic_id: "+topic.getId());
-                Toast.makeText(mContext, topic.getTopicName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), " topic_id: "+ getSelectedTopicId(), Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+
+    public long getSelectedTopicId(){
+        return selectedTopicId;
     }
 
     @Override
@@ -84,9 +81,9 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.image);
-            imageName = itemView.findViewById(R.id.image_name);
-            parentLayout = itemView.findViewById(R.id.parent_layout);
+            image = (ImageView) itemView.findViewById(R.id.image);
+            imageName = (TextView) itemView.findViewById(R.id.image_name);
+            parentLayout = (RelativeLayout) itemView.findViewById(R.id.parent_layout);
         }
     }
 }

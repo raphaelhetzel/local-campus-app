@@ -3,6 +3,7 @@ package de.tum.localcampusapp.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;

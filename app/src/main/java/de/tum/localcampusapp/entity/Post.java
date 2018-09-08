@@ -19,6 +19,7 @@ public class Post {
     private long id;
     private String uuid;
     @ColumnInfo(name = "type_id")
+    // TODO: Make this a UUID
     private long typeId;
     @ColumnInfo(name = "topic_id")
     private long topicId;

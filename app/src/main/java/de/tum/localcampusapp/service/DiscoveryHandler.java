@@ -27,6 +27,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
             Topic topic = new Topic();
             topic.setTopicName(scampiMessage.getString("topicName"));
             try {
+                // TODO: prevent duplicated in the repository
                 RepositoryLocator.getTopicRepository(applicationContext).insertTopic(topic);
             } catch (DatabaseException e) {
                 e.printStackTrace();

@@ -1,6 +1,9 @@
 package de.tum.localcampusapp.repository;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
+import android.content.Intent;
 import android.provider.ContactsContract;
 
 import java.util.List;
@@ -8,12 +11,14 @@ import java.util.List;
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.service.AppLibService;
 
-// TODO: should be singleton (di?)
 public class RealPostRepository implements PostRepository {
 
-    //TODO: Should be injected (or this class is singleton anyway)
     private final PostDao postDao;
+
+    //private AppLibService.ScampiBinder scampi;
+
 
     public RealPostRepository(PostDao postDao) {
         this.postDao = postDao;

@@ -2,7 +2,9 @@ package de.tum.localcampusapp.repository;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.LiveData;
+import android.os.Handler;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -12,15 +14,24 @@ import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.testhelper.HandlerInstantRun;
 import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 public class InMemoryPostRepositoryTest {
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
+    Handler mockHandler = HandlerInstantRun.getMockHandler();
+
+    PostRepository repository;
+
+    @Before
+    public void setupRepository() {
+        repository = new InMemoryPostRepository(mockHandler);
+    }
+
     @Test
     public void add_getId() throws DatabaseException, InterruptedException {
-        PostRepository repository = new InMemoryPostRepository();
         Post post1 = new Post();
         post1.setId(1);
         repository.addPost(post1);
@@ -35,7 +46,6 @@ public class InMemoryPostRepositoryTest {
     public void add_getByUUID() throws DatabaseException, InterruptedException {
         String uuid = UUID.randomUUID().toString();
         String uuid2 = UUID.randomUUID().toString();
-        PostRepository repository = new InMemoryPostRepository();
         Post post1 = new Post();
         post1.setId(1);
         post1.setUuid(uuid);
@@ -50,7 +60,6 @@ public class InMemoryPostRepositoryTest {
 
     @Test
     public void add_getPostsForTopics() throws DatabaseException, InterruptedException {
-        PostRepository repository = new InMemoryPostRepository();
         Post post1 = new Post();
         post1.setId(1);
         post1.setTopicId(1);
@@ -65,7 +74,6 @@ public class InMemoryPostRepositoryTest {
 
     @Test
     public void add_update() throws DatabaseException, InterruptedException {
-        PostRepository repository = new InMemoryPostRepository();
         Post post1 = new Post();
         post1.setId(1);
         post1.setData("Before");

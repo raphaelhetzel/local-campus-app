@@ -19,7 +19,7 @@ import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
-public class AppLibService extends Service implements AppLibLifecycleListener, MessageReceivedCallback {
+public class AppLibService extends Service implements AppLibLifecycleListener {
 
     public static final String DISCOVERY_SERVICE = "discovery";
 
@@ -31,7 +31,9 @@ public class AppLibService extends Service implements AppLibLifecycleListener, M
 
     private ScheduledExecutorService scheduledExecutor;
 
-    private Handler handler;
+    public Handler handler;
+
+    private DiscoveryHandler discoveryHandler;
 
     // Service Lifecycle
     @Override
@@ -50,9 +52,12 @@ public class AppLibService extends Service implements AppLibLifecycleListener, M
         this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
         handler = new Handler();
 
+        this.discoveryHandler = new DiscoveryHandler(this.getApplicationContext());
+
+
         appLib = AppLib.builder().build();
         appLib.addLifecycleListener(this);
-        appLib.addMessageReceivedCallback(DISCOVERY_SERVICE,this);
+        appLib.addMessageReceivedCallback(DISCOVERY_SERVICE, this.discoveryHandler);
         try {
             appLib.subscribe(DISCOVERY_SERVICE);
         } catch (InterruptedException e) {
@@ -106,39 +111,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener, M
                 Log.d(TAG, "Can't connect, lifecycle state: " + state);
             }
         }, delay, unit);
-    }
-
-    // Message Receiver
-
-
-    @Override
-    public void messageReceived(SCAMPIMessage scampiMessage, String service) {
-        Log.d(TAG, "Message received on Service: "+service);
-        if (scampiMessage.hasString("topicName") && scampiMessage.hasString("deviceId")) {
-            Log.d(TAG, "Received Topic: "+scampiMessage.getString("topicName")+" from location "+scampiMessage.getString("deviceId"));
-            Topic topic  = new Topic();
-            topic.setTopicName(scampiMessage.getString("topicName"));
-            handler.post(new InsertTask(this.getApplicationContext(), topic));
-        }
-        scampiMessage.close();
-    }
-    // TODO: Helper for the Fake repo, move to that repo
-    private static class InsertTask implements Runnable {
-        private Topic topic;
-        private Context applicationContext;
-        public InsertTask( Context applicationContext, Topic topic ) {
-            this.applicationContext = applicationContext;
-            this.topic = topic;
-        }
-
-        @Override
-        public void run() {
-            try {
-                RepositoryLocator.getTopicRepository(applicationContext).insertTopic(topic);
-            } catch (DatabaseException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     //Bind not Implemented yet

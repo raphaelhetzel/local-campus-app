@@ -3,9 +3,11 @@ package de.tum.localcampusapp.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.util.Log;
+import android.content.Context;
+import android.os.Handler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,9 +15,18 @@ import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 
 public class InMemoryTopicRepository implements TopicRepository {
+    private final Handler handler;
     private MutableLiveData<List<Topic>> topics;
 
+
+    // Should be started from main thread (onCreate() of an activity/service)
     public InMemoryTopicRepository() {
+        this(new Handler());
+    }
+
+
+    public InMemoryTopicRepository(Handler mainThreadHandler) {
+        this.handler = mainThreadHandler;
         this.topics = new MutableLiveData<>();
         this.topics.setValue(new ArrayList<>());
     }
@@ -50,9 +61,22 @@ public class InMemoryTopicRepository implements TopicRepository {
 
     @Override
     public void insertTopic(Topic topic) throws DatabaseException {
-        Log.d("REPO", "called");
-        List<Topic> temp = new ArrayList<>(topics.getValue());
-        temp.add(topic);
-        topics.setValue(temp);
+        handler.post(new InsertTask(topic));
+    }
+
+    // Helper to update LiveData from main Thread
+    private class InsertTask implements Runnable {
+        Topic topic;
+
+        public InsertTask(Topic topic) {
+            this.topic = topic;
+        }
+
+        @Override
+        public void run() {
+            List<Topic> temp = new ArrayList<>(topics.getValue());
+            temp.add(topic);
+            topics.setValue(temp);
+        }
     }
 }

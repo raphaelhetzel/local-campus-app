@@ -2,29 +2,37 @@ package de.tum.localcampusapp.repository;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.LiveData;
+import android.os.Handler;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.testhelper.HandlerInstantRun;
 import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 import static org.junit.Assert.assertArrayEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class InMemoryTopicRepositoryTest {
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 
+    Handler mockHandler = HandlerInstantRun.getMockHandler();
+
     private TopicRepository repository;
+
 
     @Before
     public void before() {
-        this.repository = new InMemoryTopicRepository();
+        this.repository = new InMemoryTopicRepository(mockHandler);
     }
 
     @Test

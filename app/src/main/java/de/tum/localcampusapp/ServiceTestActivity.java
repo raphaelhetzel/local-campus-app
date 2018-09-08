@@ -25,19 +25,16 @@ public class ServiceTestActivity extends AppCompatActivity {
 
     static final String TAG = ServiceTestActivity.class.getSimpleName();
 
-    private AppLibService.ScampiBinder scampiBinder;
-    private boolean boundService = false;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Intent intent = new Intent(getApplicationContext(), AppLibService.class);
-        bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
 
         Log.d( TAG, "onCreate");
         super.onCreate(savedInstanceState);
         RepositoryLocator.setCustomTopicRepository(new InMemoryTopicRepository());
+
+        //TODO: workaround to circumvent lazy repository initialization
+        RepositoryLocator.getPostRepository(this.getApplicationContext());
+
         setContentView(R.layout.activity_servicetest);
         super.startService( new Intent( this, AppLibService.class ) );
         try {
@@ -63,26 +60,11 @@ public class ServiceTestActivity extends AppCompatActivity {
                     "DATA",
                     0
                     );
-            scampiBinder.publishPost(testpost);
+            try {
+                RepositoryLocator.getPostRepository(this.getApplicationContext()).addPost(testpost);
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
         });
     }
-
-
-
-    // TODO: Just here for testing, need to figure out a way to bind the service in the repository
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d(TAG, "Service conencted");
-            AppLibService.ScampiBinder scampi = (AppLibService.ScampiBinder) service;
-            scampiBinder = scampi;
-            boundService = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            boundService = false;
-        }
-    };
 }

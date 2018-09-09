@@ -74,9 +74,14 @@ public class InMemoryTopicRepository implements TopicRepository {
 
         @Override
         public void run() {
-            List<Topic> temp = new ArrayList<>(topics.getValue());
-            temp.add(topic);
-            topics.setValue(temp);
+            synchronized (InMemoryTopicRepository.this) {
+                List<Topic> temp = new ArrayList<>(topics.getValue());
+                if (temp.stream().anyMatch(t -> t.getTopicName().equals(topic.getTopicName()))) {
+                    return;
+                }
+                temp.add(topic);
+                topics.setValue(temp);
+            }
         }
     }
 }

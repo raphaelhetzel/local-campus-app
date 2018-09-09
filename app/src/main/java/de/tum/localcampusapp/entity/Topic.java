@@ -2,11 +2,12 @@ package de.tum.localcampusapp.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
 
-@Entity(tableName = "topics")
+@Entity(tableName = "topics", indices = {@Index(value = "topic_name", unique = true)})
 public class Topic {
     @PrimaryKey(autoGenerate = true)
     private long id;

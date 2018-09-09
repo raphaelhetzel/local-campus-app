@@ -5,7 +5,10 @@ import android.util.Log;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.repository.TopicRepository;
+import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
@@ -13,26 +16,37 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     public static final String TAG = DiscoveryHandler.class.getSimpleName();
 
-    private final Context applicationContext;
+    private final TopicRepository topicRepository;
+    private final PostRepository postRepository;
+    private final AppLib appLib;
 
-    public DiscoveryHandler(Context applicationContext) {
-        this.applicationContext = applicationContext;
+    public DiscoveryHandler(TopicRepository topicRepository, PostRepository postRepository, AppLib appLib) {
+        this.topicRepository = topicRepository;
+        this.postRepository = postRepository;
+        this.appLib = appLib;
     }
 
     @Override
     public void messageReceived(SCAMPIMessage scampiMessage, String service) {
-        Log.d(TAG, "Message received on Service: " + service);
         if (scampiMessage.hasString("topicName") && scampiMessage.hasString("deviceId")) {
-            Log.d(TAG, "Received Topic: " + scampiMessage.getString("topicName") + " from location " + scampiMessage.getString("deviceId"));
             Topic topic = new Topic();
             topic.setTopicName(scampiMessage.getString("topicName"));
             try {
-                // TODO: prevent duplicated in the repository
-                RepositoryLocator.getTopicRepository(applicationContext).insertTopic(topic);
+                topicRepository.insertTopic(topic);
+                subscribeToTopic(topic.getTopicName());
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
+
         }
         scampiMessage.close();
+    }
+
+    private void subscribeToTopic(String topicName) {
+        try {
+            appLib.subscribe(topicName, new TopicHandler(postRepository));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

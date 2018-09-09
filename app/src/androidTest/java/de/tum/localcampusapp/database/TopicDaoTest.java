@@ -3,6 +3,7 @@ package de.tum.localcampusapp.database;
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.remote.EspressoRemoteMessage;
 import android.support.test.runner.AndroidJUnit4;
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.sql.SQLClientInfoException;
 import java.util.List;
 
 import de.tum.localcampusapp.entity.Post;
@@ -37,7 +39,8 @@ public class TopicDaoTest {
 
     @After
     public void closeDb() throws IOException {
-        testDatabase.close();
+        // TODO: currently disabled as this interferes with other tests
+        //testDatabase.close();
     }
 
     @Test
@@ -89,5 +92,27 @@ public class TopicDaoTest {
         // Should Not Run mainly for documentation
         LiveData<Topic> result_topic = topicDao.getTopic(1);
         assertEquals(LiveDataHelper.getValue(result_topic).getTopicName(), "/tum");
+    }
+
+    // Ensure the error message contains the field to allow inserting duplicate messages
+    @Test
+    public void insertDuplicate() throws InterruptedException {
+        Topic topic = new Topic();
+        topic.setTopicName("/tum");
+        Topic topic2 = new Topic();
+        topic2.setTopicName("/tum");
+        boolean thrown = false;
+
+        topicDao.insert(topic);
+        try {
+            topicDao.insert(topic2);
+        } catch (SQLiteConstraintException e) {
+            if (e.getMessage().contains("topics.topic_name")) {
+                thrown = true;
+            } else {
+                throw e;
+            }
+        }
+        assertEquals(thrown, true);
     }
 }

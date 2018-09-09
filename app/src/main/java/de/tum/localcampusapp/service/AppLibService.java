@@ -1,10 +1,8 @@
 package de.tum.localcampusapp.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -14,12 +12,11 @@ import java.util.concurrent.TimeUnit;
 
 import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
-import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
-import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 public class AppLibService extends Service implements AppLibLifecycleListener {
@@ -34,8 +31,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     private ScheduledExecutorService scheduledExecutor;
 
-    public Handler handler;
-
     private DiscoveryHandler discoveryHandler;
 
     private Binder binder;
@@ -46,7 +41,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         // TODO: Propagate error to the Repository
         try {
             this.appLib.publish(message, service, (appLib, scampiMessage) -> {
-                Log.d( TAG, "Message: "+scampiMessage.getAppTag()+" published");
+                Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
             });
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -69,9 +64,10 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         Log.d(TAG, "onCreate");
 
         this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        handler = new Handler();
 
-        this.discoveryHandler = new DiscoveryHandler(this.getApplicationContext());
+        PostRepository postRepository = RepositoryLocator.getPostRepository(getApplicationContext());
+        TopicRepository topicRepository = RepositoryLocator.getTopicRepository(getApplicationContext());
+        this.discoveryHandler = new DiscoveryHandler(topicRepository, postRepository, appLib);
 
         this.binder = new ScampiBinder();
 

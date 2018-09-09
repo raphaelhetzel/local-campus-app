@@ -19,6 +19,7 @@ import de.tum.localcampusapp.testhelper.HandlerInstantRun;
 import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InMemoryTopicRepositoryTest {
@@ -63,5 +64,17 @@ public class InMemoryTopicRepositoryTest {
         repository.insertTopic(topic2);
         LiveData<List<Topic>> topic_result = repository.getTopics();
         assertArrayEquals(LiveDataHelper.getValue(topic_result).toArray(), new Topic[]{topic, topic2});
+    }
+
+    @Test
+    public void insertDuplicate() throws DatabaseException, InterruptedException {
+        Topic topic = new Topic();
+        topic.setTopicName("/tum");
+        Topic topic2 = new Topic();
+        topic2.setTopicName("/tum");
+        repository.insertTopic(topic);
+        repository.insertTopic(topic2);
+        LiveData<List<Topic>> topic_result = repository.getTopics();
+        assertEquals(LiveDataHelper.getValue(topic_result).size(), 1);
     }
 }

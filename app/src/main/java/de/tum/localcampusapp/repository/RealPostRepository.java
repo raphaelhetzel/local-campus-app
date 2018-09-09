@@ -28,8 +28,8 @@ public class RealPostRepository implements PostRepository {
     private Boolean serviceBound = false;
 
 
-    public RealPostRepository(Context applicationContext) {
-        this.postDao = RepositoryLocator.getAppDatabase(applicationContext).getPostDao();
+    public RealPostRepository(Context applicationContext, PostDao postDao) {
+        this.postDao = postDao;
 
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
@@ -47,7 +47,7 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void addPost(Post post) throws DatabaseException {
-        if(this.serviceBound) {
+        if (this.serviceBound) {
             Log.d(TAG, "addPost while service Bound");
             this.scampiBinder.publishPost(post);
         }

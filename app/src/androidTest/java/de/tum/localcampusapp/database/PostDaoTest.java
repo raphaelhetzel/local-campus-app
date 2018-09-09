@@ -39,7 +39,8 @@ public class PostDaoTest {
 
     @After
     public void closeDb() throws IOException {
-        testDatabase.close();
+        // TODO: currently disabled as this interferes with other tests
+        //testDatabase.close();
     }
 
     @Test
@@ -104,11 +105,11 @@ public class PostDaoTest {
         LiveData<Post> uuid_result = postDao.getPostByUUID(uuid);
         Post result_post = LiveDataHelper.getValue(uuid_result);
         assertEquals(result_post.getData(), "Post");
-
         result_post.setData("Modified");
+        postDao.update(result_post);
 
         LiveData<Post> uuid_result2 = postDao.getPostByUUID(uuid);
-        assertEquals(LiveDataHelper.getValue(uuid_result2), "Modified");
+        assertEquals(LiveDataHelper.getValue(uuid_result2).getData(), "Modified");
     }
 
     @Test

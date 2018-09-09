@@ -1,10 +1,13 @@
 package de.tum.localcampusapp.repository;
 
+import android.content.Context;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
@@ -15,15 +18,17 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class RealPostRepositoryTest {
     PostDao mPostDao;
+    Context mContext;
 
     @Before
     public void initialize_mocks() {
         mPostDao = mock(PostDao.class);
+        mContext = mock(Context.class);
     }
 
     @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
     public void insertWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mPostDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao);
         Post post2 = new Post();
         doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).insert(post2);
         realPostRepository.insertPost(post2);
@@ -32,7 +37,7 @@ public class RealPostRepositoryTest {
 
     @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
     public void updateWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mPostDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao);
         Post post2 = new Post();
         doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).update(post2);
         realPostRepository.updatePost(post2);

@@ -15,6 +15,7 @@ public class RepositoryLocator {
         topicRepository = null;
         postRepository = null;
     }
+
     //TODO: This kind of initialization is too lazy, add an init method
     public static TopicRepository getTopicRepository(Context applicationContext) {
         if (topicRepository != null) {
@@ -40,7 +41,7 @@ public class RepositoryLocator {
         }
         synchronized (lock) {
             if (postRepository == null) {
-                postRepository = new RealPostRepository(applicationContext);
+                postRepository = new RealPostRepository(applicationContext, getAppDatabase(applicationContext).getPostDao());
             }
             return postRepository;
         }

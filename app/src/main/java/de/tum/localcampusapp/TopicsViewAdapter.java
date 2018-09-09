@@ -20,16 +20,20 @@ import de.tum.localcampusapp.entity.Topic;
 
 public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.ViewHolder>{
 
-    private static final String TAG = "TopicsViewAdapter";
+    private static final String TAG = TopicsViewAdapter.class.getSimpleName();
 
     private List<Topic> topicList;
     private View.OnLongClickListener longClickListener;
     private long selectedTopicId;
 
 
-    public TopicsViewAdapter(List<Topic> topicList, View.OnLongClickListener longClickListener) {
+    public TopicsViewAdapter(List<Topic> topicList, TopicsActivity.ItemInsertLongClickListener longClickListener) {
         this.topicList = topicList;
         this.longClickListener = longClickListener;
+    }
+
+    public TopicsViewAdapter(List<Topic> topicList){
+        this.topicList = topicList;
     }
 
 
@@ -53,14 +57,9 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
             public void onClick(View v) {
                 selectedTopicId = topic.getId();
                 Log.d(TAG, "onClick clicked, element: "+ topic.getTopicName() + " topic_id: "+topic.getId());
-                //Toast.makeText(v.getContext(), " topic_id: "+ getSelectedTopicId(), Toast.LENGTH_SHORT).show();
             }
         });
 
-    }
-
-    public long getSelectedTopicId(){
-        return selectedTopicId;
     }
 
     @Override
@@ -81,9 +80,9 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = (ImageView) itemView.findViewById(R.id.image);
-            imageName = (TextView) itemView.findViewById(R.id.image_name);
-            parentLayout = (RelativeLayout) itemView.findViewById(R.id.parent_layout);
+            image = itemView.findViewById(R.id.image);
+            imageName = itemView.findViewById(R.id.image_name);
+            parentLayout = itemView.findViewById(R.id.parent_layout);
         }
     }
 }

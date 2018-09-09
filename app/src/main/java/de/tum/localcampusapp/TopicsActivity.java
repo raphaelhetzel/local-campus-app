@@ -1,6 +1,7 @@
 package de.tum.localcampusapp;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,25 +18,37 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
-public class TopicsActivity extends AppCompatActivity implements View.OnLongClickListener{
+public class TopicsActivity extends AppCompatActivity{
     static final String TAG = TopicsActivity.class.getSimpleName();
+    public static final String EXTRA_MESSAGE = "topicId";
 
     private RecyclerView mRecyclerView;
     private TopicsAdapterViewModel viewModel;
     private TopicsViewAdapter mTopicsViewAdapter;
 
-    FakeDataGenerator fakeDataGenerator;
+    // Listener only for testing Live Data update
+    class ItemInsertLongClickListener implements View.OnLongClickListener{
+        @Override
+        public boolean onLongClick(View v) {
+            Intent intent = new Intent(TopicsActivity.this, PostsActivity.class);
+            long i = 123;
+            intent.putExtra("topicId", i);
+            intent.putExtra("android", "andr");
+            startActivity(intent);
+           // TopicsActivity.this.startActivity(intent);
 
-    // method only for testing Live Data update
-    @Override
-    public boolean onLongClick(View v) {
-        try {
-            fakeDataGenerator.insertNewTopic();
-        }catch (Exception e){
-            e.printStackTrace();
+            /*
+            try {
+
+                //viewModel.createNewDataset();
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+            }
+            */
+            return true;
         }
-        return true;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +56,13 @@ public class TopicsActivity extends AppCompatActivity implements View.OnLongClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
 
-        fakeDataGenerator = new FakeDataGenerator("FakeTopic", 8);
-
         try {
-            viewModel = new TopicsAdapterViewModel(getApplication(), fakeDataGenerator);
+            viewModel = new TopicsAdapterViewModel(getApplication());
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
 
-        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(), this);
+        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(), new ItemInsertLongClickListener());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -63,6 +74,7 @@ public class TopicsActivity extends AppCompatActivity implements View.OnLongClic
                 mTopicsViewAdapter.setItems(topics);
             }
         });
+
 
     }
 

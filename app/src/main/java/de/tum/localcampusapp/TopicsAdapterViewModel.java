@@ -25,21 +25,22 @@ public class TopicsAdapterViewModel extends AndroidViewModel {
 
     FakeDataGenerator fakeDataGenerator;
 
-    public TopicsAdapterViewModel(Application application, FakeDataGenerator fakeDataGenerator) throws DatabaseException {
+
+    public TopicsAdapterViewModel(Application application) throws DatabaseException{
         super(application);
-
         //TODO: Replace fakeData with Database
-        //RealTopicRepository realTopicRepository = new RealTopicRepository();
-        //topics = ..  */
-
-        this.fakeDataGenerator = fakeDataGenerator;
+        fakeDataGenerator = new FakeDataGenerator("FakeTopic", 8);
         fakeDataGenerator.insertSeveralTopics();
-        this.liveDataTopics = fakeDataGenerator.getLiveData();
+        liveDataTopics = fakeDataGenerator.getLiveData();
+    }
 
+    public void createNewDataset() throws DatabaseException {
+        //Helper method for creating more fake data
+        fakeDataGenerator.insertNewTopic();
     }
 
     public LiveData<List<Topic>> getLiveDataTopics() {
         return liveDataTopics;
-    }
+        }
 
-}
+    }

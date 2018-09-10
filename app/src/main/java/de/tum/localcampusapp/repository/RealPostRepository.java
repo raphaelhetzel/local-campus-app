@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,19 +37,20 @@ public class RealPostRepository implements PostRepository {
     private AppLibService.ScampiBinder scampiBinder;
     private Boolean serviceBound = false;
     private Context applicationContext;
-    private ExecutorService executor;
+    private Executor executor;
 
     public RealPostRepository(Context applicationContext) {
         this(applicationContext,
                 RepositoryLocator.getAppDatabase(applicationContext).getPostDao(),
-                RepositoryLocator.getTopicRepository(applicationContext));
+                RepositoryLocator.getTopicRepository(applicationContext),
+                Executors.newSingleThreadExecutor());
     }
 
-    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository) {
+    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor) {
         this.postDao = postDao;
         this.applicationContext = applicationContext;
         this.topicRepository = topicRepository;
-        this.executor = Executors.newSingleThreadExecutor();
+        this.executor = executor;
 
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
@@ -71,6 +73,7 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void addPost(Post post) throws DatabaseException {
+        System.out.println(serviceBound);
         executor.execute(new AddPostRunner(post));
     }
 
@@ -83,9 +86,7 @@ public class RealPostRepository implements PostRepository {
         @Override
         public void run() {
             if (serviceBound) {
-                Log.d(TAG, "addPost while service Bound");
                 if(post.getId() == 0) {
-                    Log.d(TAG, "Cannot add post as it has no id");
                     return;
                 }
                 try {
@@ -126,7 +127,6 @@ public class RealPostRepository implements PostRepository {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            Log.d(TAG, "Service connected");
             AppLibService.ScampiBinder scampi = (AppLibService.ScampiBinder) service;
             scampiBinder = scampi;
             serviceBound = true;

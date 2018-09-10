@@ -1,5 +1,7 @@
 package de.tum.localcampusapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,18 +23,17 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
     private List<Post> postsList;
     private long selectedPostId;
+    private Context context;
 
 
-    private View.OnClickListener postClickListener;
 
-
-    public PostsViewAdapter(List<Post> postsList, PostsActivity.PostClickListener postClickListener) {
+    public PostsViewAdapter(List<Post> postsList) {
         this.postsList = postsList;
-        this.postClickListener = postClickListener;
     }
 
-    public PostsViewAdapter(List<Post> postsList){
+    public PostsViewAdapter(List<Post> postsList, Context context) {
         this.postsList = postsList;
+        this.context = context;
     }
 
 
@@ -49,22 +50,23 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
         Post post = postsList.get(position);
 
-        //TODO:set all Post Attributes here
-        //holder.imageName.setText(post.getTopicName());
         holder.postDate.setText(post.getUpdatedAt().toString());
-        holder.postType.setText(Long.toString(post.getTypeId()));   //TODO: mapping: typeId --> PostType
+        holder.postType.setText(Long.toString(post.getTypeId()));
         holder.postText.setText(post.getData());
         holder.numLikes.setText(Integer.toString(post.getScore()));
 
-        holder.itemView.setOnClickListener(postClickListener);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectedPostId = post.getId();
-                Log.d(TAG, "onClick clicked, element: post_id: "+post.getId());
+                Intent intent = new Intent(context, PostCommentActivity.class);
+                intent.putExtra("selectedPostId", String.valueOf(selectedPostId));
+                Log.d(TAG, "post_id clicked: "+ String.valueOf(selectedPostId));
+                context.startActivity(intent);
             }
         });
+
 
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override

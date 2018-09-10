@@ -20,7 +20,6 @@ import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class TopicsActivity extends AppCompatActivity{
     static final String TAG = TopicsActivity.class.getSimpleName();
-    public static final String EXTRA_MESSAGE = "topicId";
 
     private RecyclerView mRecyclerView;
     private TopicsAdapterViewModel viewModel;
@@ -30,21 +29,11 @@ public class TopicsActivity extends AppCompatActivity{
     class ItemInsertLongClickListener implements View.OnLongClickListener{
         @Override
         public boolean onLongClick(View v) {
-            Intent intent = new Intent(TopicsActivity.this, PostsActivity.class);
-            long i = 123;
-            intent.putExtra("topicId", i);
-            intent.putExtra("android", "andr");
-            startActivity(intent);
-           // TopicsActivity.this.startActivity(intent);
-
-            /*
             try {
-
-                //viewModel.createNewDataset();
+                viewModel.createNewDataset();
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
-            */
             return true;
         }
     }
@@ -62,7 +51,7 @@ public class TopicsActivity extends AppCompatActivity{
             e.printStackTrace();
         }
 
-        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(), new ItemInsertLongClickListener());
+        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(),this, new ItemInsertLongClickListener());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -74,7 +63,6 @@ public class TopicsActivity extends AppCompatActivity{
                 mTopicsViewAdapter.setItems(topics);
             }
         });
-
 
     }
 

@@ -15,6 +15,8 @@ import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.repository.RealTopicRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.repository.TopicRepository;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class TopicsAdapterViewModel extends AndroidViewModel {
@@ -24,12 +26,21 @@ public class TopicsAdapterViewModel extends AndroidViewModel {
     private LiveData<List<Topic>> liveDataTopics;
 
     FakeDataGenerator fakeDataGenerator;
+    TopicRepository topicRepository;
 
 
     public TopicsAdapterViewModel(Application application) throws DatabaseException{
         super(application);
         //TODO: Replace fakeData with Database
         fakeDataGenerator = new FakeDataGenerator("FakeTopic", 8);
+        fakeDataGenerator.insertSeveralTopics();
+        liveDataTopics = fakeDataGenerator.getLiveData();
+    }
+
+    public TopicsAdapterViewModel(Application application, Context context) throws DatabaseException {
+        super(application);
+        topicRepository = RepositoryLocator.getTopicRepository(context);
+        fakeDataGenerator = new FakeDataGenerator("FakeTopic", 8, topicRepository);
         fakeDataGenerator.insertSeveralTopics();
         liveDataTopics = fakeDataGenerator.getLiveData();
     }

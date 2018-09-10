@@ -10,6 +10,7 @@ import java.util.Random;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
+import de.tum.localcampusapp.repository.TopicRepository;
 
 public class FakeDataGenerator {
 
@@ -21,6 +22,7 @@ public class FakeDataGenerator {
 
     private ArrayList<Long> idList;
     private LiveData<List<Topic>> liveDataTopics;
+    private TopicRepository topicRepository=null;
 
 
     public FakeDataGenerator(String elementsName, int fakeDataCount){
@@ -34,6 +36,13 @@ public class FakeDataGenerator {
         this.elementsName = elementsName;
         this.fakeDataCount = fakeDataCount;
         this.inMemoryTopicRepository = inMemoryTopicRepository;
+        idList = new ArrayList<Long>();
+    }
+
+    public FakeDataGenerator(String elementsName, int fakeDataCount, TopicRepository topicRepository){
+        this.elementsName = elementsName;
+        this.fakeDataCount = fakeDataCount;
+        this.topicRepository = topicRepository;
         idList = new ArrayList<Long>();
     }
 
@@ -60,17 +69,21 @@ public class FakeDataGenerator {
         long id = getId();
         try {
             Log.d("FakeDataGenerator", "insert: "+ getNameWithId(id));
-            inMemoryTopicRepository.insertTopic(new Topic(id, getNameWithId(id)));
+            if(topicRepository!=null){
+                topicRepository.insertTopic(new Topic(id, getNameWithId(id)));
+            }
+            else{
+                inMemoryTopicRepository.insertTopic(new Topic(id, getNameWithId(id)));
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public InMemoryTopicRepository getInMemoryTopicRepository() {
-        return inMemoryTopicRepository;
-    }
-
     public LiveData<List<Topic>> getLiveData() throws DatabaseException {
+        if(topicRepository!=null){
+            return topicRepository.getTopics();
+        }
         return inMemoryTopicRepository.getTopics();
     }
 

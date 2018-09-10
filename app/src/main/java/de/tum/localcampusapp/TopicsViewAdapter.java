@@ -2,6 +2,7 @@ package de.tum.localcampusapp;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,15 +26,18 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
     private List<Topic> topicList;
     private View.OnLongClickListener longClickListener;
     private long selectedTopicId;
+    private Context context;
 
 
-    public TopicsViewAdapter(List<Topic> topicList, TopicsActivity.ItemInsertLongClickListener longClickListener) {
+    public TopicsViewAdapter(List<Topic> topicList, Context context, TopicsActivity.ItemInsertLongClickListener longClickListener) {
         this.topicList = topicList;
+        this.context = context;
         this.longClickListener = longClickListener;
     }
 
-    public TopicsViewAdapter(List<Topic> topicList){
+    public TopicsViewAdapter(List<Topic> topicList, Context context){
         this.topicList = topicList;
+        this.context = context;
     }
 
 
@@ -56,7 +60,10 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
             @Override
             public void onClick(View v) {
                 selectedTopicId = topic.getId();
-                Log.d(TAG, "onClick clicked, element: "+ topic.getTopicName() + " topic_id: "+topic.getId());
+                Intent intent = new Intent(context, PostsActivity.class);
+                intent.putExtra("topicId", String.valueOf(selectedTopicId));
+                Log.d(TAG, "topic_id clicked: "+String.valueOf(selectedTopicId));
+                context.startActivity(intent);
             }
         });
 

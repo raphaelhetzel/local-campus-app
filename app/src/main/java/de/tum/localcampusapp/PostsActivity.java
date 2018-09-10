@@ -26,15 +26,6 @@ public class PostsActivity extends AppCompatActivity{
         private PostsAdapterViewModel viewModel;
         private PostsViewAdapter mPostsViewAdapter;
 
-        class PostClickListener implements View.OnClickListener{
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PostsActivity.this, TopicsActivity.class);
-                intent.putExtra("key", 123);
-                PostsActivity.this.startActivity(intent);
-            }
-        }
-
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -43,22 +34,17 @@ public class PostsActivity extends AppCompatActivity{
             setContentView(R.layout.posts_activity);
 
             Intent intent = getIntent();
-            //int topic_id = intent.getIntExtra(TopicsActivity.EXTRA_MESSAGE);
-            long topic_id = intent.getIntExtra("topicId", 0);
-            String an = intent.getStringExtra("android");
-            Log.d(TAG, "id: "+topic_id + " strung: "+an);
-            //long topicId = (long) savedInstanceState.get("toicId");
-            //Log.d(TAG, Long.toString(topicId));
-            //TODO: change to dynamic id
-            long topicId = 1212;
+
+            long topicId = Long.valueOf(intent.getStringExtra("topicId"));
+            Log.d(TAG, "topic_id received: "+ String.valueOf(topicId));
 
             try {
-                viewModel = new PostsAdapterViewModel(topicId, getApplication());
+                viewModel = new PostsAdapterViewModel(topicId, getApplication(), this);
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
 
-            mPostsViewAdapter = new PostsViewAdapter(new ArrayList<Post>(), new PostClickListener());
+            mPostsViewAdapter = new PostsViewAdapter(new ArrayList<Post>(),this);
 
             mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

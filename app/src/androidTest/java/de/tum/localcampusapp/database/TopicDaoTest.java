@@ -57,6 +57,19 @@ public class TopicDaoTest {
     }
 
     @Test
+    public void insertWithoutID_getFinalByName() throws InterruptedException {
+        Topic topic = new Topic();
+        topic.setTopicName("Test");
+        topicDao.insert(topic);
+
+        Topic null_topic = topicDao.getFinalByName("Foo");
+        assertEquals(null_topic, null);
+
+        Topic result_topic = topicDao.getFinalByName("Test");
+        assertEquals(result_topic.getTopicName(), topic.getTopicName());
+    }
+
+    @Test
     public void insertWithoutID_getTopics() throws InterruptedException {
         Topic topic = new Topic();
         topic.setTopicName("/tum");

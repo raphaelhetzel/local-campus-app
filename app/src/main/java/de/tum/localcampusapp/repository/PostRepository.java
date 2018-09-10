@@ -12,6 +12,8 @@ public interface PostRepository {
 
     LiveData<Post> getPostByUUID(String uuid) throws DatabaseException;
 
+    Post getFinalPostByUUID(String uuid) throws DatabaseException;
+
     void addPost(Post post) throws DatabaseException;
 
     void updatePost(Post post) throws DatabaseException;

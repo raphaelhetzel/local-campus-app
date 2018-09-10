@@ -50,6 +50,12 @@ public class InMemoryPostRepository implements PostRepository {
     }
 
     @Override
+    public Post getFinalPostByUUID(String uuid) throws DatabaseException {
+        List<Post> all_posts = new ArrayList<>(posts.getValue());
+        return all_posts.stream().filter(p -> p.getUuid().equals(uuid)).reduce(null, (concat, post) -> post);
+    }
+
+    @Override
     public void addPost(Post post) throws DatabaseException {
         insertPost(post);
     }

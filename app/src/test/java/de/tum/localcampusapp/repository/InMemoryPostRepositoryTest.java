@@ -17,6 +17,8 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.testhelper.HandlerInstantRun;
 import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
+import static org.junit.Assert.assertEquals;
+
 public class InMemoryPostRepositoryTest {
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
@@ -56,6 +58,17 @@ public class InMemoryPostRepositoryTest {
         repository.addPost(post2);
         LiveData<Post> single_result = repository.getPostByUUID(uuid);
         assert (LiveDataHelper.getValue(single_result).equals(post1));
+    }
+
+    @Test
+    public void add_getFinalByUUID() throws DatabaseException, InterruptedException {
+        String uuid = UUID.randomUUID().toString();
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(uuid);
+        repository.addPost(post1);
+        assertEquals (repository.getFinalPostByUUID("foo"), null);
+        assertEquals (repository.getFinalPostByUUID(uuid), post1);
     }
 
     @Test

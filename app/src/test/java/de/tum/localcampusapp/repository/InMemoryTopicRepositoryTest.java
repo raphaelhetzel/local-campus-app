@@ -57,6 +57,16 @@ public class InMemoryTopicRepositoryTest {
     }
 
     @Test
+    public void insert_getFinalByName() throws DatabaseException, InterruptedException {
+        Topic topic = new Topic(1, "/tum");
+        Topic topic2 = new Topic(2, "/tum/garching");
+        repository.insertTopic(topic);
+        repository.insertTopic(topic2);
+        assertEquals(repository.getFinalTopicByName("Foo"), null);
+        assertEquals(repository.getFinalTopicByName(topic2.getTopicName()), topic2);
+    }
+
+    @Test
     public void insert_getTopics() throws DatabaseException, InterruptedException {
         Topic topic = new Topic(1, "/tum");
         Topic topic2 = new Topic(2, "/tum/garching");

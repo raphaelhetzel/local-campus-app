@@ -14,6 +14,8 @@ public interface TopicRepository {
 
     LiveData<Topic> getTopicByName(String topicName) throws DatabaseException;
 
+    Topic getFinalTopicByName(String topicName) throws DatabaseException;
+
     /*
         Should only be called from the scampi side of the application.
         Possibly refactor the structure to better separate this.

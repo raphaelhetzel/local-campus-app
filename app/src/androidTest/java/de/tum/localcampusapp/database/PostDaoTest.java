@@ -64,6 +64,25 @@ public class PostDaoTest {
     }
 
     @Test
+    public void insertWithoutID_getFinalByUUID() throws InterruptedException {
+
+        String uuid = UUID.randomUUID().toString();
+        Post post = new Post();
+        post.setUuid(uuid);
+        post.setData("\"Post\"");
+        post.setTopicId(1);
+
+        postDao.insert(post);
+
+        Post null_result = postDao.getFinalPostByUUID("Foo");
+        assertEquals(null, null_result);
+
+        Post uuid_result = postDao.getFinalPostByUUID(uuid);
+        assertEquals(uuid_result.getData(), post.getData());
+
+    }
+
+    @Test
     public void getPostsforTopic() throws InterruptedException {
         topicDao.insert(new Topic(2, "/tum/garching"));
 

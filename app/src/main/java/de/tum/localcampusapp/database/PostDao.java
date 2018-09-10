@@ -28,4 +28,7 @@ public interface PostDao {
     @Query("SELECT * FROM posts WHERE uuid LIKE :uuid")
     LiveData<Post> getPostByUUID(String uuid);
 
+    @Query("SELECT * FROM posts WHERE uuid LIKE :uuid")
+    Post getFinalPostByUUID(String uuid);
+
 }

@@ -46,6 +46,11 @@ public class RealPostRepository implements PostRepository {
     }
 
     @Override
+    public Post getFinalPostByUUID(String uuid) throws DatabaseException {
+        return postDao.getFinalPostByUUID(uuid);
+    }
+
+    @Override
     public void addPost(Post post) throws DatabaseException {
         if (this.serviceBound) {
             Log.d(TAG, "addPost while service Bound");

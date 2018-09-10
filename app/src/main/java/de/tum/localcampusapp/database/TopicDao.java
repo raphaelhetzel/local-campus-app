@@ -24,4 +24,7 @@ public interface TopicDao {
     @Query("SELECT * FROM topics WHERE topic_name LIKE :name")
     LiveData<Topic> getByName(String name);
 
+    @Query("SELECT * FROM topics WHERE topic_name LIKE :name")
+    Topic getFinalByName(String name);
+
 }

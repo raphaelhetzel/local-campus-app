@@ -12,6 +12,8 @@ public interface TopicRepository {
 
     LiveData<Topic> getTopic(long id) throws DatabaseException;
 
+    Topic getFinalTopic(long id) throws DatabaseException;
+
     LiveData<Topic> getTopicByName(String topicName) throws DatabaseException;
 
     Topic getFinalTopicByName(String topicName) throws DatabaseException;

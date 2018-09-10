@@ -36,6 +36,11 @@ public class RealTopicRepository implements TopicRepository {
         return topicDao.getFinalByName(topicName);
     }
 
+    @Override
+    public Topic getFinalTopic(long id) throws DatabaseException {
+        return topicDao.getFinalTopic(id);
+    }
+
     /*
         TODO: make it clear in the name that this method can handle existing topics
         in a future version we might need duplicates to remove topics if a router

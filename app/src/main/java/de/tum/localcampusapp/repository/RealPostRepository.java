@@ -69,7 +69,7 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException {
-        return null;
+        return postDao.getPostsforTopic(topicId);
     }
 
     @Override

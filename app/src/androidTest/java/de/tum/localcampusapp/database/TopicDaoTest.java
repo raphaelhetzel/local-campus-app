@@ -109,7 +109,7 @@ public class TopicDaoTest {
 
     // Ensure the error message contains the field to allow inserting duplicate messages
     @Test
-    public void insertDuplicate() throws InterruptedException {
+    public void insertDuplicate() {
         Topic topic = new Topic();
         topic.setTopicName("/tum");
         Topic topic2 = new Topic();
@@ -127,5 +127,36 @@ public class TopicDaoTest {
             }
         }
         assertEquals(thrown, true);
+    }
+
+    @Test
+    public void insert_getByName_getById() throws InterruptedException {
+        Topic topic = new Topic();
+        topic.setTopicName("/tum");
+
+        topicDao.insert(topic);
+
+        Topic uuid_topic = topicDao.getFinalByName("/tum");
+        long id = uuid_topic.getId();
+
+        LiveData<Topic> id_topic = topicDao.getTopic(id);
+        assertEquals(LiveDataHelper.getValue(id_topic).getTopicName(), topic.getTopicName());
+
+    }
+
+    @Test
+    public void insert_getByName_getFinalById() {
+        Topic topic = new Topic();
+        topic.setTopicName("/tum");
+
+        topicDao.insert(topic);
+
+        Topic uuid_topic = topicDao.getFinalByName("/tum");
+        long id = uuid_topic.getId();
+
+
+        Topic id_topic = topicDao.getFinalTopic(id);
+        assertEquals(id_topic.getTopicName(), topic.getTopicName());
+
     }
 }

@@ -64,6 +64,12 @@ public class InMemoryTopicRepository implements TopicRepository {
         return all_topics.stream().filter(p -> p.getTopicName().equals(topicName)).reduce(null, (concat, topic) -> topic);
     }
 
+    @Override
+    public Topic getFinalTopic(long id) throws DatabaseException {
+        List<Topic> all_topics = new ArrayList<>(topics.getValue());
+        return all_topics.stream().filter(p -> p.getId() == id).reduce(null, (concat, topic) -> topic);
+    }
+
 
     @Override
     public void insertTopic(Topic topic) throws DatabaseException {

@@ -27,4 +27,7 @@ public interface TopicDao {
     @Query("SELECT * FROM topics WHERE topic_name LIKE :name")
     Topic getFinalByName(String name);
 
+    @Query("SELECT * FROM topics WHERE id = :id")
+    Topic getFinalTopic(long id);
+
 }

@@ -10,8 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import de.tum.localcampusapp.database.Converters;
-import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
@@ -37,15 +35,10 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     private String scampiId;
 
-    public void publish(SCAMPIMessage message, String service) {
-        // TODO: Propagate error to the Repository
-        try {
-            this.appLib.publish(message, service, (appLib, scampiMessage) -> {
-                Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void publish(SCAMPIMessage message, String service) throws InterruptedException {
+        this.appLib.publish(message, service, (appLib, scampiMessage) -> {
+            Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
+        });
 
     }
 
@@ -67,16 +60,15 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
         PostRepository postRepository = RepositoryLocator.getPostRepository(getApplicationContext());
         TopicRepository topicRepository = RepositoryLocator.getTopicRepository(getApplicationContext());
-        this.discoveryHandler = new DiscoveryHandler(topicRepository, postRepository, appLib);
 
         this.binder = new ScampiBinder();
 
 
         appLib = AppLib.builder().build();
+        this.discoveryHandler = new DiscoveryHandler(topicRepository, postRepository, appLib);
         appLib.addLifecycleListener(this);
-        appLib.addMessageReceivedCallback(DISCOVERY_SERVICE, this.discoveryHandler);
         try {
-            appLib.subscribe(DISCOVERY_SERVICE);
+            appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -139,32 +131,8 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     }
 
     public class ScampiBinder extends Binder {
-
-        // Messages Livetime set to 30 Minutes to Limit the deletion needed while testing
-        public static final long MSG_LIFETIME = 60 * 30;
-        public static final String TYPE_ID_FIELD = "type_id";
-        public static final String CREATOR_FIELD = "creator";
-        public static final String CREATED_AT_FIELD = "created_at";
-        public static final String UPDATED_AT_FIELD = "updated_at";
-        public static final String DATA_FIELD = "data";
-        public static final String SCORE_FIELD = "score";
-        // UUID already sent as the app tag
-
-        public void publishPost(Post post) {
-            SCAMPIMessage message = SCAMPIMessage.builder()
-                    .appTag(post.getUuid())
-                    .build();
-            message.putString(TYPE_ID_FIELD, Long.toString(post.getTypeId()));
-            message.putString(CREATOR_FIELD, scampiId);
-            //Sent as String to prevent Sizing issues
-            message.putString(CREATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()).toString());
-            //Sent as String to prevent Sizing issues
-            message.putString(UPDATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()).toString());
-            message.putString(DATA_FIELD, post.getData());
-            //Sent as String to prevent Sizing issues
-            message.putString(SCORE_FIELD, Integer.toString(post.getScore()));
-            message.setLifetime(MSG_LIFETIME);
-            publish(message, "/testservice");
+        public void publish(SCAMPIMessage scampiMessage, String service) throws InterruptedException {
+            AppLibService.this.publish(scampiMessage, service);
         }
     }
 }

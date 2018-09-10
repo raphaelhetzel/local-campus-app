@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
@@ -30,19 +31,26 @@ public class ServiceTestActivity extends AppCompatActivity {
 
         Log.d( TAG, "onCreate");
         super.onCreate(savedInstanceState);
-        RepositoryLocator.setCustomTopicRepository(new InMemoryTopicRepository());
+        super.startService( new Intent( this, AppLibService.class ) );
+
+        //RepositoryLocator.setCustomTopicRepository(new InMemoryTopicRepository());
 
         //TODO: workaround to circumvent lazy repository initialization
         RepositoryLocator.getPostRepository(this.getApplicationContext());
 
         setContentView(R.layout.activity_servicetest);
-        super.startService( new Intent( this, AppLibService.class ) );
         try {
             RepositoryLocator.getTopicRepository(this).getTopics().observe(this, topics -> {
                 TextView textView = findViewById(R.id.centered_text);
-                Log.d(TAG, Integer.toString(topics.size()));
                 textView.setText(topics.stream().map(t -> t.getTopicName()).reduce("", (concat, topic) -> concat+topic+"\n"));
             });
+
+            RepositoryLocator.getPostRepository(getApplicationContext()).getPostsforTopic(1).observe(this, posts -> {
+                TextView textView = findViewById(R.id.posts);
+                Log.d(TAG, Integer.toString(posts.size()));
+                textView.setText(posts.stream().map(t -> t.getUuid()).reduce("", (concat, topic) -> concat+topic+"\n"));
+            });
+
         } catch (DatabaseException e) {
             e.printStackTrace();
         }
@@ -52,7 +60,7 @@ public class ServiceTestActivity extends AppCompatActivity {
             Post testpost = new Post(
                     1,
                     UUID.randomUUID().toString(),
-                    1,
+                    "1",
                     1,
                     "Test",
                     new Date(),

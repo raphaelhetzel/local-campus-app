@@ -11,12 +11,19 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import de.tum.localcampusapp.ServiceTestActivity;
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import de.tum.localcampusapp.service.AppLibService;
+import de.tum.localcampusapp.service.TopicHandler;
+import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 public class RealPostRepository implements PostRepository {
 
@@ -24,12 +31,24 @@ public class RealPostRepository implements PostRepository {
 
     private final PostDao postDao;
 
+    private final TopicRepository topicRepository;
+
     private AppLibService.ScampiBinder scampiBinder;
     private Boolean serviceBound = false;
+    private Context applicationContext;
+    private ExecutorService executor;
 
+    public RealPostRepository(Context applicationContext) {
+        this(applicationContext,
+                RepositoryLocator.getAppDatabase(applicationContext).getPostDao(),
+                RepositoryLocator.getTopicRepository(applicationContext));
+    }
 
-    public RealPostRepository(Context applicationContext, PostDao postDao) {
+    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository) {
         this.postDao = postDao;
+        this.applicationContext = applicationContext;
+        this.topicRepository = topicRepository;
+        this.executor = Executors.newSingleThreadExecutor();
 
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
@@ -52,9 +71,31 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void addPost(Post post) throws DatabaseException {
-        if (this.serviceBound) {
-            Log.d(TAG, "addPost while service Bound");
-            this.scampiBinder.publishPost(post);
+        executor.execute(new AddPostRunner(post));
+    }
+
+    private class AddPostRunner implements Runnable {
+        private Post post;
+        public AddPostRunner(Post post) {
+            this.post = post;
+        }
+
+        @Override
+        public void run() {
+            if (serviceBound) {
+                Log.d(TAG, "addPost while service Bound");
+                if(post.getId() == 0) {
+                    Log.d(TAG, "Cannot add post as it has no id");
+                    return;
+                }
+                try {
+                    Topic topic = topicRepository.getFinalTopic(post.getId());
+                    SCAMPIMessage message = ScampiPostSerializer.messageFromPost(post, topic, "CREATOR");
+                    scampiBinder.publish(message, topic.getTopicName());
+                } catch (InterruptedException | DatabaseException e) {
+                    e.printStackTrace(); // TODO: Remove DatabaseException as you can't catch it from other threads
+                }
+            }
         }
     }
 

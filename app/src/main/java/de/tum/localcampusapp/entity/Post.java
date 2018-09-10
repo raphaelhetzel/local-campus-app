@@ -19,8 +19,7 @@ public class Post {
     private long id;
     private String uuid;
     @ColumnInfo(name = "type_id")
-    // TODO: Make this a UUID
-    private long typeId;
+    private String typeId;
     @ColumnInfo(name = "topic_id")
     private long topicId;
     private String creator;
@@ -30,12 +29,12 @@ public class Post {
     private Date updatedAt;
 
     private String data;
-    private int score;
+    private long score;
 
     public Post() {
     }
 
-    public Post(long id, String uuid, long typeId, long topicId, String creator, Date createdAt, Date updatedAt, String data, int score) {
+    public Post(long id, String uuid, String typeId, long topicId, String creator, Date createdAt, Date updatedAt, String data, long score) {
         this.id = id;
         this.uuid = uuid;
         this.typeId = typeId;
@@ -63,11 +62,11 @@ public class Post {
         this.uuid = uuid;
     }
 
-    public long getTypeId() {
+    public String getTypeId() {
         return typeId;
     }
 
-    public void setTypeId(long typeId) {
+    public void setTypeId(String typeId) {
         this.typeId = typeId;
     }
 
@@ -111,11 +110,11 @@ public class Post {
         this.data = data;
     }
 
-    public int getScore() {
+    public long getScore() {
         return score;
     }
 
-    public void setScore(int score) {
+    public void setScore(long score) {
         this.score = score;
     }
 
@@ -125,7 +124,20 @@ public class Post {
         if (o == null || getClass() != o.getClass()) return false;
         Post post = (Post) o;
         return id == post.id &&
-                typeId == post.typeId &&
+                typeId.equals(post.typeId) &&
+                topicId == post.topicId &&
+                score == post.score &&
+                Objects.equals(uuid, post.uuid) &&
+                Objects.equals(creator, post.creator) &&
+                Objects.equals(createdAt, post.createdAt) &&
+                Objects.equals(updatedAt, post.updatedAt) &&
+                Objects.equals(data, post.data);
+    }
+
+    public boolean equalsWitoutId(Post post) {
+        if (this == post) return true;
+        if (post == null) return false;
+        return typeId.equals(post.typeId) &&
                 topicId == post.topicId &&
                 score == post.score &&
                 Objects.equals(uuid, post.uuid) &&

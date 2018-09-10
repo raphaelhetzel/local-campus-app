@@ -44,7 +44,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     private void subscribeToTopic(String topicName) {
         try {
-            appLib.subscribe(topicName, new TopicHandler(postRepository));
+            appLib.subscribe(topicName, new TopicHandler(topicRepository, postRepository));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -9,7 +9,7 @@ import android.content.Context;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 
-@Database(version = 1, entities = {Topic.class, Post.class})
+@Database(version = 3, entities = {Topic.class, Post.class})
 @TypeConverters({Converters.class})
 abstract public class AppDatabase extends RoomDatabase {
     abstract public TopicDao getTopicDao();
@@ -17,6 +17,8 @@ abstract public class AppDatabase extends RoomDatabase {
     abstract public PostDao getPostDao();
 
     public static AppDatabase buildDatabase(Context applicationContext) {
-        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db").build();
+        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 }

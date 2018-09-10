@@ -33,6 +33,7 @@ public class RepositoryLocator {
         synchronized (lock) {
             topicRepository = newTopicRepository;
         }
+        // TODO: Enforce
     }
 
     public static PostRepository getPostRepository(Context applicationContext) {
@@ -41,7 +42,7 @@ public class RepositoryLocator {
         }
         synchronized (lock) {
             if (postRepository == null) {
-                postRepository = new RealPostRepository(applicationContext, getAppDatabase(applicationContext).getPostDao());
+                postRepository = new RealPostRepository(applicationContext);
             }
             return postRepository;
         }

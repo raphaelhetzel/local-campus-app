@@ -26,14 +26,15 @@ public class PostsViewModel extends ViewModel{
 
         FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId);
 
-        postRepository = RepositoryLocator.getPostRepository(context);
+        postRepository = RepositoryLocator.getPostRepository();
         liveDataPosts = postRepository.getPostsforTopic(topicId);
     }
 
     public void addPost(String dataText) throws DatabaseException {
         long id = FakeDataGenerator.getInstance().getPostId();
         String uuid = UUID.randomUUID().toString();
-        long typeId = FakeDataGenerator.getInstance().getTypeId();
+        //long typeId = FakeDataGenerator.getInstance().getTypeId();
+        String typeId = "1";
         this.topicId = topicId;
         String creator = "user";
         Date createdAt = new Date();

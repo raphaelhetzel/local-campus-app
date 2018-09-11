@@ -52,9 +52,9 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         post = postsList.get(position);
 
         holder.postDate.setText(post.getUpdatedAt().toString());
-        holder.postType.setText(Long.toString(post.getTypeId()));
+        holder.postType.setText(post.getTypeId());
         holder.postText.setText(post.getData());
-        holder.numLikes.setText(Integer.toString(post.getScore()));
+        holder.numLikes.setText(Long.toString(post.getScore()));
 
 
         holder.parentLayout.setOnClickListener((View v) -> {
@@ -68,12 +68,12 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
         holder.like.setOnClickListener((View v) -> {
                 post.setScore(post.getScore() + 1);
-                holder.numLikes.setText(Integer.toString(post.getScore()));
+                holder.numLikes.setText(Long.toString(post.getScore()));
         });
 
         holder.dislike.setOnClickListener((View v) -> {
                 post.setScore(post.getScore() - 1);
-                holder.numLikes.setText(Integer.toString(post.getScore()));
+                holder.numLikes.setText(Long.toString(post.getScore()));
         });
 
     }

@@ -1,6 +1,7 @@
 package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryPostRepository;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 
@@ -34,10 +36,11 @@ public class TopicsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
 
-        RepositoryLocator.setCustomTopicRepository(new InMemoryTopicRepository());
-        RepositoryLocator.setCustomPostRepository(new InMemoryPostRepository());
-        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository(getApplicationContext()));
-        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository(getApplicationContext()));
+        //super.startService( new Intent( this, AppLibService.class ) );
+        RepositoryLocator.initInMemory(getApplicationContext());
+
+        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
+        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 
         try {
             viewModel = new TopicsViewModel(getApplicationContext());

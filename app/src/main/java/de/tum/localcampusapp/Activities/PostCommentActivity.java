@@ -126,7 +126,7 @@ public class PostCommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 post.setScore(post.getScore() + 1);
-                numLikes.setText(Integer.toString(post.getScore()));
+                numLikes.setText(Long.toString(post.getScore()));
             }
         });
 
@@ -134,7 +134,7 @@ public class PostCommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 post.setScore(post.getScore() -1);
-                numLikes.setText(Integer.toString(post.getScore()));
+                numLikes.setText(Long.toString(post.getScore()));
             }
         });
 

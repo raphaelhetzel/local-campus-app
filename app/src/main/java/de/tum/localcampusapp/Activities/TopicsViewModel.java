@@ -30,7 +30,7 @@ public class TopicsViewModel extends ViewModel{
         //TODO: Replace fakeData with Database
         FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);
 
-        topicRepository = RepositoryLocator.getTopicRepository(applicationContext);
+        topicRepository = RepositoryLocator.getTopicRepository();
         liveDataTopics = topicRepository.getTopics();
     }
 

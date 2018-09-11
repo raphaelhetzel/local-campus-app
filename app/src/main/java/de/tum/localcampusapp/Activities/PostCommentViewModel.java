@@ -30,7 +30,7 @@ public class PostCommentViewModel extends ViewModel {
 
         this.postId = postId;
 
-        postRepository = RepositoryLocator.getPostRepository(context);
+        postRepository = RepositoryLocator.getPostRepository();
         liveDataPost = postRepository.getPost(postId);
 
         //Fake Comments for Fake Post

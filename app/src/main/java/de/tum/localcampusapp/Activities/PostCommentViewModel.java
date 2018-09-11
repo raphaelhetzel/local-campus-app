@@ -4,7 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
@@ -16,6 +18,7 @@ import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class PostCommentViewModel extends ViewModel {
+
     private LiveData<Post> liveDataPost;
     private LiveData<List<Comment>> liveDataComments;
     private long postId;
@@ -27,8 +30,6 @@ public class PostCommentViewModel extends ViewModel {
 
         this.postId = postId;
 
-        //TODO: Later when Database is up: Change to getDatabase with postId
-        //Fake Post Repo
         postRepository = RepositoryLocator.getPostRepository(context);
         liveDataPost = postRepository.getPost(postId);
 
@@ -36,7 +37,13 @@ public class PostCommentViewModel extends ViewModel {
         commentHelper = new CommentHelper();
         FakeDataGenerator.getInstance().createSeveralFakeComments(3, commentHelper, postId, 1);
         liveDataComments = commentHelper.getCommentsforPost(postId);
+    }
 
+    public void addComment(String commentData) throws DatabaseException {
+            long id = FakeDataGenerator.getInstance().getPostId();
+            long commentId = FakeDataGenerator.getInstance().getCommentId();
+
+            commentHelper.insertComment(new Comment(postId, commentId, commentData, new Date()));
     }
 
     public LiveData<Post> getLiveDataPost() {

@@ -25,7 +25,7 @@ public class FakeDataGenerator {
     private ArrayList<Long> topicsIdList =new ArrayList<>();
     private ArrayList<Long> postsIdList = new ArrayList<>();
     private ArrayList<Long> typeIdList = new ArrayList<>();
-    //private TopicRepository topicRepository=null;
+    private ArrayList<Long> commentIdList = new ArrayList<>();
 
     private static FakeDataGenerator instance = new FakeDataGenerator();
 
@@ -37,9 +37,9 @@ public class FakeDataGenerator {
     }
 
     public long getTypeId(){
-        long num = (long) (Math.random()* POST_ID_MAX) +1;
+        long num = (long) (Math.random()* TYPE_ID_MAX) +1;
         while (typeIdList.contains(num)){
-            num = (long) (Math.random()* POST_ID_MAX) +1;
+            num = (long) (Math.random()* TYPE_ID_MAX) +1;
         }
         typeIdList.add(num);
         return num;
@@ -60,6 +60,15 @@ public class FakeDataGenerator {
             num = (long) (Math.random()* TOPIC_ID_MAX) +1;
         }
         topicsIdList.add(num);
+        return num;
+    }
+
+    public long getCommentId(){
+        long num = (long) (Math.random()* POST_ID_MAX) +1;
+        while (commentIdList.contains(num)){
+            num = (long) (Math.random()* POST_ID_MAX) +1;
+        }
+        commentIdList.add(num);
         return num;
     }
 
@@ -107,6 +116,7 @@ public class FakeDataGenerator {
             createNewFakePost(id);
         }
     }
+
 
     public void createNewFakeComment(CommentHelper commentHelper, long postId, long commentId){
         Comment comment = new Comment(postId, commentId, "Sample Comment - PostId: "+postId+", CommentId: "+commentId, new Date(1992, 8, 23));

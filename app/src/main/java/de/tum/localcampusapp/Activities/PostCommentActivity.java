@@ -1,15 +1,19 @@
 package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -92,6 +96,31 @@ public class PostCommentActivity extends AppCompatActivity {
         numLikes = findViewById(R.id.num_likes);
         like = findViewById(R.id.button_upvote);
         dislike = findViewById(R.id.button_downvote);
+
+        FloatingActionButton btnAddComment = findViewById(R.id.btn_add);
+
+
+        btnAddComment.setOnClickListener((View v) -> {
+            final EditText editText = new EditText(PostCommentActivity.this);
+            AlertDialog dialog = new AlertDialog.Builder(PostCommentActivity.this)
+                    .setTitle("New Comment")
+                    .setMessage("Add comment text below")
+                    .setView(editText)
+                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String textData = String.valueOf(editText.getText());
+                            try {
+                                viewModel.addComment(textData);
+                            } catch (DatabaseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create();
+            dialog.show();
+        });
 
         like.setOnClickListener(new View.OnClickListener() {
             @Override

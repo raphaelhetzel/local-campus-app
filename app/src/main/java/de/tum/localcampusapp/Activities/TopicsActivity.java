@@ -1,4 +1,4 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
@@ -7,11 +7,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.InMemoryPostRepository;

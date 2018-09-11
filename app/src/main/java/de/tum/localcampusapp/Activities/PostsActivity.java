@@ -1,18 +1,23 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 
@@ -48,11 +53,37 @@ public class PostsActivity extends AppCompatActivity{
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerView.setAdapter(mPostsViewAdapter);
 
+
             viewModel.getLiveDataPosts().observe(PostsActivity.this, new Observer<List<Post>>() {
                 @Override
                 public void onChanged(@Nullable List<Post> posts) {
                     mPostsViewAdapter.setItems(posts);
                 }
+            });
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+
+
+            fab.setOnClickListener((View v) -> {
+                final EditText editText = new EditText(PostsActivity.this);
+                AlertDialog dialog = new AlertDialog.Builder(PostsActivity.this)
+                        .setTitle("New Post")
+                        .setMessage("Add post text below")
+                        .setView(editText)
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String textData = String.valueOf(editText.getText());
+                                try {
+                                    viewModel.addPost(textData);
+                                } catch (DatabaseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
             });
 
         }

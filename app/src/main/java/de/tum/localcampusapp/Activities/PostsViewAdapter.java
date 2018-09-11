@@ -1,4 +1,4 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,14 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
 
 public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.ViewHolder>{
 
@@ -89,6 +88,7 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         notifyDataSetChanged();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         RelativeLayout parentLayout;
@@ -111,4 +111,5 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
             dislike = (Button) itemView.findViewById(R.id.button_downvote);
         }
     }
+
 }

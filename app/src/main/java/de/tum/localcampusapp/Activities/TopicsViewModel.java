@@ -1,4 +1,4 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

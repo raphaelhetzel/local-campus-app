@@ -1,6 +1,5 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,11 +16,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.postTypes.Comment;
-import de.tum.localcampusapp.repository.PostRepository;
-import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostCommentActivity extends AppCompatActivity {
 

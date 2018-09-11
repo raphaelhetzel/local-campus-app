@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TopicsActivity">
+        <activity android:name=".Activities.TopicsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,11 +18,11 @@
         </activity>
 
         <activity
-            android:name=".PostsActivity"
+            android:name=".Activities.PostsActivity"
             android:label="@string/app_name" />
 
         <activity
-            android:name=".PostCommentActivity"
+            android:name=".Activities.PostCommentActivity"
             android:label="@string/app_name" />
     </application>
 

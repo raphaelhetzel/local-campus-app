@@ -1,4 +1,4 @@
-package de.tum.localcampusapp;
+package de.tum.localcampusapp.Activities;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.postTypes.Comment;
 
 public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentViewAdapter.ViewHolder>{

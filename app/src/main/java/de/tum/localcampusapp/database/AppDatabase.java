@@ -16,8 +16,13 @@ abstract public class AppDatabase extends RoomDatabase {
 
     abstract public PostDao getPostDao();
 
+//    public static AppDatabase buildDatabase(Context applicationContext) {
+//        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")
+//                .fallbackToDestructiveMigration()
+//                .build();
+//    }
     public static AppDatabase buildDatabase(Context applicationContext) {
-        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")
+        return Room.inMemoryDatabaseBuilder(applicationContext, AppDatabase.class)
                 .fallbackToDestructiveMigration()
                 .build();
     }

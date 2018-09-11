@@ -8,6 +8,7 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
+import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -19,6 +20,8 @@ public class DiscoveryHandler implements MessageReceivedCallback {
     private final TopicRepository topicRepository;
     private final PostRepository postRepository;
     private final AppLib appLib;
+
+    //TODO: add constructor using the repository and only needs applib passed
 
     public DiscoveryHandler(TopicRepository topicRepository, PostRepository postRepository, AppLib appLib) {
         this.topicRepository = topicRepository;
@@ -44,7 +47,8 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     private void subscribeToTopic(String topicName) {
         try {
-            appLib.subscribe(topicName, new TopicHandler(topicRepository, postRepository));
+            // TODO: replace with constructor using the repository
+            appLib.subscribe(topicName, new TopicHandler(postRepository, new ScampiPostSerializer(topicRepository)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -38,19 +38,22 @@ public class RealPostRepository implements PostRepository {
     private Boolean serviceBound = false;
     private Context applicationContext;
     private Executor executor;
+    private ScampiPostSerializer scampiPostSerializer;
 
     public RealPostRepository(Context applicationContext) {
         this(applicationContext,
                 RepositoryLocator.getAppDatabase(applicationContext).getPostDao(),
                 RepositoryLocator.getTopicRepository(applicationContext),
-                Executors.newSingleThreadExecutor());
+                Executors.newSingleThreadExecutor(),
+                new ScampiPostSerializer(RepositoryLocator.getTopicRepository(applicationContext)));
     }
 
-    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor) {
+    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer) {
         this.postDao = postDao;
         this.applicationContext = applicationContext;
         this.topicRepository = topicRepository;
         this.executor = executor;
+        this.scampiPostSerializer = scampiPostSerializer;
 
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
@@ -73,7 +76,6 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void addPost(Post post) throws DatabaseException {
-        System.out.println(serviceBound);
         executor.execute(new AddPostRunner(post));
     }
 
@@ -91,7 +93,7 @@ public class RealPostRepository implements PostRepository {
                 }
                 try {
                     Topic topic = topicRepository.getFinalTopic(post.getId());
-                    SCAMPIMessage message = ScampiPostSerializer.messageFromPost(post, topic, "CREATOR");
+                    SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, "TODOCREATOR");
                     scampiBinder.publish(message, topic.getTopicName());
                 } catch (InterruptedException | DatabaseException e) {
                     e.printStackTrace(); // TODO: Remove DatabaseException as you can't catch it from other threads

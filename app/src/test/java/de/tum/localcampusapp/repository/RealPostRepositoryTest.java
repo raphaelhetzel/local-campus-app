@@ -23,6 +23,7 @@ import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.testhelper.ExecutorInstantRun;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -37,6 +38,7 @@ public class RealPostRepositoryTest {
     AppLibService.ScampiBinder mScampiBinder;
     ComponentName mComponentName;
     Executor mExecutor;
+    ScampiPostSerializer mScampiPostSerializer;
 
     @Before
     public void initialize_mocks() {
@@ -46,11 +48,12 @@ public class RealPostRepositoryTest {
         mScampiBinder = mock(AppLibService.ScampiBinder.class);
         mComponentName = mock(ComponentName.class);
         mExecutor = ExecutorInstantRun.getMockExecutor();
+        mScampiPostSerializer = mock(ScampiPostSerializer.class);
     }
 
     @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
     public void insertWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer);
         Post post2 = new Post();
         doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).insert(post2);
         realPostRepository.insertPost(post2);
@@ -59,7 +62,7 @@ public class RealPostRepositoryTest {
 
     @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
     public void updateWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer);
         Post post2 = new Post();
         doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).update(post2);
         realPostRepository.updatePost(post2);
@@ -67,18 +70,6 @@ public class RealPostRepositoryTest {
 
     @Test
     public void add() throws DatabaseException, InterruptedException {
-        when(mContext.bindService(any(), any(), anyInt())).thenAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                System.out.print("called");
-                ServiceConnection serviceConnection = invocation.getArgument(1);
-                serviceConnection.onServiceConnected(mComponentName, mScampiBinder);
-                return null;
-            }
-        });
-        when(mTopicRepository.getFinalTopic(1)).thenReturn(new Topic(1, "/tum"));
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor);
-
         Post post = new Post(
                 1,
                 "UUID",
@@ -91,9 +82,26 @@ public class RealPostRepositoryTest {
                 0
         );
 
+        Topic topic = new Topic(1, "/tum");
+
+        SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
+
+        when(mContext.bindService(any(), any(), anyInt())).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ServiceConnection serviceConnection = invocation.getArgument(1);
+                serviceConnection.onServiceConnected(mComponentName, mScampiBinder);
+                return null;
+            }
+        });
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
+        when(mScampiPostSerializer.messageFromPost(post, topic, "TODOCREATOR")).thenReturn(scampiMessage);
+
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer);
+
         realPostRepository.addPost(post);
-        //TODO: verify call to the serializer
-        verify(mScampiBinder).publish(any(SCAMPIMessage.class), eq("/tum"));
+        verify(mScampiPostSerializer).messageFromPost(post, topic, "TODOCREATOR");
+        verify(mScampiBinder).publish(eq(scampiMessage), eq("/tum"));
         verify(mTopicRepository).getFinalTopic(1);
     }
 

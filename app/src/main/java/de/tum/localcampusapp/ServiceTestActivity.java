@@ -31,21 +31,19 @@ public class ServiceTestActivity extends AppCompatActivity {
 
         Log.d( TAG, "onCreate");
         super.onCreate(savedInstanceState);
+
+        RepositoryLocator.init(getApplicationContext());
+        
         super.startService( new Intent( this, AppLibService.class ) );
-
-        //RepositoryLocator.setCustomTopicRepository(new InMemoryTopicRepository());
-
-        //TODO: workaround to circumvent lazy repository initialization
-        RepositoryLocator.getPostRepository(this.getApplicationContext());
 
         setContentView(R.layout.activity_servicetest);
         try {
-            RepositoryLocator.getTopicRepository(this).getTopics().observe(this, topics -> {
+            RepositoryLocator.getTopicRepository().getTopics().observe(this, topics -> {
                 TextView textView = findViewById(R.id.centered_text);
                 textView.setText(topics.stream().map(t -> t.getTopicName()).reduce("", (concat, topic) -> concat+topic+"\n"));
             });
 
-            RepositoryLocator.getPostRepository(getApplicationContext()).getPostsforTopic(1).observe(this, posts -> {
+            RepositoryLocator.getPostRepository().getPostsforTopic(1).observe(this, posts -> {
                 TextView textView = findViewById(R.id.posts);
                 Log.d(TAG, Integer.toString(posts.size()));
                 textView.setText(posts.stream().map(t -> t.getUuid()).reduce("", (concat, topic) -> concat+topic+"\n"));
@@ -69,7 +67,7 @@ public class ServiceTestActivity extends AppCompatActivity {
                     0
                     );
             try {
-                RepositoryLocator.getPostRepository(this.getApplicationContext()).addPost(testpost);
+                RepositoryLocator.getPostRepository().addPost(testpost);
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }

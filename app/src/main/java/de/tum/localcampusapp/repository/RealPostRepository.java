@@ -36,21 +36,11 @@ public class RealPostRepository implements PostRepository {
 
     private AppLibService.ScampiBinder scampiBinder;
     private Boolean serviceBound = false;
-    private Context applicationContext;
     private Executor executor;
     private ScampiPostSerializer scampiPostSerializer;
 
-    public RealPostRepository(Context applicationContext) {
-        this(applicationContext,
-                RepositoryLocator.getAppDatabase(applicationContext).getPostDao(),
-                RepositoryLocator.getTopicRepository(applicationContext),
-                Executors.newSingleThreadExecutor(),
-                new ScampiPostSerializer(RepositoryLocator.getTopicRepository(applicationContext)));
-    }
-
     public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer) {
         this.postDao = postDao;
-        this.applicationContext = applicationContext;
         this.topicRepository = topicRepository;
         this.executor = executor;
         this.scampiPostSerializer = scampiPostSerializer;

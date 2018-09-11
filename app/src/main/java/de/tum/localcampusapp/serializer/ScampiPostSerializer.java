@@ -25,7 +25,6 @@ public class ScampiPostSerializer {
 
     private final TopicRepository topicRepository;
 
-    // TODO: make part of the Locator, get Creator from the repository
     public ScampiPostSerializer(TopicRepository topicRepository) {
         this.topicRepository = topicRepository;
     }

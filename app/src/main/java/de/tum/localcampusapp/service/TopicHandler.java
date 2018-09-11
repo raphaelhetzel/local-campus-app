@@ -1,22 +1,17 @@
 package de.tum.localcampusapp.service;
 
-import android.content.Context;
 import android.util.Log;
 
-import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.MissingTopicException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.PostRepository;
-import de.tum.localcampusapp.repository.TopicRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
-
-import static de.tum.localcampusapp.serializer.ScampiPostSerializer.TOPIC_FIELD;
 
 public class TopicHandler implements MessageReceivedCallback {
 
@@ -25,7 +20,9 @@ public class TopicHandler implements MessageReceivedCallback {
     private final PostRepository postRepository;
     private final ScampiPostSerializer scampiPostSerializer;
 
-    // TODO add constructor to get variables from the repository
+    public TopicHandler() {
+        this(RepositoryLocator.getPostRepository(), RepositoryLocator.getScampiPostSerializer());
+    }
 
 
     public TopicHandler(PostRepository postRepository, ScampiPostSerializer scampiPostSerializer) {

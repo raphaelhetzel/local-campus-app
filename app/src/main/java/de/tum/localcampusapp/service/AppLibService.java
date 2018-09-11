@@ -10,9 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import de.tum.localcampusapp.repository.PostRepository;
-import de.tum.localcampusapp.repository.RepositoryLocator;
-import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -58,14 +55,11 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
         this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
-        PostRepository postRepository = RepositoryLocator.getPostRepository(getApplicationContext());
-        TopicRepository topicRepository = RepositoryLocator.getTopicRepository(getApplicationContext());
-
         this.binder = new ScampiBinder();
 
 
         appLib = AppLib.builder().build();
-        this.discoveryHandler = new DiscoveryHandler(topicRepository, postRepository, appLib);
+        this.discoveryHandler = new DiscoveryHandler(appLib);
         appLib.addLifecycleListener(this);
         try {
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);

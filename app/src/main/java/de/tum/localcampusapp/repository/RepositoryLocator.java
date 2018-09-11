@@ -2,67 +2,103 @@ package de.tum.localcampusapp.repository;
 
 import android.content.Context;
 
+import java.util.concurrent.Executors;
+
 import de.tum.localcampusapp.database.AppDatabase;
+import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 
 public class RepositoryLocator {
 
-    private static volatile AppDatabase appDatabase;
+    private static volatile boolean initialized = false;
     private static volatile TopicRepository topicRepository;
+    private static volatile ScampiPostSerializer scampiPostSerializer;
     private static volatile PostRepository postRepository;
     private static final Object lock = new Object();
 
+
+    // Needs to be called before any Repository is used.
+    // Service should be explicitly started before.
+    public static void init(Context applicationContext){
+        synchronized (lock) {
+            if(initialized == false) {
+                initialized = false;
+                reInit(applicationContext);
+            }
+
+        }
+    }
+
+    public static void initInMemory(Context applicationContext){
+        synchronized (lock) {
+            if(initialized == false) {
+                initialized = false;
+                reInitInMemory(applicationContext);
+            }
+        }
+    }
+
+    public static void reInit(Context applicationContext) {
+        AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
+        topicRepository = new RealTopicRepository(appDatabase.getTopicDao());
+        scampiPostSerializer = new ScampiPostSerializer(topicRepository);
+        postRepository = new RealPostRepository(applicationContext,
+                appDatabase.getPostDao(),
+                topicRepository,
+                Executors.newSingleThreadExecutor(),
+                scampiPostSerializer);
+        initialized = true;
+    }
+
+    public static void reInitInMemory(Context applicationContext) {
+        topicRepository = new InMemoryTopicRepository();
+        scampiPostSerializer = new ScampiPostSerializer(topicRepository);
+        postRepository = new InMemoryPostRepository();
+        initialized = true;
+    }
+
+    // Warning: the real post repository currently depends on the real topic repository
+    public static void reInitCustom(TopicRepository newTopicRepository, PostRepository newPostRepository, ScampiPostSerializer newScampiPostSerializer) {
+        topicRepository = newTopicRepository;
+        scampiPostSerializer = newScampiPostSerializer;
+        postRepository = newPostRepository;
+        initialized = true;
+    }
+
+    public static TopicRepository getTopicRepository() {
+        synchronized (lock) {
+            if(initialized) {
+                return topicRepository;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
+    public static PostRepository getPostRepository() {
+        synchronized (lock) {
+            if(initialized) {
+                return postRepository;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
+    public static ScampiPostSerializer getScampiPostSerializer() {
+        synchronized (lock) {
+            if(initialized) {
+                return scampiPostSerializer;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
     public static void reset() {
-        topicRepository = null;
-        postRepository = null;
-    }
-
-    //TODO: This kind of initialization is too lazy, add an init method
-    public static TopicRepository getTopicRepository(Context applicationContext) {
-        if (topicRepository != null) {
-            return topicRepository;
-        }
         synchronized (lock) {
-            if (topicRepository == null) {
-                topicRepository = new RealTopicRepository(getAppDatabase(applicationContext).getTopicDao());
+            if(initialized) {
+                topicRepository = null;
+                postRepository = null;
+                scampiPostSerializer = null;
+                initialized = false;
             }
-            return topicRepository;
-        }
-    }
-
-    public static void setCustomTopicRepository(TopicRepository newTopicRepository) {
-        synchronized (lock) {
-            topicRepository = newTopicRepository;
-        }
-        // TODO: Enforce
-    }
-
-    public static PostRepository getPostRepository(Context applicationContext) {
-        if (postRepository != null) {
-            return postRepository;
-        }
-        synchronized (lock) {
-            if (postRepository == null) {
-                postRepository = new RealPostRepository(applicationContext);
-            }
-            return postRepository;
-        }
-    }
-
-    public static void setCustomPostRepository(PostRepository newPostRepository) {
-        synchronized (lock) {
-            postRepository = newPostRepository;
-        }
-    }
-
-    public static AppDatabase getAppDatabase(Context applicationContext) {
-        if (appDatabase != null) {
-            return appDatabase;
-        }
-        synchronized (lock) {
-            if (appDatabase == null) {
-                appDatabase = AppDatabase.buildDatabase(applicationContext);
-            }
-            return appDatabase;
         }
     }
 }

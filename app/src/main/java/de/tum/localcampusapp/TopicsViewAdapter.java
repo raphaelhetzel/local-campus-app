@@ -18,22 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.localcampusapp.entity.Topic;
+import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.ViewHolder>{
 
     private static final String TAG = TopicsViewAdapter.class.getSimpleName();
 
     private List<Topic> topicList;
-    private View.OnLongClickListener longClickListener;
     private long selectedTopicId;
     private Context context;
 
-
-    public TopicsViewAdapter(List<Topic> topicList, Context context, TopicsActivity.ItemInsertLongClickListener longClickListener) {
-        this.topicList = topicList;
-        this.context = context;
-        this.longClickListener = longClickListener;
-    }
 
     public TopicsViewAdapter(List<Topic> topicList, Context context){
         this.topicList = topicList;
@@ -54,17 +48,18 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
         Topic topic = topicList.get(position);
         holder.imageName.setText(topic.getTopicName());
-        holder.itemView.setOnLongClickListener(longClickListener);
 
-        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.itemView.setOnLongClickListener((View v) -> {
+            FakeDataGenerator.getInstance().insertNewTopic("Fake elements name");
+            return true;
+                });
+
+        holder.parentLayout.setOnClickListener((View v) -> {
                 selectedTopicId = topic.getId();
                 Intent intent = new Intent(context, PostsActivity.class);
                 intent.putExtra("topicId", String.valueOf(selectedTopicId));
                 Log.d(TAG, "topic_id clicked: "+String.valueOf(selectedTopicId));
                 context.startActivity(intent);
-            }
         });
 
     }

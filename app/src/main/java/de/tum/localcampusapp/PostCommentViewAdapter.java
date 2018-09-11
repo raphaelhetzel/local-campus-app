@@ -2,19 +2,15 @@ package de.tum.localcampusapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
-import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.testhelper.Comment;
+import de.tum.localcampusapp.postTypes.Comment;
 
 public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentViewAdapter.ViewHolder>{
 

@@ -1,5 +1,6 @@
 package de.tum.localcampusapp;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import java.util.List;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.testhelper.Comment;
+import de.tum.localcampusapp.postTypes.Comment;
+import de.tum.localcampusapp.repository.PostRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostCommentActivity extends AppCompatActivity {
 
@@ -38,11 +41,48 @@ public class PostCommentActivity extends AppCompatActivity {
 
     private Post post;
 
-    class CommentClickListener implements View.OnClickListener{
-        @Override
-        public void onClick(View v) {
-            //TODO: If needed later
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.post_comment_activity);
+
+        setPostVariables();
+
+        Intent intent = getIntent();
+
+        long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
+        Log.d(TAG, "post_id received: "+ String.valueOf(postId));
+
+
+        try {
+            viewModel = new PostCommentViewModel(postId, getApplicationContext());
+        } catch (DatabaseException e) {
+            e.printStackTrace();
         }
+
+        mCommentsViewAdapter = new PostCommentViewAdapter(new ArrayList<Comment>(), this);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_comments);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mCommentsViewAdapter);
+
+        viewModel.getLiveDataPost().observe(PostCommentActivity.this, new Observer<Post>() {
+            @Override
+            public void onChanged(@Nullable Post post) {
+                updatePostVariables(post);
+            }
+        });
+
+
+        viewModel.getLiveDataComments().observe(PostCommentActivity.this, new Observer<List<Comment>>() {
+            @Override
+            public void onChanged(@Nullable List<Comment> comments) {
+                mCommentsViewAdapter.setItems(comments);
+            }
+        });
+
     }
 
 
@@ -79,49 +119,6 @@ public class PostCommentActivity extends AppCompatActivity {
         postType.setText(String.valueOf(post.getTypeId()));
         postText.setText(post.getData());
         numLikes.setText(String.valueOf(post.getScore()));
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.post_comment_activity);;
-
-        Intent intent = getIntent();
-
-        long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
-        Log.d(TAG, "post_id received: "+ String.valueOf(postId));
-
-
-        try {
-            viewModel = new PostCommentViewModel(postId, getApplication(), this);
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
-
-        setPostVariables();
-
-        mCommentsViewAdapter = new PostCommentViewAdapter(new ArrayList<Comment>(), this);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_comments);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mCommentsViewAdapter);
-
-        viewModel.getLiveDataPost().observe(PostCommentActivity.this, new Observer<Post>() {
-            @Override
-            public void onChanged(@Nullable Post post) {
-                updatePostVariables(post);
-            }
-        });
-
-
-        viewModel.getLiveDataComments().observe(PostCommentActivity.this, new Observer<List<Comment>>() {
-            @Override
-            public void onChanged(@Nullable List<Comment> comments) {
-                mCommentsViewAdapter.setItems(comments);
-            }
-        });
-
     }
 
 }

@@ -1,4 +1,4 @@
-package de.tum.localcampusapp.testhelper;
+package de.tum.localcampusapp.postTypes;
 
 import android.util.Pair;
 
@@ -9,6 +9,14 @@ public class Comment {
     private long commentId;
     private String data;
     private Date updatedComment;
+
+
+    public Comment(long postId, long commentId, String data, Date updatedComment) {
+        this.postId = postId;
+        this.commentId = commentId;
+        this.data = data;
+        this.updatedComment = updatedComment;
+    }
 
     public long getPostId() {
         return postId;
@@ -42,10 +50,4 @@ public class Comment {
         this.updatedComment = updatedComment;
     }
 
-    public Comment(long postId, long commentId, String data, Date updatedComment) {
-        this.postId = postId;
-        this.commentId = commentId;
-        this.data = data;
-        this.updatedComment = updatedComment;
-    }
 }

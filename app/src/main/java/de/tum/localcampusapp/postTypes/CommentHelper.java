@@ -1,14 +1,14 @@
-package de.tum.localcampusapp.testhelper;
+package de.tum.localcampusapp.postTypes;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import de.tum.localcampusapp.postTypes.Comment;
 
 public class CommentHelper {
 

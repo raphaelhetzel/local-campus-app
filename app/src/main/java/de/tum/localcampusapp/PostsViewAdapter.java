@@ -25,6 +25,7 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
     private long selectedPostId;
     private Context context;
 
+    private Post post;
 
 
     public PostsViewAdapter(List<Post> postsList) {
@@ -48,7 +49,8 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
     @Override
     public void onBindViewHolder(PostsViewAdapter.ViewHolder holder, final int position) {
 
-        Post post = postsList.get(position);
+        //Post post = postsList.get(position);
+        post = postsList.get(position);
 
         holder.postDate.setText(post.getUpdatedAt().toString());
         holder.postType.setText(Long.toString(post.getTypeId()));
@@ -56,32 +58,23 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         holder.numLikes.setText(Integer.toString(post.getScore()));
 
 
-        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.parentLayout.setOnClickListener((View v) -> {
                 selectedPostId = post.getId();
                 Intent intent = new Intent(context, PostCommentActivity.class);
                 intent.putExtra("selectedPostId", String.valueOf(selectedPostId));
                 Log.d(TAG, "post_id clicked: "+ String.valueOf(selectedPostId));
                 context.startActivity(intent);
-            }
         });
 
 
-        holder.like.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.like.setOnClickListener((View v) -> {
                 post.setScore(post.getScore() + 1);
                 holder.numLikes.setText(Integer.toString(post.getScore()));
-            }
         });
 
-        holder.dislike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.dislike.setOnClickListener((View v) -> {
                 post.setScore(post.getScore() - 1);
                 holder.numLikes.setText(Integer.toString(post.getScore()));
-            }
         });
 
     }

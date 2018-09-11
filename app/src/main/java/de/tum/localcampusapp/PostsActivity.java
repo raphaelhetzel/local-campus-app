@@ -14,16 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class PostsActivity extends AppCompatActivity{
 
         static final String TAG = PostsActivity.class.getSimpleName();
 
         private RecyclerView mRecyclerView;
-        private PostsAdapterViewModel viewModel;
+        private PostsViewModel viewModel;
         private PostsViewAdapter mPostsViewAdapter;
 
 
@@ -39,7 +37,7 @@ public class PostsActivity extends AppCompatActivity{
             Log.d(TAG, "topic_id received: "+ String.valueOf(topicId));
 
             try {
-                viewModel = new PostsAdapterViewModel(topicId, getApplication(), this);
+                viewModel = new PostsViewModel(topicId, getApplicationContext());
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
@@ -58,6 +56,5 @@ public class PostsActivity extends AppCompatActivity{
             });
 
         }
-
 
     }

@@ -1,49 +1,37 @@
 package de.tum.localcampusapp.testhelper;
 
-import android.arch.lifecycle.LiveData;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.Date;
 
+import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.postTypes.Comment;
+import de.tum.localcampusapp.postTypes.CommentHelper;
+import de.tum.localcampusapp.repository.InMemoryPostRepository;
 import de.tum.localcampusapp.repository.InMemoryTopicRepository;
+import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.TopicRepository;
 
 public class FakeDataGenerator {
 
     private static final int ID_MAX = 100000;
 
-    private int fakeDataCount;
-    private String elementsName;
-    private InMemoryTopicRepository inMemoryTopicRepository;
+    private TopicRepository topicRepository;
+    private PostRepository postRepository;
 
-    private ArrayList<Long> idList;
-    private LiveData<List<Topic>> liveDataTopics;
-    private TopicRepository topicRepository=null;
+    private ArrayList<Long> idList=new ArrayList<>();
+    //private TopicRepository topicRepository=null;
 
+    private static FakeDataGenerator instance = new FakeDataGenerator();
 
-    public FakeDataGenerator(String elementsName, int fakeDataCount){
-        this.elementsName = elementsName;
-        this.fakeDataCount = fakeDataCount;
-        inMemoryTopicRepository = new InMemoryTopicRepository();
-        idList = new ArrayList<Long>();
+    private FakeDataGenerator() {
     }
 
-    public FakeDataGenerator(String elementsName, int fakeDataCount, InMemoryTopicRepository inMemoryTopicRepository){
-        this.elementsName = elementsName;
-        this.fakeDataCount = fakeDataCount;
-        this.inMemoryTopicRepository = inMemoryTopicRepository;
-        idList = new ArrayList<Long>();
-    }
-
-    public FakeDataGenerator(String elementsName, int fakeDataCount, TopicRepository topicRepository){
-        this.elementsName = elementsName;
-        this.fakeDataCount = fakeDataCount;
-        this.topicRepository = topicRepository;
-        idList = new ArrayList<Long>();
+    public static FakeDataGenerator getInstance(){
+        return instance;
     }
 
     public long getId(){
@@ -55,36 +43,60 @@ public class FakeDataGenerator {
         return num;
     }
 
-    public String getNameWithId(long id){
+    public String getNameWithId(String elementsName, long id){
         return elementsName + Long.toString(id);
     }
 
-    public void insertSeveralTopics(){
+    public void insertSeveralTopics(String elementsName, int fakeDataCount){
         for(int i=0; i<fakeDataCount; i++){
-            insertNewTopic();
+            insertNewTopic(elementsName);
         }
     }
 
-    public void insertNewTopic() {
+    public void setTopicsRepo(TopicRepository topicRepository){
+        this.topicRepository = topicRepository;
+    }
+
+    public void setPostRepo(PostRepository postRepo){
+        this.postRepository = postRepo;
+    }
+
+    public void insertNewTopic(String elementsName) {
         long id = getId();
         try {
-            Log.d("FakeDataGenerator", "insert: "+ getNameWithId(id));
+            Log.d("FakeDataGenerator", "insert: "+ getNameWithId(elementsName, id));
             if(topicRepository!=null){
-                topicRepository.insertTopic(new Topic(id, getNameWithId(id)));
+                topicRepository.insertTopic(new Topic(id, getNameWithId(elementsName, id)));
             }
             else{
-                inMemoryTopicRepository.insertTopic(new Topic(id, getNameWithId(id)));
+                topicRepository.insertTopic(new Topic(id, getNameWithId(elementsName, id)));
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    public LiveData<List<Topic>> getLiveData() throws DatabaseException {
-        if(topicRepository!=null){
-            return topicRepository.getTopics();
+    public void createSeveralFakeComments(int count, CommentHelper commentHelper, long postId, long commentId){
+        for(int i=0; i<count; i++){
+            createNewFakeComment(commentHelper, postId, commentId++);
         }
-        return inMemoryTopicRepository.getTopics();
+    }
+
+    public void createSeveralFakePosts(int count, long postId, long id) throws DatabaseException {
+        for(int i=0; i<count; i++){
+            createNewFakePosts(postId++, id);
+        }
+    }
+
+    public void createNewFakeComment(CommentHelper commentHelper, long postId, long commentId){
+        Comment comment = new Comment(postId, commentId, "Sample Comment - PostId: "+postId+", CommentId: "+commentId, new Date(1992, 8, 23));
+        commentHelper.insertComment(comment);
+    }
+
+    public void createNewFakePosts(long postId, long id) throws DatabaseException {
+        Post post = new Post(postId, "hello", 121221, id, "Alex", new Date(1992, 8, 23)
+                , new Date(2018, 6, 22), "sample Post - postId: "+postId, 6);
+        postRepository.insertPost(post);
     }
 
 }

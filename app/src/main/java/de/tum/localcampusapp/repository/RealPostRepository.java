@@ -82,7 +82,7 @@ public class RealPostRepository implements PostRepository {
                     return;
                 }
                 try {
-                    Topic topic = topicRepository.getFinalTopic(post.getId());
+                    Topic topic = topicRepository.getFinalTopic(post.getTopicId());
                     SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, "TODOCREATOR");
                     scampiBinder.publish(message, topic.getTopicName());
                 } catch (InterruptedException | DatabaseException e) {

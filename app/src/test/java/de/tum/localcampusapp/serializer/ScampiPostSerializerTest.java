@@ -86,11 +86,10 @@ public class ScampiPostSerializerTest {
         assertEquals(message.getString(ScampiPostSerializer.TOPIC_FIELD), "Topic");
         assertEquals(message.getString(ScampiPostSerializer.UUID_FIELD), "UUID");
         assertEquals(message.getString(ScampiPostSerializer.DATA_FIELD), "Data");
-        assertEquals(message.getString(ScampiPostSerializer.CREATOR_FIELD), "Creator");
         assertEquals(message.getString(ScampiPostSerializer.TYPE_ID_FIELD), "Type");
-        assertEquals(message.getInteger(ScampiPostSerializer.CREATED_AT_FIELD), Converters.dateToTimestamp(currentTime));
+        assertEquals(new Long(message.getInteger(ScampiPostSerializer.CREATED_AT_FIELD)), Converters.dateToTimestamp(currentTime));
 
-        assertEquals(message.getInteger(ScampiPostSerializer.UPDATED_AT_FIELD), Converters.dateToTimestamp(currentTime));
+        assertEquals(new  Long(message.getInteger(ScampiPostSerializer.UPDATED_AT_FIELD)), Converters.dateToTimestamp(currentTime));
         assertEquals(message.getInteger(ScampiPostSerializer.SCORE_FIELD), 1);
     }
 

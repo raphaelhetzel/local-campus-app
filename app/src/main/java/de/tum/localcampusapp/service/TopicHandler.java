@@ -15,7 +15,7 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 public class TopicHandler implements MessageReceivedCallback {
 
-    public static final String TAG = DiscoveryHandler.class.getSimpleName();
+    public static final String TAG = TopicHandler.class.getSimpleName();
 
     private final PostRepository postRepository;
     private final ScampiPostSerializer scampiPostSerializer;

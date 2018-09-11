@@ -32,9 +32,9 @@ public class ServiceTestActivity extends AppCompatActivity {
         Log.d( TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        RepositoryLocator.init(getApplicationContext());
-        
+
         super.startService( new Intent( this, AppLibService.class ) );
+        RepositoryLocator.init(getApplicationContext());
 
         setContentView(R.layout.activity_servicetest);
         try {
@@ -60,7 +60,7 @@ public class ServiceTestActivity extends AppCompatActivity {
                     UUID.randomUUID().toString(),
                     "1",
                     1,
-                    "Test",
+                    "unused",
                     new Date(),
                     new Date(),
                     "DATA",

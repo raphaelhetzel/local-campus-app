@@ -1,5 +1,8 @@
 package de.tum.localcampusapp.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RepositoryLocator;
@@ -14,6 +17,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     private final TopicRepository topicRepository;
     private final AppLib appLib;
+    private Set<String> subscriptions;
 
     public DiscoveryHandler(AppLib appLib) {
         this(RepositoryLocator.getTopicRepository(), appLib);
@@ -22,6 +26,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
     public DiscoveryHandler(TopicRepository topicRepository, AppLib appLib) {
         this.topicRepository = topicRepository;
         this.appLib = appLib;
+        this.subscriptions = new HashSet<>();
     }
 
     @Override
@@ -42,8 +47,10 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     private void subscribeToTopic(String topicName) {
         try {
-            // TODO: replace with constructor using the repository
-            appLib.subscribe(topicName, new TopicHandler());
+            if(!this.subscriptions.contains(topicName)) {
+                appLib.subscribe(topicName, new TopicHandler());
+                this.subscriptions.add(topicName);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

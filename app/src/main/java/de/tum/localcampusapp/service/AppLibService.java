@@ -6,10 +6,14 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -30,13 +34,28 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     private Binder binder;
 
-    private String scampiId;
+    private volatile String scampiId;
+    private volatile boolean connected;
+    private volatile List<Message> preconnect_buffer = new ArrayList<>();
 
     public void publish(SCAMPIMessage message, String service) throws InterruptedException {
-        this.appLib.publish(message, service, (appLib, scampiMessage) -> {
-            Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
-        });
+        if(this.connected) {
+            publish_now(message, service);
+        } else {
+            preconnect_buffer.add(new Message(message, service));
+            Log.d(TAG, "Buffered Message");
+        }
 
+    }
+
+    private class Message {
+        public SCAMPIMessage scampiMessage;
+        public String targetService;
+
+        public Message(SCAMPIMessage scampiMessage, String targetService) {
+            this.scampiMessage = scampiMessage;
+            this.targetService = targetService;
+        }
     }
 
     // Service Lifecycle
@@ -49,6 +68,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     @Override
     public void onCreate() {
+        RepositoryLocator.init(getApplicationContext());
 
         super.onCreate();
         Log.d(TAG, "onCreate");
@@ -75,6 +95,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     public void onDestroy() {
 
         super.onDestroy();
+        appLib.stop();
         Log.d(TAG, "onDestroy");
 
     }
@@ -82,12 +103,16 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     // Scampi Lifecycle
     @Override
     public void onConnected(String scampiId) {
+        this.connected = true;
         this.scampiId = scampiId;
         Log.d(TAG, "AppLib connected: " + scampiId);
+        clear_preconnect_buffer();
     }
 
     @Override
     public void onDisconnected() {
+        this.connected = false;
+        this.scampiId = null;
         Log.d(TAG, "AppLib disconnected");
         this.scheduleConnect(RECONNECT_PERIOD, TimeUnit.MILLISECONDS);
     }
@@ -100,6 +125,8 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     @Override
     public void onStopped() {
+        this.connected = false;
+        this.scampiId = null;
         Log.d(TAG, "AppLib stopped");
     }
 
@@ -115,6 +142,27 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
                 Log.d(TAG, "Can't connect, lifecycle state: " + state);
             }
         }, delay, unit);
+    }
+
+    private void publish_now(SCAMPIMessage message, String service) throws InterruptedException {
+        message.putString(ScampiPostSerializer.CREATOR_FIELD, scampiId);
+        this.appLib.publish(message, service, (appLib, scampiMessage) -> {
+            Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
+        });
+    }
+
+    private void clear_preconnect_buffer() {
+        scheduledExecutor.execute( ()-> {
+            while(preconnect_buffer.size() > 0) {
+                if(connected == false) return;
+                Message message = preconnect_buffer.remove(0);
+                try {
+                    publish(message.scampiMessage, message.targetService);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     //Bind

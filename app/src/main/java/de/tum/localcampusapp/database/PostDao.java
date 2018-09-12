@@ -16,19 +16,28 @@ public interface PostDao {
     @Insert
     void insert(Post post);
 
-    @Update
-    void update(Post post);
-
-    @Query("SELECT * FROM posts WHERE topic_id = :topicId")
+    @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
+            " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
+            "FROM (SELECT * FROM posts WHERE posts.topic_id = :topicId) as filtered_posts " +
+            "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
     LiveData<List<Post>> getPostsforTopic(long topicId);
 
-    @Query("SELECT * FROM posts WHERE id = :id")
+    @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
+            " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
+            "FROM (SELECT * FROM posts WHERE posts.id = :id) as filtered_posts " +
+            "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
     LiveData<Post> getPost(long id);
 
-    @Query("SELECT * FROM posts WHERE uuid LIKE :uuid")
+    @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
+            " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
+            "FROM (SELECT * FROM posts WHERE posts.uuid LIKE :uuid) as filtered_posts " +
+            "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
     LiveData<Post> getPostByUUID(String uuid);
 
-    @Query("SELECT * FROM posts WHERE uuid LIKE :uuid")
+    @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
+            " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
+            "FROM (SELECT * FROM posts WHERE posts.uuid LIKE :uuid) as filtered_posts " +
+            "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
     Post getFinalPostByUUID(String uuid);
 
 }

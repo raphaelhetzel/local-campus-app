@@ -3,6 +3,8 @@ package de.tum.localcampusapp.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Date;
@@ -25,25 +27,25 @@ public class Post {
     private String creator;
     @ColumnInfo(name = "created_at")
     private Date createdAt;
-    @ColumnInfo(name = "updated_at")
-    private Date updatedAt;
 
     private String data;
+
+    // Unfortunately, there is no way of allowing the fetch from multiple
+    // tables while still preventing a column to be created for it
+    // we can only get rid of this field by not using room anymore
     private long score;
 
     public Post() {
     }
 
-    public Post(long id, String uuid, String typeId, long topicId, String creator, Date createdAt, Date updatedAt, String data, long score) {
+    public Post(long id, String uuid, String typeId, long topicId, String creator, Date createdAt, String data) {
         this.id = id;
         this.uuid = uuid;
         this.typeId = typeId;
         this.topicId = topicId;
         this.creator = creator;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.data = data;
-        this.score = score;
     }
 
     public long getId() {
@@ -94,14 +96,6 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getData() {
         return data;
     }
@@ -114,6 +108,7 @@ public class Post {
         return score;
     }
 
+    // this should never be used!
     public void setScore(long score) {
         this.score = score;
     }
@@ -126,30 +121,16 @@ public class Post {
         return id == post.id &&
                 typeId.equals(post.typeId) &&
                 topicId == post.topicId &&
-                score == post.score &&
+                getScore() == post.getScore() &&
                 Objects.equals(uuid, post.uuid) &&
                 Objects.equals(creator, post.creator) &&
                 Objects.equals(createdAt, post.createdAt) &&
-                Objects.equals(updatedAt, post.updatedAt) &&
-                Objects.equals(data, post.data);
-    }
-
-    public boolean equalsWitoutId(Post post) {
-        if (this == post) return true;
-        if (post == null) return false;
-        return typeId.equals(post.typeId) &&
-                topicId == post.topicId &&
-                score == post.score &&
-                Objects.equals(uuid, post.uuid) &&
-                Objects.equals(creator, post.creator) &&
-                Objects.equals(createdAt, post.createdAt) &&
-                Objects.equals(updatedAt, post.updatedAt) &&
                 Objects.equals(data, post.data);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, uuid, typeId, topicId, creator, createdAt, updatedAt, data, score);
+        return Objects.hash(id, uuid, typeId, topicId, creator, createdAt, data, score);
     }
 }

@@ -70,10 +70,6 @@ public class InMemoryPostRepository implements PostRepository {
         });
     }
 
-    @Override
-    public void updatePost(Post post) throws DatabaseException {
-    }
-
     public void insertPost(Post post) throws DatabaseException {
         handler.post(new InsertTask(post));
     }

@@ -59,15 +59,6 @@ public class RealPostRepositoryTest {
         realPostRepository.insertPost(post2);
     }
 
-
-    @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
-    public void updateWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer);
-        Post post2 = new Post();
-        doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).update(post2);
-        realPostRepository.updatePost(post2);
-    }
-
     @Test
     public void add() throws DatabaseException, InterruptedException {
         Post post = new Post(
@@ -77,9 +68,7 @@ public class RealPostRepositoryTest {
                 1,
                 "Test",
                 new Date(),
-                new Date(),
-                "DATA",
-                0
+                "DATA"
         );
 
         Topic topic = new Topic(1, "/tum");

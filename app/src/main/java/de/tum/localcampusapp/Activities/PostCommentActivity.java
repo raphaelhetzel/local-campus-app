@@ -142,7 +142,7 @@ public class PostCommentActivity extends AppCompatActivity {
 
     private void updatePostVariables(Post post){
         this.post = post;
-        postDate.setText(post.getUpdatedAt().toString());
+        postDate.setText(post.getCreatedAt().toString());
         postType.setText(String.valueOf(post.getTypeId()));
         postText.setText(post.getData());
         numLikes.setText(String.valueOf(post.getScore()));

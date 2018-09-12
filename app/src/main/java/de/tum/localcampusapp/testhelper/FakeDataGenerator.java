@@ -125,8 +125,7 @@ public class FakeDataGenerator {
 
     public void createNewFakePost(long id) throws DatabaseException {
         long currPostId = getPostId();
-        Post post = new Post(currPostId, "hello", "121221", id, "Alex", new Date(1992, 8, 23)
-                , new Date(2018, 6, 22), "sample Post - postId: "+ currPostId, 6);
+        Post post = new Post(currPostId, "hello", "121221", id, "Alex", new Date(1992, 8, 23), "sample Post - postId: "+ currPostId);
         postRepository.insertPost(post);
     }
 

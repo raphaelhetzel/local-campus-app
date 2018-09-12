@@ -44,9 +44,6 @@ public class ScampiPostSerializerTest {
         message.putString(ScampiPostSerializer.DATA_FIELD,"Data");
         message.putString(ScampiPostSerializer.UUID_FIELD,"UUID");
 
-        message.putInteger(ScampiPostSerializer.SCORE_FIELD, 1);
-        message.putInteger(ScampiPostSerializer.UPDATED_AT_FIELD, Converters.dateToTimestamp(currentTime));
-
         when(mTopicRepository.getFinalTopicByName("Topic")).thenReturn(new Topic(1, "Topic"));
 
         Post post  = scampiPostSerializer.postFromMessage(message);
@@ -57,9 +54,6 @@ public class ScampiPostSerializerTest {
         assertEquals(post.getCreator(), "Creator");
         assertEquals(post.getTopicId(), 1);
         assertEquals(post.getUuid(), "UUID");
-
-        assertEquals(post.getUpdatedAt(), currentTime);
-        assertEquals(post.getScore(), 1);
 
     }
 
@@ -75,9 +69,7 @@ public class ScampiPostSerializerTest {
                 1,
                 "Creator",
                 currentTime,
-                currentTime,
-                "Data",
-                1
+                "Data"
         );
         Topic topic = new Topic(1, "Topic");
 
@@ -88,9 +80,6 @@ public class ScampiPostSerializerTest {
         assertEquals(message.getString(ScampiPostSerializer.DATA_FIELD), "Data");
         assertEquals(message.getString(ScampiPostSerializer.TYPE_ID_FIELD), "Type");
         assertEquals(new Long(message.getInteger(ScampiPostSerializer.CREATED_AT_FIELD)), Converters.dateToTimestamp(currentTime));
-
-        assertEquals(new  Long(message.getInteger(ScampiPostSerializer.UPDATED_AT_FIELD)), Converters.dateToTimestamp(currentTime));
-        assertEquals(message.getInteger(ScampiPostSerializer.SCORE_FIELD), 1);
     }
 
     @Test(expected = MissingFieldsException.class)
@@ -115,9 +104,6 @@ public class ScampiPostSerializerTest {
         message.putString(ScampiPostSerializer.CREATOR_FIELD ,"Creator");
         message.putString(ScampiPostSerializer.DATA_FIELD,"Data");
         message.putString(ScampiPostSerializer.UUID_FIELD,"UUID");
-
-        message.putInteger(ScampiPostSerializer.SCORE_FIELD, 1);
-        message.putInteger(ScampiPostSerializer.UPDATED_AT_FIELD, Converters.dateToTimestamp(currentTime));
 
         when(mTopicRepository.getFinalTopicByName("Topic")).thenReturn(null);
 

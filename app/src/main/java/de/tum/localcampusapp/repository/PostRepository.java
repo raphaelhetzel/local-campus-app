@@ -16,8 +16,6 @@ public interface PostRepository {
 
     void addPost(Post post) throws DatabaseException;
 
-    void updatePost(Post post) throws DatabaseException;
-
     LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException;
 
     /*

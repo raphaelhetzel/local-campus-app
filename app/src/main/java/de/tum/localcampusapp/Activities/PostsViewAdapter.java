@@ -51,7 +51,7 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         //Post post = postsList.get(position);
         post = postsList.get(position);
 
-        holder.postDate.setText(post.getUpdatedAt().toString());
+        holder.postDate.setText(post.getCreatedAt().toString());
         holder.postType.setText(post.getTypeId());
         holder.postText.setText(post.getData());
         holder.numLikes.setText(Long.toString(post.getScore()));

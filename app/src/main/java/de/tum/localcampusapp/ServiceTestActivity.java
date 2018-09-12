@@ -62,9 +62,7 @@ public class ServiceTestActivity extends AppCompatActivity {
                     1,
                     "unused",
                     new Date(),
-                    new Date(),
-                    "DATA",
-                    0
+                    "DATA"
                     );
             try {
                 RepositoryLocator.getPostRepository().addPost(testpost);

@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,11 +13,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
+import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.testhelper.LiveDataHelper;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -26,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 public class PostDaoTest {
     private PostDao postDao;
     private TopicDao topicDao;
+    private VoteDao voteDao;
     private AppDatabase testDatabase;
 
     @Before
@@ -34,6 +38,7 @@ public class PostDaoTest {
         testDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
         postDao = testDatabase.getPostDao();
         topicDao = testDatabase.getTopicDao();
+        voteDao = testDatabase.getVoteDao();
         topicDao.insert(new Topic(1, "/tum"));
     }
 
@@ -108,29 +113,6 @@ public class PostDaoTest {
         assertArrayEquals(LiveDataHelper.getValue(result).stream().map(p -> p.getData()).toArray(String[]::new), new String[]{"Post1", "Post2"});
     }
 
-
-    @Test
-    public void updatePost() throws InterruptedException {
-
-
-        String uuid = UUID.randomUUID().toString();
-        Post post = new Post();
-        post.setUuid(uuid);
-        post.setData("Post");
-        post.setTopicId(1);
-
-        postDao.insert(post);
-
-        LiveData<Post> uuid_result = postDao.getPostByUUID(uuid);
-        Post result_post = LiveDataHelper.getValue(uuid_result);
-        assertEquals(result_post.getData(), "Post");
-        result_post.setData("Modified");
-        postDao.update(result_post);
-
-        LiveData<Post> uuid_result2 = postDao.getPostByUUID(uuid);
-        assertEquals(LiveDataHelper.getValue(uuid_result2).getData(), "Modified");
-    }
-
     @Test
     public void insertWithNonExistingID() throws InterruptedException {
         Post post = new Post();
@@ -162,5 +144,28 @@ public class PostDaoTest {
         //Won't run
         LiveData<Post> result_post = postDao.getPost(1);
         assertEquals(LiveDataHelper.getValue(result_post).getData(), "Test");
+    }
+
+    @Test
+    public void postsContainScore() throws InterruptedException {
+
+        Post post1 = new Post();
+        post1.setUuid("UUID");
+        post1.setData("Post1");
+        post1.setTopicId(1);
+        postDao.insert(post1);
+        Post databasePost = postDao.getFinalPostByUUID("UUID");
+        Date date = new Date();
+
+        voteDao.insert(new Vote("UUID1", databasePost.getId(), "User1", date, +10));
+        voteDao.insert(new Vote("UUID2", databasePost.getId(), "User2", date, +10));
+        voteDao.insert(new Vote("UUID3", databasePost.getId(), "User3", date, -10));
+
+
+        LiveData<List<Post>> result = postDao.getPostsforTopic(1);
+        Post topicsQueryPost = LiveDataHelper.getValue(result).get(0);
+        assertEquals("Post1", topicsQueryPost.getData());;
+        assertEquals(10, topicsQueryPost.getScore());
+
     }
 }

@@ -40,9 +40,7 @@ public class ScampiPostSerializer {
         post.setTypeId(scampiMessage.getString(TYPE_ID_FIELD));
         post.setCreator(scampiMessage.getString(CREATOR_FIELD));
         post.setCreatedAt(Converters.fromTimestamp(scampiMessage.getInteger(CREATED_AT_FIELD)));
-        post.setUpdatedAt(Converters.fromTimestamp(scampiMessage.getInteger(UPDATED_AT_FIELD)));
         post.setData(scampiMessage.getString(DATA_FIELD));
-        post.setScore(scampiMessage.getInteger(SCORE_FIELD));
         post.setTopicId(topic.getId());
         return post;
     }
@@ -56,9 +54,7 @@ public class ScampiPostSerializer {
         message.putString(TYPE_ID_FIELD, post.getTypeId());
         message.putString(UUID_FIELD, post.getUuid());
         message.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()));
-        message.putInteger(UPDATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()));
         message.putString(DATA_FIELD, post.getData());
-        message.putInteger(SCORE_FIELD, post.getScore());
         message.putString(TOPIC_FIELD, topic.getTopicName());
         return message;
     }
@@ -68,9 +64,7 @@ public class ScampiPostSerializer {
                 scampiMessage.hasString(UUID_FIELD) &&
                 scampiMessage.hasString(CREATOR_FIELD) &&
                 scampiMessage.hasInteger(CREATED_AT_FIELD) &&
-                scampiMessage.hasInteger(UPDATED_AT_FIELD) &&
                 scampiMessage.hasString(DATA_FIELD) &&
-                scampiMessage.hasInteger(SCORE_FIELD) &&
                 scampiMessage.hasString(TOPIC_FIELD)) return false;
         return true;
     }

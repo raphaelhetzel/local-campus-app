@@ -96,15 +96,6 @@ public class RealPostRepository implements PostRepository {
     }
 
     @Override
-    public void updatePost(Post post) throws DatabaseException {
-        try {
-            postDao.update(post);
-        } catch (android.database.sqlite.SQLiteConstraintException e) {
-            throw new DatabaseException();
-        }
-    }
-
-    @Override
     public LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException {
         return postDao.getPostsforTopic(topicId);
     }
@@ -112,6 +103,7 @@ public class RealPostRepository implements PostRepository {
     @Override
     public void insertPost(Post post) throws DatabaseException {
         try {
+            post.setScore(0);
             postDao.insert(post);
         } catch (android.database.sqlite.SQLiteConstraintException e) {
             throw new DatabaseException();

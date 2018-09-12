@@ -38,11 +38,9 @@ public class PostsViewModel extends ViewModel{
         String typeId = "1";
         String creator = "user";
         Date createdAt = new Date();
-        Date updatedAt = createdAt;
         String data = dataText;
-        int score = 0;
 
-        postRepository.addPost(new Post(id, uuid, typeId, topicId, creator, createdAt, updatedAt, data, score));
+        postRepository.addPost(new Post(id, uuid, typeId, topicId, creator, createdAt, data));
     }
 
     public LiveData<List<Post>> getLiveDataPosts() {

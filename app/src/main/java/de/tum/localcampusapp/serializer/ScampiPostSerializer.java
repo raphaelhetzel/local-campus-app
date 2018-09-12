@@ -5,7 +5,7 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
-import de.tum.localcampusapp.exception.MissingTopicException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -16,9 +16,7 @@ public class ScampiPostSerializer {
     public static final String UUID_FIELD = "uuid";
     public static final String CREATOR_FIELD = "creator";
     public static final String CREATED_AT_FIELD = "created_at";
-    public static final String UPDATED_AT_FIELD = "updated_at";
     public static final String DATA_FIELD = "data";
-    public static final String SCORE_FIELD = "score";
     public static final String TOPIC_FIELD = "topic";
     public static final String MESSAGE_TYPE_FIELD = "message_type";
     public static final String MESSAGE_TYPE_POST = "post";
@@ -29,11 +27,11 @@ public class ScampiPostSerializer {
         this.topicRepository = topicRepository;
     }
 
-    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, MissingTopicException, DatabaseException, WrongParserException {
+    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, MissingRelatedDataException, DatabaseException, WrongParserException {
         if(!messageIsPost(scampiMessage)) throw new WrongParserException();
         if (messageIsMissingFields(scampiMessage)) throw new MissingFieldsException();
         Topic topic = topicRepository.getFinalTopicByName(scampiMessage.getString(TOPIC_FIELD));
-        if (topic == null) throw new MissingTopicException();
+        if (topic == null) throw new MissingRelatedDataException();
 
         Post post = new Post();
         post.setUuid(scampiMessage.getString(UUID_FIELD));

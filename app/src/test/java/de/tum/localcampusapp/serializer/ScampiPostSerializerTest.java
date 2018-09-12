@@ -12,7 +12,7 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
-import de.tum.localcampusapp.exception.MissingTopicException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -32,7 +32,7 @@ public class ScampiPostSerializerTest {
     }
 
     @Test
-    public void postFromMessage() throws DatabaseException, MissingFieldsException, WrongParserException, MissingTopicException {
+    public void postFromMessage() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
         ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();
@@ -83,7 +83,7 @@ public class ScampiPostSerializerTest {
     }
 
     @Test(expected = MissingFieldsException.class)
-    public void postFromMessage_MissingFields() throws DatabaseException, MissingFieldsException, WrongParserException, MissingTopicException {
+    public void postFromMessage_MissingFields() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
         ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
         SCAMPIMessage message = SCAMPIMessage.builder().build();
         message.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, ScampiPostSerializer.MESSAGE_TYPE_POST);
@@ -92,8 +92,8 @@ public class ScampiPostSerializerTest {
         Post post  = scampiPostSerializer.postFromMessage(message);
     }
 
-    @Test(expected = MissingTopicException.class)
-    public void postFromMessage_MissingTopic() throws DatabaseException, MissingFieldsException, WrongParserException, MissingTopicException {
+    @Test(expected = MissingRelatedDataException.class)
+    public void postFromMessage_MissingTopic() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
         ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();
@@ -111,7 +111,7 @@ public class ScampiPostSerializerTest {
     }
 
     @Test(expected = WrongParserException.class)
-    public void postFromMessage_NotAPost() throws DatabaseException, MissingFieldsException, WrongParserException, MissingTopicException {
+    public void postFromMessage_NotAPost() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
         ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();

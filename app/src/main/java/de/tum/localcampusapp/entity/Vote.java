@@ -34,6 +34,9 @@ public class Vote {
     @ColumnInfo(name = "score_influence")
     private long scoreInfluence;
 
+    public Vote() {
+    }
+
     public Vote(String uuid, long postId, String creatorId, Date createdAt, long scoreInfluence) {
         this.uuid = uuid;
         this.postId = postId;

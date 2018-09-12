@@ -18,11 +18,13 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import de.tum.localcampusapp.ServiceTestActivity;
 import de.tum.localcampusapp.database.PostDao;
+import de.tum.localcampusapp.database.VoteDao;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
+import de.tum.localcampusapp.serializer.ScampiVoteDeserializer;
 import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.service.TopicHandler;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -32,6 +34,7 @@ public class RealPostRepository implements PostRepository {
     static final String TAG = ServiceTestActivity.class.getSimpleName();
 
     private final PostDao postDao;
+    private final VoteDao voteDao;
 
     private final TopicRepository topicRepository;
 
@@ -40,11 +43,12 @@ public class RealPostRepository implements PostRepository {
     private Executor executor;
     private ScampiPostSerializer scampiPostSerializer;
 
-    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer) {
+    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer, VoteDao voteDao) {
         this.postDao = postDao;
         this.topicRepository = topicRepository;
         this.executor = executor;
         this.scampiPostSerializer = scampiPostSerializer;
+        this.voteDao = voteDao;
 
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
@@ -123,7 +127,20 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void insertVote(Vote vote) throws DatabaseException {
-
+        try {
+            voteDao.insert(vote);
+        }
+        // Catches both the case where the topic id and the uuid are duplicate
+        catch (android.database.sqlite.SQLiteConstraintException e) {
+            /*
+                Ignore duplicate topics, while matching a String isn't ideal
+                this should be fine as the string is verified by a test
+             */
+            if (e.getMessage().contains("votes.uuid")) {
+                return;
+            }
+            throw new DatabaseException();
+        }
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {

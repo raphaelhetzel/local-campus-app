@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 import de.tum.localcampusapp.database.AppDatabase;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
+import de.tum.localcampusapp.serializer.ScampiVoteDeserializer;
 
 public class RepositoryLocator {
 
@@ -13,6 +14,7 @@ public class RepositoryLocator {
     private static volatile TopicRepository topicRepository;
     private static volatile ScampiPostSerializer scampiPostSerializer;
     private static volatile PostRepository postRepository;
+    private static volatile ScampiVoteDeserializer scampiVoteDeSerializer;
     private static final Object lock = new Object();
 
 
@@ -21,7 +23,6 @@ public class RepositoryLocator {
     public static void init(Context applicationContext){
         synchronized (lock) {
             if(initialized == false) {
-                initialized = false;
                 reInit(applicationContext);
             }
 
@@ -31,7 +32,6 @@ public class RepositoryLocator {
     public static void initInMemory(Context applicationContext){
         synchronized (lock) {
             if(initialized == false) {
-                initialized = false;
                 reInitInMemory(applicationContext);
             }
         }
@@ -45,7 +45,9 @@ public class RepositoryLocator {
                 appDatabase.getPostDao(),
                 topicRepository,
                 Executors.newSingleThreadExecutor(),
-                scampiPostSerializer);
+                scampiPostSerializer,
+                appDatabase.getVoteDao());
+        scampiVoteDeSerializer = new ScampiVoteDeserializer(postRepository);
         initialized = true;
     }
 
@@ -53,14 +55,16 @@ public class RepositoryLocator {
         topicRepository = new InMemoryTopicRepository();
         scampiPostSerializer = new ScampiPostSerializer(topicRepository);
         postRepository = new InMemoryPostRepository();
+        scampiVoteDeSerializer = new ScampiVoteDeserializer(postRepository);
         initialized = true;
     }
 
     // Warning: the real post repository currently depends on the real topic repository
-    public static void reInitCustom(TopicRepository newTopicRepository, PostRepository newPostRepository, ScampiPostSerializer newScampiPostSerializer) {
+    public static void reInitCustom(TopicRepository newTopicRepository, PostRepository newPostRepository, ScampiPostSerializer newScampiPostSerializer, ScampiVoteDeserializer newScampiVoteDeserializer) {
         topicRepository = newTopicRepository;
         scampiPostSerializer = newScampiPostSerializer;
         postRepository = newPostRepository;
+        scampiVoteDeSerializer = newScampiVoteDeserializer;
         initialized = true;
     }
 
@@ -91,12 +95,22 @@ public class RepositoryLocator {
         }
     }
 
+    public static ScampiVoteDeserializer getScampiVoteDeserializer() {
+        synchronized (lock) {
+            if(initialized) {
+                return scampiVoteDeSerializer;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
     public static void reset() {
         synchronized (lock) {
             if(initialized) {
                 topicRepository = null;
                 postRepository = null;
                 scampiPostSerializer = null;
+                scampiVoteDeSerializer = null;
                 initialized = false;
             }
         }

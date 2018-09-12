@@ -47,7 +47,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         holder.imageName.setText(topic.getTopicName());
 
         holder.itemView.setOnLongClickListener((View v) -> {
-            FakeDataGenerator.getInstance().insertNewTopic("Fake elements name");
+            //FakeDataGenerator.getInstance().insertNewTopic("Fake elements name");
             return true;
                 });
 

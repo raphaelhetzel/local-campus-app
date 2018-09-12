@@ -3,6 +3,7 @@ package de.tum.localcampusapp.Activities;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ public class PostsViewModel extends ViewModel{
     public PostsViewModel(long topicId, Context context) throws DatabaseException{
         this.topicId = topicId;
 
-        FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId);
+        //FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId);
 
         postRepository = RepositoryLocator.getPostRepository();
         liveDataPosts = postRepository.getPostsforTopic(topicId);
@@ -35,7 +36,6 @@ public class PostsViewModel extends ViewModel{
         String uuid = UUID.randomUUID().toString();
         //long typeId = FakeDataGenerator.getInstance().getTypeId();
         String typeId = "1";
-        this.topicId = topicId;
         String creator = "user";
         Date createdAt = new Date();
         Date updatedAt = createdAt;

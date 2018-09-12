@@ -36,11 +36,11 @@ public class TopicsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
 
-        //super.startService( new Intent( this, AppLibService.class ) );
-        RepositoryLocator.initInMemory(getApplicationContext());
+        super.startService( new Intent( this, AppLibService.class ) );
+        RepositoryLocator.init(getApplicationContext());
 
-        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
-        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
+        //FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
+        //FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 
         try {
             viewModel = new TopicsViewModel(getApplicationContext());

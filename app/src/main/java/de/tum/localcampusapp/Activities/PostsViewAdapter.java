@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -94,8 +95,8 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         TextView postDate;
         TextView postType;
         TextView postText;
-        Button like;
-        Button dislike;
+        ImageView like;
+        ImageView dislike;
         TextView numLikes;
 
         public ViewHolder(View itemView) {
@@ -106,8 +107,8 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
             postType = (TextView) itemView.findViewById(R.id.post_type);
             postText = (TextView) itemView.findViewById(R.id.post_text);
             numLikes = (TextView) itemView.findViewById(R.id.num_likes);
-            like = (Button) itemView.findViewById(R.id.button_upvote);
-            dislike = (Button) itemView.findViewById(R.id.button_downvote);
+            like = itemView.findViewById(R.id.button_upvote);
+            dislike = itemView.findViewById(R.id.button_downvote);
         }
     }
 

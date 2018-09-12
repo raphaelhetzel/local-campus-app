@@ -20,6 +20,7 @@ import de.tum.localcampusapp.ServiceTestActivity;
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
+import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import de.tum.localcampusapp.service.AppLibService;
@@ -101,6 +102,16 @@ public class RealPostRepository implements PostRepository {
     }
 
     @Override
+    public boolean upVote(long postId) {
+        return false;
+    }
+
+    @Override
+    public boolean downVote(long postId) {
+        return false;
+    }
+
+    @Override
     public void insertPost(Post post) throws DatabaseException {
         try {
             post.setScore(0);
@@ -108,6 +119,11 @@ public class RealPostRepository implements PostRepository {
         } catch (android.database.sqlite.SQLiteConstraintException e) {
             throw new DatabaseException();
         }
+    }
+
+    @Override
+    public void insertVote(Vote vote) throws DatabaseException {
+
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {

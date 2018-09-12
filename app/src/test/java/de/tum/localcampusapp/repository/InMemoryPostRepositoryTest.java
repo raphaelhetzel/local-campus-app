@@ -98,4 +98,63 @@ public class InMemoryPostRepositoryTest {
         post1.setData("After");
         assert (LiveDataHelper.getValue(single_post).getData().equals("After"));
     }
+
+    @Test
+    public void upVote() throws DatabaseException {
+        String uuid = UUID.randomUUID().toString();
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(uuid);
+        repository.addPost(post1);
+        repository.upVote(1);
+        assertEquals (repository.getFinalPostByUUID(uuid).getScore(), 1);
+    }
+
+    @Test
+    public void upVoteLiveDataChangesOnlyOnce() throws DatabaseException, InterruptedException {
+        String uuid = UUID.randomUUID().toString();
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(uuid);
+        repository.addPost(post1);
+
+        LiveData<Post> resultPost = repository.getPostByUUID(uuid);
+        assertEquals (LiveDataHelper.getValue(resultPost).getScore(), 0);
+        repository.upVote(1);
+        assertEquals (LiveDataHelper.getValue(resultPost).getScore(), 1);
+        repository.upVote(1);
+        assertEquals (LiveDataHelper.getValue(resultPost).getScore(), 1);
+    }
+
+    @Test
+    public void upVoteLiveDataMultiple() throws DatabaseException, InterruptedException {
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setTopicId(1);
+        repository.addPost(post1);
+
+        LiveData<List<Post>> resultPost = repository.getPostsforTopic(1);
+        assertEquals (LiveDataHelper.getValue(resultPost).size(), 1);
+
+        Post post2 = new Post();
+        post2.setId(2);
+        post2.setTopicId(1);
+        repository.addPost(post2);
+        assertEquals (LiveDataHelper.getValue(resultPost).size(), 2);
+
+        assertEquals (LiveDataHelper.getValue(resultPost).get(0).getScore(), 0);
+        repository.upVote(LiveDataHelper.getValue(resultPost).get(0).getId());
+        assertEquals (LiveDataHelper.getValue(resultPost).get(0).getScore(), 1);
+    }
+
+    @Test
+    public void downVote() throws DatabaseException {
+        String uuid = UUID.randomUUID().toString();
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(uuid);
+        repository.addPost(post1);
+        repository.downVote(1);
+        assertEquals (repository.getFinalPostByUUID(uuid).getScore(), -1);
+    }
 }

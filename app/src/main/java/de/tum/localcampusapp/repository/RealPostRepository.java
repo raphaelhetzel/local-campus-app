@@ -37,6 +37,7 @@ public class RealPostRepository implements PostRepository {
     private final VoteDao voteDao;
 
     private final TopicRepository topicRepository;
+    private final UserRepository userRepository;
 
     private AppLibService.ScampiBinder scampiBinder;
     private Boolean serviceBound = false;
@@ -49,17 +50,38 @@ public class RealPostRepository implements PostRepository {
 
     private final Set<String> voteBuffer;
 
-    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer, VoteDao voteDao) {
-        this(applicationContext, postDao, topicRepository, executor, scampiPostSerializer, voteDao, new ScampiVoteSerializer());
+    public RealPostRepository(Context applicationContext,
+                              PostDao postDao,
+                              TopicRepository topicRepository,
+                              Executor executor,
+                              ScampiPostSerializer scampiPostSerializer,
+                              VoteDao voteDao,
+                              UserRepository userRepository) {
+        this(applicationContext,
+                postDao,
+                topicRepository,
+                executor,
+                scampiPostSerializer,
+                voteDao,
+                new ScampiVoteSerializer(),
+                userRepository);
     }
 
-    public RealPostRepository(Context applicationContext, PostDao postDao, TopicRepository topicRepository, Executor executor, ScampiPostSerializer scampiPostSerializer, VoteDao voteDao, ScampiVoteSerializer scampiVoteSerializer) {
+    public RealPostRepository(Context applicationContext,
+                              PostDao postDao,
+                              TopicRepository topicRepository,
+                              Executor executor,
+                              ScampiPostSerializer scampiPostSerializer,
+                              VoteDao voteDao,
+                              ScampiVoteSerializer scampiVoteSerializer,
+                              UserRepository userRepository) {
         this.postDao = postDao;
         this.topicRepository = topicRepository;
         this.executor = executor;
         this.scampiPostSerializer = scampiPostSerializer;
         this.voteDao = voteDao;
         this.scampiVoteSerializer = scampiVoteSerializer;
+        this.userRepository = userRepository;
 
         this.voteBuffer = Collections.synchronizedSet(new HashSet<String>());
 
@@ -103,7 +125,7 @@ public class RealPostRepository implements PostRepository {
     }
 
     private boolean vote(long postId, long scoreInfluce) {
-        executor.execute(new VoteRunner(postId, "TODOCREATOR", scoreInfluce));
+        executor.execute(new VoteRunner(postId, userRepository.getId(), scoreInfluce));
         return true;
 
     }
@@ -131,7 +153,7 @@ public class RealPostRepository implements PostRepository {
         try {
             synchronized (insertLock) {
 
-                Vote existing_user_vote = voteDao.getUserVoteByUUID(vote.getPostUuid(), "TODOCREATOR");
+                Vote existing_user_vote = voteDao.getUserVoteByUUID(vote.getPostUuid(), vote.getCreatorId());
                 if (existing_user_vote != null) return;
 
                 Post post = postDao.getFinalPostByUUID(vote.getPostUuid());
@@ -182,7 +204,7 @@ public class RealPostRepository implements PostRepository {
                         vote.setUuid(UUID.randomUUID().toString());
                         vote.setPostUuid(post.getUuid());
                         vote.setCreatedAt(new Date());
-                        vote.setCreatorId("TODOCREATOR");
+                        vote.setCreatorId(userRepository.getId());
                         vote.setScoreInfluence(scoreInfluence);
 
                         SCAMPIMessage scampiMessage = scampiVoteSerializer.voteToMessage(vote);
@@ -215,7 +237,7 @@ public class RealPostRepository implements PostRepository {
                 }
                 try {
                     Topic topic = topicRepository.getFinalTopic(post.getTopicId());
-                    SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, "TODOCREATOR");
+                    SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, userRepository.getId());
                     scampiBinder.publish(message, topic.getTopicName());
                 } catch (InterruptedException | DatabaseException e) {
                     e.printStackTrace(); // TODO: Remove DatabaseException as you can't catch it from other threads

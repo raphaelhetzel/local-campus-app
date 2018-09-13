@@ -2,6 +2,7 @@ package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
+import static android.provider.Settings.Secure.ANDROID_ID;
+
 
 public class TopicsActivity extends AppCompatActivity{
     static final String TAG = TopicsActivity.class.getSimpleName();
@@ -35,7 +38,6 @@ public class TopicsActivity extends AppCompatActivity{
         Log.d( TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-
         super.startService( new Intent( this, AppLibService.class ) );
         RepositoryLocator.init(getApplicationContext());
 

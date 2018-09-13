@@ -132,7 +132,7 @@ public class InMemoryPostRepository implements PostRepository {
     }
 
     private void vote(long postId, long scoreInflunce) {
-        String userId = "TODOCREATOR";
+        String userId = "MOCKCREATOR";
         Post post = posts.getValue().stream().filter(p -> p.getId() == postId).reduce(null, (cancat, post1) -> post1);
         if (post == null) return;
         if (!votes.getValue().stream().anyMatch(v -> v.getPostId() == postId && v.getCreatorId().equals(userId))) {

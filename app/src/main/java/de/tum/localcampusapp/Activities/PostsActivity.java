@@ -87,5 +87,4 @@ public class PostsActivity extends AppCompatActivity{
             });
 
         }
-
-    }
+}

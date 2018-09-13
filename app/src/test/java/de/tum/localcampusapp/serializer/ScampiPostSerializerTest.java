@@ -47,6 +47,7 @@ public class ScampiPostSerializerTest {
         when(mTopicRepository.getFinalTopicByName("Topic")).thenReturn(new Topic(1, "Topic"));
 
         Post post  = scampiPostSerializer.postFromMessage(message);
+
         assertEquals(post.getId(), 0); // Doesn't set id
         assertEquals(post.getTypeId(), "Type");
         assertEquals(post.getData(), "Data");
@@ -77,6 +78,7 @@ public class ScampiPostSerializerTest {
         assertEquals(message.getString(ScampiPostSerializer.MESSAGE_TYPE_FIELD), ScampiPostSerializer.MESSAGE_TYPE_POST);
         assertEquals(message.getString(ScampiPostSerializer.TOPIC_FIELD), "Topic");
         assertEquals(message.getString(ScampiPostSerializer.UUID_FIELD), "UUID");
+        assertEquals(message.getString(ScampiPostSerializer.CREATOR_FIELD), "Creator");
         assertEquals(message.getString(ScampiPostSerializer.DATA_FIELD), "Data");
         assertEquals(message.getString(ScampiPostSerializer.TYPE_ID_FIELD), "Type");
         assertEquals(new Long(message.getInteger(ScampiPostSerializer.CREATED_AT_FIELD)), Converters.dateToTimestamp(currentTime));

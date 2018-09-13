@@ -154,7 +154,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     }
 
     private void publish_now(SCAMPIMessage message, String service) throws InterruptedException {
-        message.putString(ScampiPostSerializer.CREATOR_FIELD, "TODOCREATOR");
         this.appLib.publish(message, service, (appLib, scampiMessage) -> {
             Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
         });

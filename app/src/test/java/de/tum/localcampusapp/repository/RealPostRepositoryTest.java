@@ -50,6 +50,7 @@ public class RealPostRepositoryTest {
     ScampiPostSerializer mScampiPostSerializer;
     SQLiteConstraintException mSqLiteConstraintException;
     ScampiVoteSerializer mScampiVoteSerializer;
+    UserRepository mUserRepository;
 
     @Before
     public void initialize_mocks() {
@@ -63,11 +64,13 @@ public class RealPostRepositoryTest {
         mScampiPostSerializer = mock(ScampiPostSerializer.class);
         mScampiVoteSerializer = mock(ScampiVoteSerializer.class);
         mSqLiteConstraintException = mock(SQLiteConstraintException.class);
+        mUserRepository = mock(UserRepository.class);
+        when(mUserRepository.getId()).thenReturn("MOCKUSER");
     }
 
     @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
     public void insertWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
         Post post2 = new Post();
         doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).insert(post2);
         realPostRepository.insertPost(post2);
@@ -98,12 +101,12 @@ public class RealPostRepositoryTest {
             }
         });
         when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
-        when(mScampiPostSerializer.messageFromPost(post, topic, "TODOCREATOR")).thenReturn(scampiMessage);
+        when(mScampiPostSerializer.messageFromPost(post, topic, "MOCKUSER")).thenReturn(scampiMessage);
 
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
 
         realPostRepository.addPost(post);
-        verify(mScampiPostSerializer).messageFromPost(post, topic, "TODOCREATOR");
+        verify(mScampiPostSerializer).messageFromPost(post, topic, "MOCKUSER");
         verify(mScampiBinder).publish(eq(scampiMessage), eq("/tum"));
         verify(mTopicRepository).getFinalTopic(1);
     }
@@ -111,7 +114,7 @@ public class RealPostRepositoryTest {
     @Test
     public void insertVoteWithDuplicate() throws DatabaseException {
 
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
         Vote vote = new Vote();
         vote.setUuid("UUID");
         vote.setScoreInfluence(-1);
@@ -154,9 +157,8 @@ public class RealPostRepositoryTest {
         when(mPostDao.getFinalPost(1)).thenReturn(post);
         when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
         when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
-        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(null);
 
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer, mUserRepository);
 
         realPostRepository.upVote(1);
         verify(mScampiVoteSerializer).voteToMessage(any(Vote.class));
@@ -190,9 +192,9 @@ public class RealPostRepositoryTest {
             }
         });
         when(mPostDao.getFinalPost(1)).thenReturn(post);
-        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(new Vote());
+        when(mVoteDao.getUserVote(1, "MOCKUSER")).thenReturn(new Vote());
 
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer, mUserRepository);
 
         realPostRepository.upVote(1);
         verify(mScampiBinder, never()).publish(any(), eq("/tum"));
@@ -224,9 +226,8 @@ public class RealPostRepositoryTest {
         when(mPostDao.getFinalPost(1)).thenReturn(post);
         when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
         when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
-        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(null);
 
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer, mUserRepository);
 
         realPostRepository.upVote(1);
         realPostRepository.upVote(2);
@@ -235,7 +236,7 @@ public class RealPostRepositoryTest {
 
     @Test
     public void insertVoteWithoutExistingPost() {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
@@ -251,7 +252,7 @@ public class RealPostRepositoryTest {
 
     @Test
     public void insertVoteWithExistingPost() {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
@@ -271,24 +272,25 @@ public class RealPostRepositoryTest {
 
     @Test
     public void insertExistingUserVote() {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
         vote.setPostUuid("UUID2");
+        vote.setCreatorId("UUID3");
         vote.setScoreInfluence(-1);
 
-        when(mVoteDao.getUserVoteByUUID("UUID2", "TODOCREATOR")).thenReturn(new Vote());
+        when(mVoteDao.getUserVoteByUUID("UUID2", "UUID3")).thenReturn(new Vote());
 
         realPostRepository.insertVote(vote);
         assertEquals(0L, vote.getPostId());
-        verify(mVoteDao).getUserVoteByUUID("UUID2", "TODOCREATOR");
+        verify(mVoteDao).getUserVoteByUUID("UUID2", "UUID3");
         verify(mVoteDao, never()).insert(vote);
     }
 
     @Test
     public void updatesVotesOnPostInsert() {
-        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mUserRepository);
 
         Vote vote = mock(Vote.class);
 

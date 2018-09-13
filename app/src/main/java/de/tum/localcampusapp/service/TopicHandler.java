@@ -15,6 +15,8 @@ import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static de.tum.localcampusapp.serializer.ScampiPostSerializer.CREATOR_FIELD;
+
 public class TopicHandler implements MessageReceivedCallback {
 
     public static final String TAG = TopicHandler.class.getSimpleName();
@@ -40,6 +42,7 @@ public class TopicHandler implements MessageReceivedCallback {
     public void messageReceived(SCAMPIMessage scampiMessage, String s) {
         try {
             if (ScampiPostSerializer.messageIsPost(scampiMessage)) {
+                Log.d("RAHDEBUG", "Post: "+scampiMessage.getString(CREATOR_FIELD));
                 Post newPost = scampiPostSerializer.postFromMessage(scampiMessage);
                 Post existingPost = postRepository.getFinalPostByUUID(scampiMessage.getAppTag());
 
@@ -47,6 +50,7 @@ public class TopicHandler implements MessageReceivedCallback {
                     postRepository.insertPost(newPost);
                 }
             } else if (ScampiVoteSerializer.messageIsVote(scampiMessage)) {
+                Log.d("RAHDEBUG", "Vote: "+scampiMessage.getString(CREATOR_FIELD));
                 Vote vote = scampiVoteSerializer.messageToVote(scampiMessage);
                 postRepository.insertVote(vote);
             }

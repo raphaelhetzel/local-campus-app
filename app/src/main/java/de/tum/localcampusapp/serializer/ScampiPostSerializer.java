@@ -51,6 +51,7 @@ public class ScampiPostSerializer {
         message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(TYPE_ID_FIELD, post.getTypeId());
         message.putString(UUID_FIELD, post.getUuid());
+        message.putString(CREATOR_FIELD ,creator);
         message.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()));
         message.putString(DATA_FIELD, post.getData());
         message.putString(TOPIC_FIELD, topic.getTopicName());

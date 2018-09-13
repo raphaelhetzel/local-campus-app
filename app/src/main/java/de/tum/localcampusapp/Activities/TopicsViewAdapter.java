@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -44,7 +43,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, final int position) {
 
         Topic topic = topicList.get(position);
-        holder.imageName.setText(topic.getTopicName());
+        holder.topicName.setText(topic.getTopicName());
 
         holder.itemView.setOnLongClickListener((View v) -> {
             //FakeDataGenerator.getInstance().insertNewTopic("Fake elements name");
@@ -73,14 +72,12 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        ImageView image;
-        TextView imageName;
+        TextView topicName;
         RelativeLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.image);
-            imageName = itemView.findViewById(R.id.topic_name);
+            topicName = itemView.findViewById(R.id.topic_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
         }
     }

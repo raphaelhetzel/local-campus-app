@@ -3,21 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp"
+    android:padding="20dp"
+    android:background="@drawable/border_bottom_black"
     android:id="@+id/parent_layout"
     >
 
-
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sample"
+
         android:layout_marginTop="20dp"
         android:id="@+id/topic_name"
         android:textColor="#000"
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
-        android:textSize="17sp"
+
+        android:textSize="20sp"
         />
 
 </RelativeLayout>

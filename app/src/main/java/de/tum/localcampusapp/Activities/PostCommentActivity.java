@@ -35,6 +35,7 @@ public class PostCommentActivity extends AppCompatActivity {
     private PostCommentViewModel viewModel;
     private PostCommentViewAdapter mCommentsViewAdapter;
 
+    private RelativeLayout rootLayout;
     private RelativeLayout postParentLayout;
     private TextView postDate;
     private TextView postType;
@@ -93,7 +94,19 @@ public class PostCommentActivity extends AppCompatActivity {
 
 
     private void setPostVariables(){
+
+        rootLayout = findViewById(R.id.posts_comment_layout);
+
         postParentLayout = findViewById(R.id.posts_template_layout);
+
+        /*
+        // Find the root view
+        View root = postParentLayout.getRootView();
+
+        // Set the color
+        root.setBackgroundColor(getResources().getColor(android.R.color.black));
+        */
+
         postDate = findViewById(R.id.post_date);
         postType = findViewById(R.id.post_type);
         postText = findViewById(R.id.post_text);
@@ -145,6 +158,7 @@ public class PostCommentActivity extends AppCompatActivity {
     private void updatePostVariables(Post post){
         this.post = post;
         int color = colorGenerator.getColor(post.getId());
+        rootLayout.setBackgroundColor(color);
         postParentLayout.setBackgroundColor(color);
         postDate.setText(post.getCreatedAt().toString());
         postType.setText(String.valueOf(post.getTypeId()));

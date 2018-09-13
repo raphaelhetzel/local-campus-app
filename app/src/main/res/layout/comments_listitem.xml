@@ -28,6 +28,7 @@
         android:layout_marginRight="10dp"
         android:text="Sample Comment"
         android:paddingTop="10dp"
+        android:paddingBottom="20dp"
         style="@style/normalTextWhite"
          />
 

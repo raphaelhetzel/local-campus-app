@@ -1,9 +1,15 @@
 package de.tum.localcampusapp.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,6 +18,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import de.tum.localcampusapp.Activities.TopicsActivity;
+import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
@@ -68,6 +76,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     @Override
     public void onCreate() {
+        moveToForeGround();
         RepositoryLocator.init(getApplicationContext());
 
         super.onCreate();
@@ -164,6 +173,40 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
             }
         });
     }
+
+    private void moveToForeGround() {
+        createNotificationChannel();
+        Intent notificationIntent = new Intent(this, TopicsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, "LCA_CHANNEL_DEFAULT")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("LocalCampusApp")
+            .setContentText("Scampi Running")
+            .setContentIntent(pendingIntent)
+            .setTicker("Scampi Running")
+            .build();
+
+
+        startForeground(1337, notification);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Local Campus Channel";
+            String description = "Local Campus Channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("LCA_CHANNEL_DEFAULT", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     //Bind
 

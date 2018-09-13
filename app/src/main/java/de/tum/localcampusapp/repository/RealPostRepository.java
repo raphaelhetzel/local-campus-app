@@ -195,7 +195,6 @@ public class RealPostRepository implements PostRepository {
                 }
 
             } else {
-                // TODO: Reconnect to the Service if it went down / start it as a foreground service
                 Log.d(TAG, "Service went down, message currently ignored");
             }
         }
@@ -222,7 +221,6 @@ public class RealPostRepository implements PostRepository {
                     e.printStackTrace(); // TODO: Remove DatabaseException as you can't catch it from other threads
                 }
             } else {
-                // TODO: Reconnect to the Service if it went down / start it as a foreground service
                 Log.d(TAG, "Service went down, message currently ignored");
             }
         }

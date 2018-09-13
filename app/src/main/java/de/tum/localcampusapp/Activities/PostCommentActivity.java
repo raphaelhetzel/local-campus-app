@@ -24,6 +24,7 @@ import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.generator.ColorGenerator;
+import de.tum.localcampusapp.generator.DateTransformer;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 
@@ -160,7 +161,7 @@ public class PostCommentActivity extends AppCompatActivity {
         int color = colorGenerator.getColor(post.getId());
         rootLayout.setBackgroundColor(color);
         postParentLayout.setBackgroundColor(color);
-        postDate.setText(post.getCreatedAt().toString());
+        postDate.setText(DateTransformer.getTimeDate(post.getCreatedAt()));
         postType.setText(String.valueOf(post.getTypeId()));
         postText.setText(post.getData());
         numLikes.setText(String.valueOf(post.getScore()));

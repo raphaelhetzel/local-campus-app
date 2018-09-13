@@ -12,6 +12,7 @@ import java.util.List;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.generator.ColorGenerator;
+import de.tum.localcampusapp.generator.DateTransformer;
 import de.tum.localcampusapp.postTypes.Comment;
 
 public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentViewAdapter.ViewHolder>{
@@ -41,7 +42,8 @@ public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentView
         Comment comment = commentsList.get(position);
         int color = ColorGenerator.getInstance().getColor(comment.getPostId());
         holder.parentLayout.setBackgroundColor(color);
-        holder.dateText.setText(comment.getUpdatedComment().toString());
+        //holder.dateText.setText(comment.getUpdatedComment().toString());
+        holder.dateText.setText(DateTransformer.getTimeDate(comment.getUpdatedComment()));
         holder.commentText.setText(comment.getData());
     }
 

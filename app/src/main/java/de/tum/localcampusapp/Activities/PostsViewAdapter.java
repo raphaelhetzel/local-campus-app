@@ -17,6 +17,7 @@ import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.generator.ColorGenerator;
+import de.tum.localcampusapp.generator.DateTransformer;
 
 public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.ViewHolder>{
 
@@ -55,8 +56,9 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
         int color = ColorGenerator.getInstance().getSetColor(context, post.getId());
         holder.parentLayout.setBackgroundColor(color);
-
-        holder.postDate.setText(post.getCreatedAt().toString());
+        
+        //holder.postDate.setText(post.getUpdatedAt().toString());
+        holder.postDate.setText(DateTransformer.getTimeDate(post.getCreatedAt()));
         holder.postType.setText(post.getTypeId());
         holder.postText.setText(post.getData());
         holder.numLikes.setText(Long.toString(post.getScore()));
@@ -70,7 +72,6 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
                 selectedPostId = postsList.get(clickedPosition).getId();
                 Intent intent = new Intent(context, PostCommentActivity.class);
                 intent.putExtra("selectedPostId", String.valueOf(selectedPostId));
-                Log.d(TAG, "post_id clicked: "+ String.valueOf(selectedPostId));
                 context.startActivity(intent);
         });
 

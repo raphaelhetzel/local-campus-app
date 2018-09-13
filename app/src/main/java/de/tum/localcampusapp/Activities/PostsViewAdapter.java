@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +16,7 @@ import java.util.List;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.generator.ColorGenerator;
 
 public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.ViewHolder>{
 
@@ -53,6 +53,9 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         //Post post = postsList.get(position);
         post = postsList.get(position);
 
+        int color = ColorGenerator.getInstance().getSetColor(context, post.getId());
+        holder.parentLayout.setBackgroundColor(color);
+
         holder.postDate.setText(post.getCreatedAt().toString());
         holder.postType.setText(post.getTypeId());
         holder.postText.setText(post.getData());
@@ -60,7 +63,11 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
 
         holder.parentLayout.setOnClickListener((View v) -> {
-                selectedPostId = post.getId();
+
+                int clickedPosition = holder.getAdapterPosition();
+                Log.d(TAG, "clicked: "+" selctedId: "+post.getId()+ " new: "+postsList.get(clickedPosition).getId());
+                //selectedPostId = post.getId();
+                selectedPostId = postsList.get(clickedPosition).getId();
                 Intent intent = new Intent(context, PostCommentActivity.class);
                 intent.putExtra("selectedPostId", String.valueOf(selectedPostId));
                 Log.d(TAG, "post_id clicked: "+ String.valueOf(selectedPostId));
@@ -102,7 +109,7 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
         public ViewHolder(View itemView) {
             super(itemView);
 
-            parentLayout = itemView.findViewById(R.id.posts_layout);
+            parentLayout = itemView.findViewById(R.id.posts_template_layout);
             postDate = (TextView) itemView.findViewById(R.id.post_date);
             postType = (TextView) itemView.findViewById(R.id.post_type);
             postText = (TextView) itemView.findViewById(R.id.post_text);

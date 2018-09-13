@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.tum.localcampusapp.R;
+import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.postTypes.Comment;
 
 public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentViewAdapter.ViewHolder>{
@@ -38,7 +39,8 @@ public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentView
     public void onBindViewHolder(PostCommentViewAdapter.ViewHolder holder, final int position) {
 
         Comment comment = commentsList.get(position);
-
+        int color = ColorGenerator.getInstance().getColor(comment.getPostId());
+        holder.parentLayout.setBackgroundColor(color);
         holder.dateText.setText(comment.getUpdatedComment().toString());
         holder.commentText.setText(comment.getData());
     }

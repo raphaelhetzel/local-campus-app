@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.postTypes.CommentLocater;
 import de.tum.localcampusapp.repository.InMemoryPostRepository;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.CommentHelper;
@@ -37,7 +38,7 @@ public class PostCommentViewModel extends ViewModel {
         liveDataPost = postRepository.getPost(postId);
 
         //Fake Comments for Fake Post
-//        commentHelper = new CommentHelper();
+//        commentHelper = CommentLocater.getInstance().getCommentHelper();
 //        FakeDataGenerator.getInstance().createSeveralFakeComments(3, commentHelper, postId, 1);
 //        liveDataComments = commentHelper.getCommentsforPost(postId);
         liveDataComments = Transformations.map(postRepository.getPostExtensionsForPost(postId), postExtensions -> {

@@ -6,27 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="50dp"
-    android:id="@+id/parent_layout">
 
-    <!-- android:background="" -->
+    style="@style/PaddingTopBottom"
+
+    android:background="@color/colorCampusApp2"
+    android:id="@+id/parent_layout">
 
     <TextView
         android:id="@+id/comment_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="10dp"
         android:text="Sample Date"
-        android:textColor="#000"
-        android:textSize="10sp" />
+        style="@style/CalendarIcon"/>
 
     <TextView
         android:id="@+id/comment_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:text="Sample Comment"
-        android:textColor="#000"
-        android:paddingTop="5dp"
-        android:textSize="15sp" />
+        android:paddingTop="10dp"
+        style="@style/normalTextWhite"
+         />
 
 </LinearLayout>

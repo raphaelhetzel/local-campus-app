@@ -14,7 +14,24 @@
     <color name="colorCampusApp8">#a71111</color>
     <color name="colorCampusApp9">#65c491</color>
     <color name="colorCampusApp10">#b17e7e</color>
+    <color name="colorCampusApp11">#8344b8dc</color>
 
 
-    <color name="white">#FFFFFF</color>
+<color name="black">#000000</color>
+<color name="white">#FFFFFF</color>
+
+    <integer-array name="CampusAppColors">
+        <item>@color/colorCampusApp1</item>
+        <item>@color/colorCampusApp2</item>
+        <item>@color/colorCampusApp3</item>
+        <item>@color/colorCampusApp4</item>
+        <item>@color/colorCampusApp5</item>
+        <item>@color/colorCampusApp6</item>
+        <item>@color/colorCampusApp7</item>
+        <item>@color/colorCampusApp8</item>
+        <item>@color/colorCampusApp9</item>
+        <item>@color/colorCampusApp10</item>
+        <item>@color/colorCampusApp11</item>
+    </integer-array>
+
 </resources>

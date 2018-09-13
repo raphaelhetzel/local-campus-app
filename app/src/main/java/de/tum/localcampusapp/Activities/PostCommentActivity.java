@@ -12,8 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +23,7 @@ import java.util.List;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 
@@ -34,15 +35,17 @@ public class PostCommentActivity extends AppCompatActivity {
     private PostCommentViewModel viewModel;
     private PostCommentViewAdapter mCommentsViewAdapter;
 
-    private RelativeLayout parentLayout;
+    private RelativeLayout postParentLayout;
     private TextView postDate;
     private TextView postType;
     private TextView postText;
-    private Button like;
-    private Button dislike;
+    private ImageView like;
+    private ImageView dislike;
     private TextView numLikes;
 
     private Post post;
+
+    private ColorGenerator colorGenerator = ColorGenerator.getInstance();
 
 
     @Override
@@ -90,7 +93,7 @@ public class PostCommentActivity extends AppCompatActivity {
 
 
     private void setPostVariables(){
-        parentLayout = findViewById(R.id.posts_layout);
+        postParentLayout = findViewById(R.id.posts_template_layout);
         postDate = findViewById(R.id.post_date);
         postType = findViewById(R.id.post_type);
         postText = findViewById(R.id.post_text);
@@ -141,6 +144,8 @@ public class PostCommentActivity extends AppCompatActivity {
 
     private void updatePostVariables(Post post){
         this.post = post;
+        int color = colorGenerator.getColor(post.getId());
+        postParentLayout.setBackgroundColor(color);
         postDate.setText(post.getCreatedAt().toString());
         postType.setText(String.valueOf(post.getTypeId()));
         postText.setText(post.getData());

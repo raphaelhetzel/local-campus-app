@@ -24,6 +24,7 @@ import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.postTypes.Comment;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostCommentActivity extends AppCompatActivity {
 
@@ -125,16 +126,14 @@ public class PostCommentActivity extends AppCompatActivity {
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post.setScore(post.getScore() + 1);
-                numLikes.setText(Long.toString(post.getScore()));
+                RepositoryLocator.getPostRepository().upVote(post.getId());
             }
         });
 
         dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                post.setScore(post.getScore() -1);
-                numLikes.setText(Long.toString(post.getScore()));
+                RepositoryLocator.getPostRepository().upVote(post.getId());
             }
         });
 

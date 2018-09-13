@@ -14,7 +14,7 @@ import de.tum.localcampusapp.entity.Post;
 public interface PostDao {
 
     @Insert
-    void insert(Post post);
+    long insert(Post post);
 
     @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
             " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
@@ -27,6 +27,12 @@ public interface PostDao {
             "FROM (SELECT * FROM posts WHERE posts.id = :id) as filtered_posts " +
             "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
     LiveData<Post> getPost(long id);
+
+    @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
+            " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +
+            "FROM (SELECT * FROM posts WHERE posts.id = :id) as filtered_posts " +
+            "LEFT JOIN votes ON filtered_posts.id = votes.post_id GROUP BY filtered_posts.id")
+    Post getFinalPost(long id);
 
     @Query("SELECT filtered_posts.id, filtered_posts.uuid, filtered_posts.type_id, filtered_posts.topic_id," +
             " filtered_posts.creator, filtered_posts.created_at, filtered_posts.data, SUM(votes.score_influence) as score " +

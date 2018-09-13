@@ -15,7 +15,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 
@@ -26,11 +28,14 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
+import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.testhelper.ExecutorInstantRun;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,6 +49,7 @@ public class RealPostRepositoryTest {
     Executor mExecutor;
     ScampiPostSerializer mScampiPostSerializer;
     SQLiteConstraintException mSqLiteConstraintException;
+    ScampiVoteSerializer mScampiVoteSerializer;
 
     @Before
     public void initialize_mocks() {
@@ -55,6 +61,7 @@ public class RealPostRepositoryTest {
         mComponentName = mock(ComponentName.class);
         mExecutor = ExecutorInstantRun.getMockExecutor();
         mScampiPostSerializer = mock(ScampiPostSerializer.class);
+        mScampiVoteSerializer = mock(ScampiVoteSerializer.class);
         mSqLiteConstraintException = mock(SQLiteConstraintException.class);
     }
 
@@ -119,6 +126,187 @@ public class RealPostRepositoryTest {
 
         verify(mVoteDao).insert(vote);
         verify(mVoteDao).insert(duplicateVote);
+    }
+
+    @Test
+    public void upVote() throws MissingFieldsException, InterruptedException {
+        Post post = new Post(
+                1,
+                "UUID",
+                "1",
+                1,
+                "Test",
+                new Date(),
+                "DATA"
+        );
+
+        Topic topic = new Topic(1, "/tum");
+        SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
+
+        when(mContext.bindService(any(), any(), anyInt())).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ServiceConnection serviceConnection = invocation.getArgument(1);
+                serviceConnection.onServiceConnected(mComponentName, mScampiBinder);
+                return null;
+            }
+        });
+        when(mPostDao.getFinalPost(1)).thenReturn(post);
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
+        when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
+        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(null);
+
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+
+        realPostRepository.upVote(1);
+        verify(mScampiVoteSerializer).voteToMessage(any(Vote.class));
+        verify(mScampiBinder).publish(eq(scampiMessage), eq("/tum"));
+        verify(mTopicRepository).getFinalTopic(1);
+        verify(mPostDao).getFinalPost(1);
+    }
+
+
+    @Test
+    public void duplicateVoteDB() throws MissingFieldsException, InterruptedException {
+        Post post = new Post(
+                1,
+                "UUID",
+                "1",
+                1,
+                "Test",
+                new Date(),
+                "DATA"
+        );
+
+        Topic topic = new Topic(1, "/tum");
+        SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
+
+        when(mContext.bindService(any(), any(), anyInt())).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ServiceConnection serviceConnection = invocation.getArgument(1);
+                serviceConnection.onServiceConnected(mComponentName, mScampiBinder);
+                return null;
+            }
+        });
+        when(mPostDao.getFinalPost(1)).thenReturn(post);
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
+        when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
+        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(new Vote());
+
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+
+        realPostRepository.upVote(1);
+        verify(mScampiBinder, never()).publish(any(), eq("/tum"));
+    }
+
+    @Test
+    public void duplicateVoteBuffer() throws MissingFieldsException, InterruptedException {
+        Post post = new Post(
+                1,
+                "UUID",
+                "1",
+                1,
+                "Test",
+                new Date(),
+                "DATA"
+        );
+
+        Topic topic = new Topic(1, "/tum");
+        SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
+
+        when(mContext.bindService(any(), any(), anyInt())).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ServiceConnection serviceConnection = invocation.getArgument(1);
+                serviceConnection.onServiceConnected(mComponentName, mScampiBinder);
+                return null;
+            }
+        });
+        when(mPostDao.getFinalPost(1)).thenReturn(post);
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
+        when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
+        when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(null);
+
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);
+
+        realPostRepository.upVote(1);
+        realPostRepository.upVote(2);
+        verify(mScampiBinder, times(1)).publish(any(), eq("/tum"));
+    }
+
+    @Test
+    public void insertVoteWithoutExistingPost() {
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+
+        Vote vote = new Vote();
+        vote.setUuid("UUID");
+        vote.setPostUuid("UUID2");
+        vote.setScoreInfluence(-1);
+
+        when(mPostDao.getFinalPostByUUID("UUID2")).thenReturn(null);
+
+        realPostRepository.insertVote(vote);
+        assertEquals(0L, vote.getPostId());
+        verify(mVoteDao).insert(vote);
+    }
+
+    @Test
+    public void insertVoteWithExistingPost() {
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+
+        Vote vote = new Vote();
+        vote.setUuid("UUID");
+        vote.setPostUuid("UUID2");
+        vote.setScoreInfluence(-1);
+
+        Post post = new Post();
+        post.setUuid("UUID2");
+        post.setId(1);
+
+        when(mPostDao.getFinalPostByUUID("UUID2")).thenReturn(post);
+
+        realPostRepository.insertVote(vote);
+        assertEquals(1L, vote.getPostId());
+        verify(mVoteDao).insert(vote);
+    }
+
+    @Test
+    public void insertExistingUserVote() {
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+
+        Vote vote = new Vote();
+        vote.setUuid("UUID");
+        vote.setPostUuid("UUID2");
+        vote.setScoreInfluence(-1);
+
+        when(mVoteDao.getUserVoteByUUID("UUID2", "TODOCREATOR")).thenReturn(new Vote());
+
+        realPostRepository.insertVote(vote);
+        assertEquals(0L, vote.getPostId());
+        verify(mVoteDao).getUserVoteByUUID("UUID2", "TODOCREATOR");
+        verify(mVoteDao, never()).insert(vote);
+    }
+
+    @Test
+    public void updatesVotesOnPostInsert() {
+        RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao);
+
+        Vote vote = mock(Vote.class);
+
+        List<Vote> votes = new ArrayList<>();
+        votes.add(vote);
+        when(mVoteDao.getVotesByPostUUID("UUID2")).thenReturn(votes);
+        when(mPostDao.insert(any(Post.class))).thenReturn(1L);
+
+        Post post = new Post();
+        post.setId(1);
+        post.setUuid("UUID2");
+
+        realPostRepository.insertPost(post);
+
+        verify(mVoteDao).getVotesByPostUUID("UUID2");
+        verify(vote).setPostId(1);
     }
 
 }

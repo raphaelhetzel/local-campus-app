@@ -24,9 +24,9 @@ public interface PostRepository {
     LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException;
 
 
-    boolean upVote(long postId);
+    void upVote(long postId);
 
-    boolean downVote(long postId);
+    void downVote(long postId);
 
 
     /*

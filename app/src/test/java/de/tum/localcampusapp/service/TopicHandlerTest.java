@@ -13,7 +13,7 @@ import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
-import de.tum.localcampusapp.serializer.ScampiVoteDeserializer;
+import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,18 +27,18 @@ public class TopicHandlerTest {
 
     PostRepository mPostRepository;
     private ScampiPostSerializer mScampiPostSerializer;
-    private ScampiVoteDeserializer mScampiVoteDeserializer;
+    private ScampiVoteSerializer mScampiVoteSerializer;
 
     @Before
     public void initializeMocks() {
         this.mPostRepository = mock(PostRepository.class);
         this.mScampiPostSerializer = mock(ScampiPostSerializer.class);
-        this.mScampiVoteDeserializer = mock(ScampiVoteDeserializer.class);
+        this.mScampiVoteSerializer = mock(ScampiVoteSerializer.class);
     }
 
     @Test
     public void receivesPost() throws MissingRelatedDataException, MissingFieldsException, WrongParserException, DatabaseException {
-        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteDeserializer);
+        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteSerializer);
         Post post = new Post();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, ScampiPostSerializer.MESSAGE_TYPE_POST);
@@ -51,22 +51,22 @@ public class TopicHandlerTest {
     }
 
     @Test
-    public void receivesVote() throws MissingRelatedDataException, MissingFieldsException, WrongParserException, DatabaseException {
-        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteDeserializer);
+    public void receivesVote() throws MissingFieldsException, WrongParserException, DatabaseException {
+        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteSerializer);
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         Vote vote = new Vote();
         scampiMessage.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, "vote");
-        when(mScampiVoteDeserializer.messageToVote(scampiMessage)).thenReturn(vote);
+        when(mScampiVoteSerializer.messageToVote(scampiMessage)).thenReturn(vote);
 
         topicHandler.messageReceived(scampiMessage, "Topic");
 
-        verify(mScampiVoteDeserializer).messageToVote(scampiMessage);
+        verify(mScampiVoteSerializer).messageToVote(scampiMessage);
         verify(mPostRepository).insertVote(vote);
     }
 
     @Test
     public void receivesPostExtension() throws MissingRelatedDataException, MissingFieldsException, WrongParserException, DatabaseException {
-        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteDeserializer);
+        TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteSerializer);
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, "post_extension");
 

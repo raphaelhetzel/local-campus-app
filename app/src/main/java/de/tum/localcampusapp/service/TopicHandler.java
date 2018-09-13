@@ -11,7 +11,7 @@ import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
-import de.tum.localcampusapp.serializer.ScampiVoteDeserializer;
+import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
@@ -21,19 +21,19 @@ public class TopicHandler implements MessageReceivedCallback {
 
     private final PostRepository postRepository;
     private final ScampiPostSerializer scampiPostSerializer;
-    private final ScampiVoteDeserializer scampiVoteDeserializer;
+    private final ScampiVoteSerializer scampiVoteSerializer;
 
     public TopicHandler() {
         this(RepositoryLocator.getPostRepository(),
                 RepositoryLocator.getScampiPostSerializer(),
-                RepositoryLocator.getScampiVoteDeserializer());
+                new ScampiVoteSerializer());
     }
 
 
-    public TopicHandler(PostRepository postRepository, ScampiPostSerializer scampiPostSerializer, ScampiVoteDeserializer scampiVoteDeserializer) {
+    public TopicHandler(PostRepository postRepository, ScampiPostSerializer scampiPostSerializer, ScampiVoteSerializer scampiVoteSerializer) {
         this.postRepository = postRepository;
         this.scampiPostSerializer = scampiPostSerializer;
-        this.scampiVoteDeserializer = scampiVoteDeserializer;
+        this.scampiVoteSerializer = scampiVoteSerializer;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class TopicHandler implements MessageReceivedCallback {
                 if (existingPost == null) {
                     postRepository.insertPost(newPost);
                 }
-            } else if(ScampiVoteDeserializer.messageIsVote(scampiMessage)){
-                Vote vote = scampiVoteDeserializer.messageToVote(scampiMessage);
+            } else if (ScampiVoteSerializer.messageIsVote(scampiMessage)) {
+                Vote vote = scampiVoteSerializer.messageToVote(scampiMessage);
                 postRepository.insertVote(vote);
             }
 

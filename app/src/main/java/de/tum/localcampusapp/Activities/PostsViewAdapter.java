@@ -15,6 +15,7 @@ import java.util.List;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.ViewHolder>{
 
@@ -67,13 +68,11 @@ public class PostsViewAdapter extends RecyclerView.Adapter<PostsViewAdapter.View
 
 
         holder.like.setOnClickListener((View v) -> {
-                post.setScore(post.getScore() + 1);
-                holder.numLikes.setText(Long.toString(post.getScore()));
+            RepositoryLocator.getPostRepository().upVote(post.getId());
         });
 
         holder.dislike.setOnClickListener((View v) -> {
-                post.setScore(post.getScore() - 1);
-                holder.numLikes.setText(Long.toString(post.getScore()));
+            RepositoryLocator.getPostRepository().downVote(post.getId());
         });
 
     }

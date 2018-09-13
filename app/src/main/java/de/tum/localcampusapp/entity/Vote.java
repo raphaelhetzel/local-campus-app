@@ -9,12 +9,11 @@ import android.arch.persistence.room.PrimaryKey;
 import java.util.Date;
 import java.util.Objects;
 
-@Entity(tableName = "votes", foreignKeys = @ForeignKey(entity = Post.class,
-        parentColumns = "id",
-        childColumns = "post_id",
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.NO_ACTION),  indices = {@Index(value = "uuid", unique = true)})
-
+@Entity(tableName = "votes",  indices = {@Index(value = "uuid", unique = true),
+        @Index(value = "post_uuid"),
+        @Index(value = {"post_id", "creator_id"}),
+        @Index(value = {"post_uuid", "creator_id"})})
+//TODO reduce indicies
 public class Vote {
 
     @PrimaryKey(autoGenerate = true)
@@ -24,6 +23,9 @@ public class Vote {
 
     @ColumnInfo(name = "post_id")
     private long postId;
+
+    @ColumnInfo(name = "post_uuid")
+    private String postUuid;
 
     @ColumnInfo(name = "creator_id")
     private String creatorId;
@@ -37,9 +39,9 @@ public class Vote {
     public Vote() {
     }
 
-    public Vote(String uuid, long postId, String creatorId, Date createdAt, long scoreInfluence) {
+    public Vote(String uuid, String postUuid, String creatorId, Date createdAt, long scoreInfluence) {
         this.uuid = uuid;
-        this.postId = postId;
+        this.postUuid = postUuid;
         this.creatorId = creatorId;
         this.createdAt = createdAt;
         this.scoreInfluence = scoreInfluence;
@@ -69,6 +71,14 @@ public class Vote {
         this.postId = postId;
     }
 
+    public String getPostUuid() {
+        return postUuid;
+    }
+
+    public void setPostUuid(String postUuid) {
+        this.postUuid = postUuid;
+    }
+
     public String getCreatorId() {
         return creatorId;
     }
@@ -91,25 +101,5 @@ public class Vote {
 
     public void setScoreInfluence(long scoreInfluence) {
         this.scoreInfluence = scoreInfluence;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vote vote = (Vote) o;
-        return getId() == vote.getId() &&
-                getPostId() == vote.getPostId() &&
-                getScoreInfluence() == vote.getScoreInfluence() &&
-                Objects.equals(getUuid(), vote.getUuid()) &&
-                Objects.equals(getCreatorId(), vote.getCreatorId()) &&
-                Objects.equals(getCreatedAt(), vote.getCreatedAt());
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(getId(), getUuid(), getPostId(), getCreatorId(), getCreatedAt(), getScoreInfluence());
     }
 }

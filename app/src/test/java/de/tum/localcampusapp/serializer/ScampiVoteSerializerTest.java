@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ScampiVoteDeserializerTest {
+public class ScampiVoteSerializerTest {
     private PostRepository mPostRepository;
 
     @Before
@@ -40,7 +40,7 @@ public class ScampiVoteDeserializerTest {
 
     @Test
     public void messageToVote() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
-        ScampiVoteDeserializer scampiVoteSerializer = new ScampiVoteDeserializer(mPostRepository);
+        ScampiVoteSerializer scampiVoteSerializer = new ScampiVoteSerializer();
         Date date = new Date();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_VOTE);
@@ -50,15 +50,10 @@ public class ScampiVoteDeserializerTest {
         scampiMessage.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(date));
         scampiMessage.putInteger(SCORE_INFLUENCE_FIELD, 1);
 
-        Post post = new Post();
-        post.setUuid("UUID2");
-        post.setId(1);
-        when(mPostRepository.getFinalPostByUUID("UUID2")).thenReturn(post);
-
         Vote result = scampiVoteSerializer.messageToVote(scampiMessage);
 
         assertEquals("UUID", result.getUuid());
-        assertEquals(1, result.getPostId());
+        assertEquals("UUID2", result.getPostUuid());
         assertEquals("Creator", result.getCreatorId());
         assertEquals(date, result.getCreatedAt());
         assertEquals(1, result.getScoreInfluence());
@@ -73,17 +68,13 @@ public class ScampiVoteDeserializerTest {
         Vote vote = new Vote();
         vote.setId(1);
         vote.setUuid("UUID");
-        vote.setPostId(1);
+        vote.setPostUuid("UUID2");
         vote.setCreatedAt(date);
         vote.setCreatorId("Creator");
         vote.setScoreInfluence(1);
 
-        Post post = new Post();
-        post.setId(1);
-        post.setUuid("UUID2");
 
-
-        SCAMPIMessage scampiMessage = scampiVoteSerializer.voteToMessage(vote, post);
+        SCAMPIMessage scampiMessage = scampiVoteSerializer.voteToMessage(vote);
         assertEquals("UUID", scampiMessage.getString(UUID_FIELD));
         assertEquals("UUID2", scampiMessage.getString(POST_UUID_FIELD));
         assertEquals("Creator", scampiMessage.getString(CREATOR_FIELD));
@@ -93,37 +84,19 @@ public class ScampiVoteDeserializerTest {
 
     @Test(expected = WrongParserException.class)
     public void wrongParser() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
-        ScampiVoteDeserializer scampiVoteDeSerializer = new ScampiVoteDeserializer(mPostRepository);
+        ScampiVoteSerializer scampiVoteSerializer = new ScampiVoteSerializer();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
 
-        scampiVoteDeSerializer.messageToVote(scampiMessage);
+        scampiVoteSerializer.messageToVote(scampiMessage);
     }
 
     @Test(expected = MissingFieldsException.class)
     public void missingFieldsFromMessage() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
-        ScampiVoteDeserializer scampiVoteDeSerializer = new ScampiVoteDeserializer(mPostRepository);
+        ScampiVoteSerializer scampiVoteDeSerializer = new ScampiVoteSerializer();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_VOTE);
         scampiMessage.putString(UUID_FIELD, "UUID");
-
-        scampiVoteDeSerializer.messageToVote(scampiMessage);
-
-    }
-
-    @Test(expected = MissingRelatedDataException.class)
-    public void missingRelatedData() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
-        ScampiVoteDeserializer scampiVoteDeSerializer = new ScampiVoteDeserializer(mPostRepository);
-        Date date = new Date();
-        SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
-        scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_VOTE);
-        scampiMessage.putString(UUID_FIELD, "UUID");
-        scampiMessage.putString(POST_UUID_FIELD, "UUID2");
-        scampiMessage.putString(CREATOR_FIELD, "Creator");
-        scampiMessage.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(date));
-        scampiMessage.putInteger(SCORE_INFLUENCE_FIELD, 1);
-
-        when(mPostRepository.getFinalPostByUUID("UUID2")).thenReturn(null);
 
         scampiVoteDeSerializer.messageToVote(scampiMessage);
 
@@ -142,7 +115,7 @@ public class ScampiVoteDeserializerTest {
         post.setUuid("UUID2");
 
 
-        scampiVoteSerializer.voteToMessage(vote, post);
+        scampiVoteSerializer.voteToMessage(vote);
     }
 
 

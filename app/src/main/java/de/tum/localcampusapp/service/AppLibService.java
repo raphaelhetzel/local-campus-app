@@ -39,7 +39,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     private volatile List<Message> preconnect_buffer = new ArrayList<>();
 
     public void publish(SCAMPIMessage message, String service) throws InterruptedException {
-        if(this.connected) {
+        if (this.connected) {
             publish_now(message, service);
         } else {
             preconnect_buffer.add(new Message(message, service));
@@ -145,16 +145,16 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     }
 
     private void publish_now(SCAMPIMessage message, String service) throws InterruptedException {
-        message.putString(ScampiPostSerializer.CREATOR_FIELD, scampiId);
+        message.putString(ScampiPostSerializer.CREATOR_FIELD, "TODOCREATOR");
         this.appLib.publish(message, service, (appLib, scampiMessage) -> {
             Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
         });
     }
 
     private void clear_preconnect_buffer() {
-        scheduledExecutor.execute( ()-> {
-            while(preconnect_buffer.size() > 0) {
-                if(connected == false) return;
+        scheduledExecutor.execute(() -> {
+            while (preconnect_buffer.size() > 0) {
+                if (connected == false) return;
                 Message message = preconnect_buffer.remove(0);
                 try {
                     publish(message.scampiMessage, message.targetService);

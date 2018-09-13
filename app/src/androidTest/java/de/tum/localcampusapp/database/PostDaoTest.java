@@ -5,7 +5,6 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
@@ -57,14 +56,16 @@ public class PostDaoTest {
         post.setData("\"Post\"");
         post.setTopicId(1);
 
-        postDao.insert(post);
+        long row_id = postDao.insert(post);
 
         LiveData<Post> uuid_result = postDao.getPostByUUID(uuid);
         assertEquals(LiveDataHelper.getValue(uuid_result).getData(), post.getData());
 
         long id = LiveDataHelper.getValue(uuid_result).getId();
         LiveData<Post> id_result = postDao.getPost(id);
-        assertEquals(LiveDataHelper.getValue(uuid_result).getData(), post.getData());
+        assertEquals(LiveDataHelper.getValue(id_result).getData(), post.getData());
+
+        assertEquals(row_id, id);
 
     }
 
@@ -157,14 +158,22 @@ public class PostDaoTest {
         Post databasePost = postDao.getFinalPostByUUID("UUID");
         Date date = new Date();
 
-        voteDao.insert(new Vote("UUID1", databasePost.getId(), "User1", date, +10));
-        voteDao.insert(new Vote("UUID2", databasePost.getId(), "User2", date, +10));
-        voteDao.insert(new Vote("UUID3", databasePost.getId(), "User3", date, -10));
+        Vote vote1 = new Vote("UUID1", "PostUUID1", "User1", new Date(), +10);
+        vote1.setPostId(1);
+        Vote vote2 = new Vote("UUID2", "PostUUID1", "User2", new Date(), +10);
+        vote1.setPostId(1);
+        Vote vote3 = new Vote("UUID3", "PostUUID1", "User3", new Date(), -10);
+        vote1.setPostId(1);
+
+        voteDao.insert(vote1);
+        voteDao.insert(vote2);
+        voteDao.insert(vote3);
 
 
         LiveData<List<Post>> result = postDao.getPostsforTopic(1);
         Post topicsQueryPost = LiveDataHelper.getValue(result).get(0);
-        assertEquals("Post1", topicsQueryPost.getData());;
+        assertEquals("Post1", topicsQueryPost.getData());
+        ;
         assertEquals(10, topicsQueryPost.getScore());
 
     }

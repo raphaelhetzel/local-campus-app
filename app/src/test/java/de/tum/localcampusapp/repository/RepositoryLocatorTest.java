@@ -10,7 +10,6 @@ import org.junit.rules.TestRule;
 
 import de.tum.localcampusapp.database.TopicDao;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
-import de.tum.localcampusapp.serializer.ScampiVoteDeserializer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -39,7 +38,6 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getPostRepository().getClass(), RealPostRepository.class);
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), RealTopicRepository.class);
         assertEquals(RepositoryLocator.getScampiPostSerializer().getClass(), ScampiPostSerializer.class);
-        assertEquals(RepositoryLocator.getScampiVoteDeserializer().getClass(), ScampiVoteDeserializer.class);
     }
 
     @Test
@@ -48,7 +46,6 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getPostRepository().getClass(), InMemoryPostRepository.class);
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), InMemoryTopicRepository.class);
         assertEquals(RepositoryLocator.getScampiPostSerializer().getClass(), ScampiPostSerializer.class);
-        assertEquals(RepositoryLocator.getScampiVoteDeserializer().getClass(), ScampiVoteDeserializer.class);
     }
 
     @Test
@@ -63,11 +60,9 @@ public class RepositoryLocatorTest {
         // This would not work for the current implementation of the repositories
         RepositoryLocator.reInitCustom(new RealTopicRepository(mTopicDao),
                 new InMemoryPostRepository(),
-                new ScampiPostSerializer(new InMemoryTopicRepository()),
-                new ScampiVoteDeserializer(new InMemoryPostRepository()));
+                new ScampiPostSerializer(new InMemoryTopicRepository()));
         assertEquals(RepositoryLocator.getPostRepository().getClass(), InMemoryPostRepository.class);
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), RealTopicRepository.class);
         assertEquals(RepositoryLocator.getScampiPostSerializer().getClass(), ScampiPostSerializer.class);
-        assertEquals(RepositoryLocator.getScampiVoteDeserializer().getClass(), ScampiVoteDeserializer.class);
     }
 }

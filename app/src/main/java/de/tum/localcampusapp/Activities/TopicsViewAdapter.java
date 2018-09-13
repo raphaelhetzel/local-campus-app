@@ -80,7 +80,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.image);
-            imageName = itemView.findViewById(R.id.image_name);
+            imageName = itemView.findViewById(R.id.topic_name);
             parentLayout = itemView.findViewById(R.id.parent_layout);
         }
     }

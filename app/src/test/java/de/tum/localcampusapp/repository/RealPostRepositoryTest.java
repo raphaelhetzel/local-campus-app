@@ -190,8 +190,6 @@ public class RealPostRepositoryTest {
             }
         });
         when(mPostDao.getFinalPost(1)).thenReturn(post);
-        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
-        when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
         when(mVoteDao.getUserVote(1, "TODOCREATOR")).thenReturn(new Vote());
 
         RealPostRepository realPostRepository = new RealPostRepository(mContext, mPostDao, mTopicRepository, mExecutor, mScampiPostSerializer, mVoteDao, mScampiVoteSerializer);

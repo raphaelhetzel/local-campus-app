@@ -39,11 +39,11 @@ public class RepositoryLocator {
         scampiPostSerializer = new ScampiPostSerializer(topicRepository);
         postRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
-                topicRepository,
-                Executors.newSingleThreadExecutor(),
-                scampiPostSerializer,
                 appDatabase.getVoteDao(),
-                userRepository);
+                appDatabase.getPostExtensionDao(),
+                topicRepository,
+                userRepository,
+                scampiPostSerializer);
         initialized = true;
     }
 

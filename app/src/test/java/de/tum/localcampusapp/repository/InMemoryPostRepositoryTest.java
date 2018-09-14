@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.testhelper.HandlerInstantRun;
@@ -162,5 +163,39 @@ public class InMemoryPostRepositoryTest {
         repository.insertPost(post1);
 
         assertEquals(repository.getFinalPostByUUID(post_uuid).getScore(), 10);
+    }
+
+    @Test
+    public void insertPostLinksPostExtensions() throws DatabaseException, InterruptedException {
+        String postUUID = UUID.randomUUID().toString();
+        String extensionUUID = UUID.randomUUID().toString();
+
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(postUUID);
+
+        PostExtension postExtension = new PostExtension(extensionUUID, postUUID, "Creator", new Date(), "Data");
+        repository.insertPostExtension(postExtension);
+        repository.insertPost(post1);
+
+        assertEquals(LiveDataHelper.getValue(repository.getPostExtensionsForPost(1)).size(), 1);
+        assertEquals(LiveDataHelper.getValue(repository.getPostExtensionsForPost(1)).get(0).getData(), "Data");
+    }
+
+    @Test
+    public void addPostExtension_getPostExtensionsForPost() throws DatabaseException, InterruptedException {
+        String postUUID = UUID.randomUUID().toString();
+
+        Post post1 = new Post();
+        post1.setId(1);
+        post1.setUuid(postUUID);
+
+        PostExtension postExtension = new PostExtension(1, "Data");
+        repository.insertPost(post1);
+        repository.addPostExtension(postExtension);
+
+        assertEquals(LiveDataHelper.getValue(repository.getPostExtensionsForPost(1)).size(), 1);
+        assertEquals(LiveDataHelper.getValue(repository.getPostExtensionsForPost(1)).get(0).getData(), "Data");
+        assertEquals(LiveDataHelper.getValue(repository.getPostExtensionsForPost(1)).get(0).getPostUuid(), postUUID);
     }
 }

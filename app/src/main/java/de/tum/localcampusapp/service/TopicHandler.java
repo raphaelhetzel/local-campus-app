@@ -43,6 +43,7 @@ public class TopicHandler implements MessageReceivedCallback {
         try {
             if (ScampiPostSerializer.messageIsPost(scampiMessage)) {
                 Post newPost = scampiPostSerializer.postFromMessage(scampiMessage);
+                // TODO: move to the repository
                 Post existingPost = postRepository.getFinalPostByUUID(scampiMessage.getAppTag());
 
                 if (existingPost == null) {

@@ -7,10 +7,11 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 
-@Database(version = 4, entities = {Topic.class, Post.class, Vote.class})
+@Database(version = 5, entities = {Topic.class, Post.class, Vote.class, PostExtension.class})
 @TypeConverters({Converters.class})
 abstract public class AppDatabase extends RoomDatabase {
     abstract public TopicDao getTopicDao();
@@ -18,6 +19,8 @@ abstract public class AppDatabase extends RoomDatabase {
     abstract public PostDao getPostDao();
 
     abstract public VoteDao getVoteDao();
+
+    abstract public PostExtensionDao getPostExtensionDao();
 
 //    public static AppDatabase buildDatabase(Context applicationContext) {
 //        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")

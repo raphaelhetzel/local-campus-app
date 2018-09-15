@@ -10,6 +10,9 @@ import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST;
+
 public class ScampiPostSerializer {
 
     public static final String TYPE_ID_FIELD = "type_id";
@@ -18,8 +21,6 @@ public class ScampiPostSerializer {
     public static final String CREATED_AT_FIELD = "created_at";
     public static final String DATA_FIELD = "data";
     public static final String TOPIC_FIELD = "topic";
-    public static final String MESSAGE_TYPE_FIELD = "message_type";
-    public static final String MESSAGE_TYPE_POST = "post";
 
     private final TopicRepository topicRepository;
 
@@ -28,7 +29,7 @@ public class ScampiPostSerializer {
     }
 
     public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, MissingRelatedDataException, DatabaseException, WrongParserException {
-        if(!messageIsPost(scampiMessage)) throw new WrongParserException();
+        if (!messageIsPost(scampiMessage)) throw new WrongParserException();
         if (messageIsMissingFields(scampiMessage)) throw new MissingFieldsException();
         Topic topic = topicRepository.getFinalTopicByName(scampiMessage.getString(TOPIC_FIELD));
         if (topic == null) throw new MissingRelatedDataException();
@@ -51,7 +52,7 @@ public class ScampiPostSerializer {
         message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(TYPE_ID_FIELD, post.getTypeId());
         message.putString(UUID_FIELD, post.getUuid());
-        message.putString(CREATOR_FIELD ,creator);
+        message.putString(CREATOR_FIELD, creator);
         message.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()));
         message.putString(DATA_FIELD, post.getData());
         message.putString(TOPIC_FIELD, topic.getTopicName());
@@ -69,7 +70,7 @@ public class ScampiPostSerializer {
     }
 
     public static boolean messageIsPost(SCAMPIMessage scampiMessage) {
-        if ( scampiMessage.hasString(MESSAGE_TYPE_FIELD) && scampiMessage.getString(MESSAGE_TYPE_FIELD).equals(MESSAGE_TYPE_POST))
+        if (scampiMessage.hasString(MESSAGE_TYPE_FIELD) && scampiMessage.getString(MESSAGE_TYPE_FIELD).equals(MESSAGE_TYPE_POST))
             return true;
         return false;
     }

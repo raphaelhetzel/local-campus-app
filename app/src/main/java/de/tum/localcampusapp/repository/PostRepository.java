@@ -52,9 +52,9 @@ public interface PostRepository {
 
     /// PostExtension
 
-    public void addPostExtension(PostExtension postExtension);
+    void addPostExtension(PostExtension postExtension);
 
-    public LiveData<List<PostExtension>> getPostExtensionsForPost(long postId);
+    LiveData<List<PostExtension>> getPostExtensionsForPost(long postId);
 
-    public void insertPostExtension(PostExtension postExtension);
+    void insertPostExtension(PostExtension postExtension);
 }

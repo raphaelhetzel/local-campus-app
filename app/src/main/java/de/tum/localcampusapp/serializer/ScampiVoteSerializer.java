@@ -8,6 +8,9 @@ import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_VOTE;
+
 public class ScampiVoteSerializer {
 
     public static final String UUID_FIELD = "uuid";
@@ -15,10 +18,6 @@ public class ScampiVoteSerializer {
     public static final String CREATOR_FIELD = "creator";
     public static final String CREATED_AT_FIELD = "created_at";
     public static final String SCORE_INFLUENCE_FIELD = "score_influence";
-
-    //TODO: Unify with other serializers
-    public static final String MESSAGE_TYPE_FIELD = "message_type";
-    public static final String MESSAGE_TYPE_VOTE = "vote";
 
     public SCAMPIMessage voteToMessage(Vote vote) throws MissingFieldsException {
         if (!voteHasRequiredFields(vote)) throw new MissingFieldsException();

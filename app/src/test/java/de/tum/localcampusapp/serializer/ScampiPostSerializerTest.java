@@ -17,6 +17,8 @@ import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,20 +35,20 @@ public class ScampiPostSerializerTest {
 
     @Test
     public void postFromMessage() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
-        ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
+        ScampiPostSerializer scampiPostSerializer = new ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();
-        message.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, ScampiPostSerializer.MESSAGE_TYPE_POST);
+        message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(ScampiPostSerializer.TOPIC_FIELD, "Topic");
         message.putInteger(ScampiPostSerializer.CREATED_AT_FIELD, Converters.dateToTimestamp(currentTime));
         message.putString(ScampiPostSerializer.TYPE_ID_FIELD, "Type");
-        message.putString(ScampiPostSerializer.CREATOR_FIELD ,"Creator");
-        message.putString(ScampiPostSerializer.DATA_FIELD,"Data");
-        message.putString(ScampiPostSerializer.UUID_FIELD,"UUID");
+        message.putString(ScampiPostSerializer.CREATOR_FIELD, "Creator");
+        message.putString(ScampiPostSerializer.DATA_FIELD, "Data");
+        message.putString(ScampiPostSerializer.UUID_FIELD, "UUID");
 
         when(mTopicRepository.getFinalTopicByName("Topic")).thenReturn(new Topic(1, "Topic"));
 
-        Post post  = scampiPostSerializer.postFromMessage(message);
+        Post post = scampiPostSerializer.postFromMessage(message);
 
         assertEquals(post.getId(), 0); // Doesn't set id
         assertEquals(post.getTypeId(), "Type");
@@ -60,7 +62,7 @@ public class ScampiPostSerializerTest {
 
     @Test
     public void MessageFromPost() {
-        ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
+        ScampiPostSerializer scampiPostSerializer = new ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
 
         Post post = new Post(
@@ -75,7 +77,7 @@ public class ScampiPostSerializerTest {
         Topic topic = new Topic(1, "Topic");
 
         SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, "Creator");
-        assertEquals(message.getString(ScampiPostSerializer.MESSAGE_TYPE_FIELD), ScampiPostSerializer.MESSAGE_TYPE_POST);
+        assertEquals(message.getString(MESSAGE_TYPE_FIELD), MESSAGE_TYPE_POST);
         assertEquals(message.getString(ScampiPostSerializer.TOPIC_FIELD), "Topic");
         assertEquals(message.getString(ScampiPostSerializer.UUID_FIELD), "UUID");
         assertEquals(message.getString(ScampiPostSerializer.CREATOR_FIELD), "Creator");
@@ -86,40 +88,40 @@ public class ScampiPostSerializerTest {
 
     @Test(expected = MissingFieldsException.class)
     public void postFromMessage_MissingFields() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
-        ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
+        ScampiPostSerializer scampiPostSerializer = new ScampiPostSerializer(mTopicRepository);
         SCAMPIMessage message = SCAMPIMessage.builder().build();
-        message.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, ScampiPostSerializer.MESSAGE_TYPE_POST);
+        message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(ScampiPostSerializer.TOPIC_FIELD, "Topic");
 
-        Post post  = scampiPostSerializer.postFromMessage(message);
+        Post post = scampiPostSerializer.postFromMessage(message);
     }
 
     @Test(expected = MissingRelatedDataException.class)
     public void postFromMessage_MissingTopic() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
-        ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
+        ScampiPostSerializer scampiPostSerializer = new ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();
-        message.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, ScampiPostSerializer.MESSAGE_TYPE_POST);
+        message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(ScampiPostSerializer.TOPIC_FIELD, "Topic");
         message.putInteger(ScampiPostSerializer.CREATED_AT_FIELD, Converters.dateToTimestamp(currentTime));
         message.putString(ScampiPostSerializer.TYPE_ID_FIELD, "Type");
-        message.putString(ScampiPostSerializer.CREATOR_FIELD ,"Creator");
-        message.putString(ScampiPostSerializer.DATA_FIELD,"Data");
-        message.putString(ScampiPostSerializer.UUID_FIELD,"UUID");
+        message.putString(ScampiPostSerializer.CREATOR_FIELD, "Creator");
+        message.putString(ScampiPostSerializer.DATA_FIELD, "Data");
+        message.putString(ScampiPostSerializer.UUID_FIELD, "UUID");
 
         when(mTopicRepository.getFinalTopicByName("Topic")).thenReturn(null);
 
-        Post post  = scampiPostSerializer.postFromMessage(message);
+        Post post = scampiPostSerializer.postFromMessage(message);
     }
 
     @Test(expected = WrongParserException.class)
     public void postFromMessage_NotAPost() throws DatabaseException, MissingFieldsException, WrongParserException, MissingRelatedDataException {
-        ScampiPostSerializer scampiPostSerializer = new  ScampiPostSerializer(mTopicRepository);
+        ScampiPostSerializer scampiPostSerializer = new ScampiPostSerializer(mTopicRepository);
         Date currentTime = new Date();
         SCAMPIMessage message = SCAMPIMessage.builder().build();
-        message.putString(ScampiPostSerializer.MESSAGE_TYPE_FIELD, "post_extension");
+        message.putString(MESSAGE_TYPE_FIELD, "post_extension");
 
-        Post post  = scampiPostSerializer.postFromMessage(message);
+        Post post = scampiPostSerializer.postFromMessage(message);
     }
 }
 

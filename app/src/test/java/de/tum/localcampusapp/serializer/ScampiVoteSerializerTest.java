@@ -1,6 +1,5 @@
 package de.tum.localcampusapp.serializer;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -14,32 +13,23 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
-import de.tum.localcampusapp.repository.PostRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
-import static de.tum.localcampusapp.serializer.ScampiPostSerializer.MESSAGE_TYPE_POST;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST;
+import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_VOTE;
 import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.CREATED_AT_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.CREATOR_FIELD;
-import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.MESSAGE_TYPE_FIELD;
-import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.MESSAGE_TYPE_VOTE;
 import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.POST_UUID_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.SCORE_INFLUENCE_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiVoteSerializer.UUID_FIELD;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScampiVoteSerializerTest {
-    private PostRepository mPostRepository;
-
-    @Before
-    public void initializeMocks() {
-        this.mPostRepository = mock(PostRepository.class);
-    }
 
     @Test
-    public void messageToVote() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
+    public void messageToVote() throws DatabaseException, WrongParserException, MissingFieldsException {
         ScampiVoteSerializer scampiVoteSerializer = new ScampiVoteSerializer();
         Date date = new Date();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();

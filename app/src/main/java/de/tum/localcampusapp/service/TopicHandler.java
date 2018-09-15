@@ -21,7 +21,6 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST_EXTENSION;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_VOTE;
-import static de.tum.localcampusapp.serializer.ScampiPostSerializer.CREATOR_FIELD;
 
 public class TopicHandler implements MessageReceivedCallback {
 
@@ -34,7 +33,7 @@ public class TopicHandler implements MessageReceivedCallback {
 
     public TopicHandler() {
         this(RepositoryLocator.getPostRepository(),
-                RepositoryLocator.getScampiPostSerializer(),
+                new ScampiPostSerializer(),
                 new ScampiVoteSerializer(),
                 new ScampiPostExtensionSerializer());
     }
@@ -52,13 +51,8 @@ public class TopicHandler implements MessageReceivedCallback {
         try {
             switch (ScampiMessageTypes.messageTypeOf(scampiMessage)) {
                 case MESSAGE_TYPE_POST:
-                    // TODO: move duplicate check to the repository
-                    Post newPost = scampiPostSerializer.postFromMessage(scampiMessage);
-                    Post existingPost = postRepository.getFinalPostByUUID(scampiMessage.getAppTag());
-
-                    if (existingPost == null) {
-                        postRepository.insertPost(newPost);
-                    }
+                    Post post = scampiPostSerializer.postFromMessage(scampiMessage);
+                    postRepository.insertPost(post);
                     break;
                 case MESSAGE_TYPE_VOTE:
                     Vote vote = scampiVoteSerializer.messageToVote(scampiMessage);

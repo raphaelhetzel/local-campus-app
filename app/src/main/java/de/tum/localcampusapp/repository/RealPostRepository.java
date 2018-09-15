@@ -27,6 +27,7 @@ import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
@@ -62,19 +63,19 @@ public class RealPostRepository implements PostRepository {
                               VoteDao voteDao,
                               PostExtensionDao postExtensionDao,
                               TopicRepository topicRepository,
-                              UserRepository userRepository,
-                              ScampiPostSerializer scampiPostSerializer) {
+                              UserRepository userRepository) {
         this(applicationContext,
                 postDao,
                 voteDao,
                 postExtensionDao,
                 topicRepository,
                 userRepository,
-                scampiPostSerializer,
+                new ScampiPostSerializer(),
                 new ScampiVoteSerializer(),
                 new ScampiPostExtensionSerializer(),
                 Executors.newSingleThreadExecutor());
     }
+
     // Constructor that allows testing
     public RealPostRepository(Context applicationContext,
                               PostDao postDao,
@@ -130,9 +131,14 @@ public class RealPostRepository implements PostRepository {
     }
 
     @Override
-    public void insertPost(Post post) throws DatabaseException {
+    public void insertPost(Post post) throws DatabaseException, MissingRelatedDataException {
         try {
+            Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
+            if (relatedTopic == null) throw new MissingRelatedDataException();
+
             post.setScore(0);
+            post.setTopicId(relatedTopic.getId());
+
             synchronized (insertLock) {
                 long postId = postDao.insert(post);
                 post.setId(postId);
@@ -141,7 +147,55 @@ public class RealPostRepository implements PostRepository {
             }
 
         } catch (android.database.sqlite.SQLiteConstraintException e) {
+            // Ignore duplicate inserts
+            if (e.getMessage().contains("posts.uuid")) {
+                return;
+            }
             throw new DatabaseException();
+        }
+    }
+
+    private void updateRelatedVotes(Post post) {
+        List<Vote> unassignedVotes = voteDao.getVotesByPostUUID(post.getUuid());
+        for (Vote vote : unassignedVotes) {
+            vote.setPostId(post.getId());
+            voteDao.update(vote);
+        }
+    }
+
+    private void updateRelatedPostExtensions(Post post) {
+        List<PostExtension> unassignedPosts = postExtensionDao.getFinalPostExtensionsByPostUUID(post.getUuid());
+        for (PostExtension postExtension : unassignedPosts) {
+            postExtension.setPostId(post.getId());
+            postExtensionDao.update(postExtension);
+        }
+    }
+
+    private class AddPostRunner implements Runnable {
+        private Post post;
+
+        public AddPostRunner(Post post) {
+            this.post = post;
+        }
+
+        @Override
+        public void run() {
+            if (serviceBound) {
+                try {
+                    Topic topic = topicRepository.getFinalTopic(post.getTopicId());
+                    if (topic == null) return;
+                    post.setTopicName(topic.getTopicName());
+                    post.setUuid(UUID.randomUUID().toString());
+                    post.setCreator(userRepository.getId());
+                    post.setCreatedAt(new Date());
+                    SCAMPIMessage message = scampiPostSerializer.messageFromPost(post);
+                    scampiBinder.publish(message, topic.getTopicName());
+                } catch (MissingFieldsException | InterruptedException | DatabaseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(TAG, "Service went down, message currently ignored");
+            }
         }
     }
 
@@ -187,58 +241,6 @@ public class RealPostRepository implements PostRepository {
                 return;
             }
             throw new DatabaseException();
-        }
-    }
-
-
-    //Post Extension
-
-    @Override
-    public void addPostExtension(PostExtension postExtension) {
-        if(postExtension.getPostId() == 0) throw new DatabaseException();
-        executor.execute(new AddPostExtensionRunner(postExtension));
-    }
-
-    @Override
-    public LiveData<List<PostExtension>> getPostExtensionsForPost(long postId) {
-        return postExtensionDao.getPostExtensionsByPostId(postId);
-    }
-
-    @Override
-    public void insertPostExtension(PostExtension postExtension) {
-        try {
-            synchronized (insertLock) {
-                Post relatedPost = postDao.getFinalPostByUUID(postExtension.getPostUuid());
-                if (relatedPost == null) postExtension.setPostId(0);
-                else postExtension.setPostId(relatedPost.getId());
-                postExtensionDao.insert(postExtension);
-            }
-        }
-        // Catches both the case where the id and the uuid are duplicate
-        catch (android.database.sqlite.SQLiteConstraintException e) {
-            // ignore duplicate inserts
-            if (e.getMessage().contains("post_extensions.uuid")) {
-                return;
-            }
-            throw new DatabaseException();
-        }
-    }
-
-    /// Helpers & Runners
-
-    private void updateRelatedVotes(Post post) {
-        List<Vote> unassignedVotes = voteDao.getVotesByPostUUID(post.getUuid());
-        for (Vote vote : unassignedVotes) {
-            vote.setPostId(post.getId());
-            voteDao.update(vote);
-        }
-    }
-
-    private void updateRelatedPostExtensions(Post post) {
-        List<PostExtension> unassignedPosts = postExtensionDao.getFinalPostExtensionsByPostUUID(post.getUuid());
-        for (PostExtension postExtension : unassignedPosts) {
-            postExtension.setPostId(post.getId());
-            postExtensionDao.update(postExtension);
         }
     }
 
@@ -289,29 +291,37 @@ public class RealPostRepository implements PostRepository {
         }
     }
 
-    private class AddPostRunner implements Runnable {
-        private Post post;
 
-        public AddPostRunner(Post post) {
-            this.post = post;
-        }
+    //Post Extension
 
-        @Override
-        public void run() {
-            if (serviceBound) {
-                if (post.getId() == 0) {
-                    return;
-                }
-                try {
-                    Topic topic = topicRepository.getFinalTopic(post.getTopicId());
-                    SCAMPIMessage message = scampiPostSerializer.messageFromPost(post, topic, userRepository.getId());
-                    scampiBinder.publish(message, topic.getTopicName());
-                } catch (InterruptedException | DatabaseException e) {
-                    e.printStackTrace(); // TODO: Remove DatabaseException as you can't catch it from other threads
-                }
-            } else {
-                Log.d(TAG, "Service went down, message currently ignored");
+    @Override
+    public void addPostExtension(PostExtension postExtension) {
+        if (postExtension.getPostId() == 0) throw new DatabaseException();
+        executor.execute(new AddPostExtensionRunner(postExtension));
+    }
+
+    @Override
+    public LiveData<List<PostExtension>> getPostExtensionsForPost(long postId) {
+        return postExtensionDao.getPostExtensionsByPostId(postId);
+    }
+
+    @Override
+    public void insertPostExtension(PostExtension postExtension) {
+        try {
+            synchronized (insertLock) {
+                Post relatedPost = postDao.getFinalPostByUUID(postExtension.getPostUuid());
+                if (relatedPost == null) postExtension.setPostId(0);
+                else postExtension.setPostId(relatedPost.getId());
+                postExtensionDao.insert(postExtension);
             }
+        }
+        // Catches both the case where the id and the uuid are duplicate
+        catch (android.database.sqlite.SQLiteConstraintException e) {
+            // ignore duplicate inserts
+            if (e.getMessage().contains("post_extensions.uuid")) {
+                return;
+            }
+            throw new DatabaseException();
         }
     }
 
@@ -326,7 +336,7 @@ public class RealPostRepository implements PostRepository {
         public void run() {
             if (serviceBound) {
                 try {
-                    if(postExtension.getPostId() == 0) return;
+                    if (postExtension.getPostId() == 0) return;
                     Post relatedPost = postDao.getFinalPost(postExtension.getPostId());
                     if (relatedPost == null) return;
 
@@ -337,7 +347,7 @@ public class RealPostRepository implements PostRepository {
                     postExtension.setCreatedAt(new Date());
                     postExtension.setCreatorId(userRepository.getId());
 
-                    SCAMPIMessage scampiMessage =scampiPostExtensionSerializer.postExtensionToMessage(postExtension);
+                    SCAMPIMessage scampiMessage = scampiPostExtensionSerializer.postExtensionToMessage(postExtension);
                     scampiBinder.publish(scampiMessage, topic.getTopicName());
 
                 } catch (MissingFieldsException | InterruptedException | DatabaseException e) {
@@ -349,6 +359,7 @@ public class RealPostRepository implements PostRepository {
         }
     }
 
+    /// Service Connection
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 

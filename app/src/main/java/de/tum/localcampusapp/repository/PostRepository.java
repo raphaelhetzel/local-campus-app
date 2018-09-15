@@ -8,6 +8,7 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 
 public interface PostRepository {
 
@@ -38,7 +39,7 @@ public interface PostRepository {
 
     LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException;
 
-    void insertPost(Post post) throws DatabaseException;
+    void insertPost(Post post) throws DatabaseException, MissingRelatedDataException;
 
 
     /// Vote

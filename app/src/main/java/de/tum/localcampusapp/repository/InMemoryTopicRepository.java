@@ -3,16 +3,16 @@ package de.tum.localcampusapp.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.content.Context;
 import android.os.Handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+
+// This is just a Mock and should not be used in Production!
 
 public class InMemoryTopicRepository implements TopicRepository {
     private final Handler handler;

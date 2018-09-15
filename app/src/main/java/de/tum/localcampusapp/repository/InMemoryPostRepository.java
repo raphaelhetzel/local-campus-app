@@ -14,13 +14,17 @@ import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
+import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 
 public class InMemoryPostRepository implements PostRepository {
 
     private final Handler handler;
     private volatile Object lock = new Object();
+
+    private TopicRepository topicRepository;
 
     private MutableLiveData<List<Post>> posts;
     private MutableLiveData<List<Vote>> votes;
@@ -30,13 +34,16 @@ public class InMemoryPostRepository implements PostRepository {
     private volatile long voteId = 1L;
     private volatile long extensionId = 1L;
 
+    // This is just a Mock and should not be used in Production!
 
-    public InMemoryPostRepository() {
-        this(new Handler());
+    public InMemoryPostRepository(TopicRepository topicRepository) {
+        this(new Handler(), topicRepository);
     }
 
-    public InMemoryPostRepository(Handler handler) {
+    public InMemoryPostRepository(Handler handler, TopicRepository topicRepository) {
         this.handler = handler;
+
+        this.topicRepository = topicRepository;
 
         this.posts = new MutableLiveData<>();
         this.posts.setValue(new ArrayList<>());
@@ -102,7 +109,19 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public void addPost(Post post) throws DatabaseException {
-        insertPost(post);
+        Topic related_topic = topicRepository.getFinalTopic(post.getTopicId());
+        if (related_topic == null)
+            throw new RuntimeException(); // Throw to make the error more noticeable
+        post.setTopicName(related_topic.getTopicName());
+        if (post.getCreatedAt() == null) post.setCreatedAt(new Date());
+        if (post.getCreator() == null || post.getCreator().isEmpty()) post.setCreator("MOCKUSER");
+        if (post.getUuid() == null || post.getUuid().isEmpty())
+            post.setUuid(UUID.randomUUID().toString());
+        try {
+            insertPost(post);
+        } catch (MissingRelatedDataException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -125,7 +144,9 @@ public class InMemoryPostRepository implements PostRepository {
         return liveData;
     }
 
-    public void insertPost(Post post) throws DatabaseException {
+    public void insertPost(Post post) throws DatabaseException, MissingRelatedDataException {
+        Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
+        if (relatedTopic == null) throw new MissingRelatedDataException();
         handler.post(new InsertTask(post));
     }
 
@@ -167,7 +188,7 @@ public class InMemoryPostRepository implements PostRepository {
         Post relatedPost = posts.getValue().stream()
                 .filter(post -> post.getId() == postExtension.getPostId())
                 .reduce(null, (acc, current) -> current);
-        if(relatedPost == null) throw new DatabaseException();
+        if (relatedPost == null) throw new DatabaseException();
         postExtension.setPostUuid(relatedPost.getUuid());
         postExtension.setUuid(UUID.randomUUID().toString());
         postExtension.setCreatedAt(new Date());
@@ -207,7 +228,13 @@ public class InMemoryPostRepository implements PostRepository {
         @Override
         public void run() {
             synchronized (lock) {
-                ArrayList<Post> temp_posts = new ArrayList<Post>(posts.getValue());
+                ArrayList<Post> temp_posts = new ArrayList<>(posts.getValue());
+
+                Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
+                // Actual exception thrown before so if this happens here it was deleted in the meantime
+                if (relatedTopic == null) throw new RuntimeException();
+
+                post.setTopicId(relatedTopic.getId());
 
                 if (post.getId() == 0) {
                     post.setId(postId++);

@@ -2,12 +2,9 @@ package de.tum.localcampusapp.serializer;
 
 import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
-import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
-import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
@@ -22,40 +19,32 @@ public class ScampiPostSerializer {
     public static final String DATA_FIELD = "data";
     public static final String TOPIC_FIELD = "topic";
 
-    private final TopicRepository topicRepository;
-
-    public ScampiPostSerializer(TopicRepository topicRepository) {
-        this.topicRepository = topicRepository;
-    }
-
-    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, MissingRelatedDataException, DatabaseException, WrongParserException {
+    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, DatabaseException, WrongParserException {
         if (!messageIsPost(scampiMessage)) throw new WrongParserException();
         if (messageIsMissingFields(scampiMessage)) throw new MissingFieldsException();
-        Topic topic = topicRepository.getFinalTopicByName(scampiMessage.getString(TOPIC_FIELD));
-        if (topic == null) throw new MissingRelatedDataException();
 
         Post post = new Post();
         post.setUuid(scampiMessage.getString(UUID_FIELD));
+        post.setTopicName(scampiMessage.getString(TOPIC_FIELD));
         post.setTypeId(scampiMessage.getString(TYPE_ID_FIELD));
         post.setCreator(scampiMessage.getString(CREATOR_FIELD));
         post.setCreatedAt(Converters.fromTimestamp(scampiMessage.getInteger(CREATED_AT_FIELD)));
         post.setData(scampiMessage.getString(DATA_FIELD));
-        post.setTopicId(topic.getId());
         return post;
     }
 
-    public SCAMPIMessage messageFromPost(Post post, Topic topic, String creator) {
-
+    public SCAMPIMessage messageFromPost(Post post) throws MissingFieldsException{
+        if(!postHasRequiredFields(post)) throw new MissingFieldsException();
         SCAMPIMessage message = SCAMPIMessage.builder()
                 .appTag(post.getUuid())
                 .build();
         message.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
         message.putString(TYPE_ID_FIELD, post.getTypeId());
         message.putString(UUID_FIELD, post.getUuid());
-        message.putString(CREATOR_FIELD, creator);
+        message.putString(CREATOR_FIELD, post.getCreator());
         message.putInteger(CREATED_AT_FIELD, Converters.dateToTimestamp(post.getCreatedAt()));
         message.putString(DATA_FIELD, post.getData());
-        message.putString(TOPIC_FIELD, topic.getTopicName());
+        message.putString(TOPIC_FIELD, post.getTopicName());
         return message;
     }
 
@@ -67,6 +56,21 @@ public class ScampiPostSerializer {
                 scampiMessage.hasString(DATA_FIELD) &&
                 scampiMessage.hasString(TOPIC_FIELD)) return false;
         return true;
+    }
+
+    private boolean postHasRequiredFields(Post post) {
+        if (!(post.getUuid() == null ||
+                post.getUuid().isEmpty() ||
+                post.getTopicName() == null ||
+                post.getTopicName().isEmpty() ||
+                post.getCreatedAt() == null ||
+                post.getCreator() == null ||
+                post.getCreator().isEmpty() ||
+                post.getData() == null ||
+                post.getData().isEmpty() ||
+                post.getTypeId() == null ||
+                post.getTypeId().isEmpty())) return true;
+        return false;
     }
 
     public static boolean messageIsPost(SCAMPIMessage scampiMessage) {

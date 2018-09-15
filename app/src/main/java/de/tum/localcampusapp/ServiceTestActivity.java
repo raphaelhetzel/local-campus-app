@@ -1,24 +1,13 @@
 package de.tum.localcampusapp;
-
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Date;
-import java.util.UUID;
-
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
 
@@ -55,15 +44,7 @@ public class ServiceTestActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.test_button);
         button.setOnClickListener((view)-> {
-            Post testpost = new Post(
-                    1,
-                    UUID.randomUUID().toString(),
-                    "1",
-                    1,
-                    "unused",
-                    new Date(),
-                    "DATA"
-                    );
+            Post testpost = new Post(1, "1", "DATA");
             try {
                 RepositoryLocator.getPostRepository().addPost(testpost);
             } catch (DatabaseException e) {

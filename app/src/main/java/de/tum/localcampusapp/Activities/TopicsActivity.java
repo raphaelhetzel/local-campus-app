@@ -2,7 +2,6 @@ package de.tum.localcampusapp.Activities;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,16 +15,11 @@ import java.util.List;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.repository.InMemoryPostRepository;
-import de.tum.localcampusapp.repository.InMemoryTopicRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
-
-import static android.provider.Settings.Secure.ANDROID_ID;
 
 
-public class TopicsActivity extends AppCompatActivity{
+public class TopicsActivity extends AppCompatActivity {
     static final String TAG = TopicsActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
@@ -35,14 +29,17 @@ public class TopicsActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d( TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-        super.startService( new Intent( this, AppLibService.class ) );
-        RepositoryLocator.init(getApplicationContext());
 
-        //FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
-        //FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
+        //Real Data
+        super.startService(new Intent(this, AppLibService.class));
+        RepositoryLocator.init(getApplicationContext());
+        // Fake Data
+//        RepositoryLocator.initInMemory(getApplicationContext());
+//        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
+//        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 
         try {
             viewModel = new TopicsViewModel(getApplicationContext());
@@ -50,7 +47,7 @@ public class TopicsActivity extends AppCompatActivity{
             e.printStackTrace();
         }
 
-        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(),this);
+        mTopicsViewAdapter = new TopicsViewAdapter(new ArrayList<Topic>(), this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -3,6 +3,7 @@ package de.tum.localcampusapp.database;
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -176,5 +177,45 @@ public class PostDaoTest {
         ;
         assertEquals(10, topicsQueryPost.getScore());
 
+    }
+
+    @Test
+    public void postsContainTopicName() throws InterruptedException {
+
+        String uuid = UUID.randomUUID().toString();
+        Post post = new Post();
+        post.setUuid(uuid);
+        post.setData("Data");
+        post.setTopicId(1);
+
+        postDao.insert(post);
+
+        Post uuid_result = postDao.getFinalPostByUUID(uuid);
+        assertEquals("/tum", uuid_result.getTopicName());
+
+    }
+
+    // Ensure the error message contains the field to allow inserting duplicate messages in the repository
+    @Test()
+    public void insertDuplicateRightErrorMessage() {
+        boolean thrown = false;
+        Post post1 = new Post();
+        Post post2 = new Post();
+        post1.setTopicId(1);
+        post2.setTopicId(1);
+        post1.setUuid("UUID");
+        post2.setUuid("UUID");
+
+        postDao.insert(post1);
+        try {
+            postDao.insert(post2);
+        } catch (SQLiteConstraintException e) {
+            if (e.getMessage().contains("posts.uuid")) {
+                thrown = true;
+            } else {
+                throw e;
+            }
+        }
+        assertEquals(thrown, true);
     }
 }

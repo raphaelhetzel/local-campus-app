@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.sqlite.SQLiteConstraintException;
-import android.os.IBinder;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -18,10 +16,9 @@ import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Executor;
 
-import de.tum.localcampusapp.database.Converters;
+
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.database.PostExtensionDao;
 import de.tum.localcampusapp.database.VoteDao;
@@ -31,6 +28,7 @@ import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
@@ -107,36 +105,96 @@ public class RealPostRepositoryTest {
                 mExecutor);
     }
 
-    @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
-    public void insertWithDuplicateIdOrNonExistantTopic() throws DatabaseException {
+    @Test
+    public void insertPost() throws DatabaseException, MissingRelatedDataException {
+        Topic topic = new Topic(1, "/tum");
         Post post2 = new Post();
-        doThrow(new android.database.sqlite.SQLiteConstraintException()).when(mPostDao).insert(post2);
+        post2.setTopicName("/tum");
+        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
+
+        realPostRepository.insertPost(post2);
+        verify(mPostDao).insert(any(Post.class));
+    }
+
+
+    @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
+    public void insertPostWithDuplicateId() throws DatabaseException, MissingRelatedDataException {
+        Topic topic = new Topic(1, "/tum");
+        Post post2 = new Post();
+        post2.setTopicName("/tum");
+        when(mSqLiteConstraintException.getMessage()).thenReturn("primary key");
+        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
+        doThrow(mSqLiteConstraintException).when(mPostDao).insert(post2);
+
         realPostRepository.insertPost(post2);
     }
 
+    @Test(expected = MissingRelatedDataException.class)
+    public void insertPostWithMissingTopic() throws DatabaseException, MissingRelatedDataException {
+        Post post2 = new Post();
+        post2.setTopicName("/tum");
+
+        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(null);
+
+        realPostRepository.insertPost(post2);
+
+        verify(mPostDao, never()).insert(any(Post.class));
+    }
+
     @Test
-    public void add() throws DatabaseException, InterruptedException {
+    public void insertDuplicatePost() throws DatabaseException, MissingRelatedDataException {
+        Topic topic = new Topic(1, "/tum");
+        Post post2 = new Post();
+        post2.setTopicName("/tum");
+        when(mSqLiteConstraintException.getMessage()).thenReturn("posts.uuid");
+        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
+        doThrow(mSqLiteConstraintException).when(mPostDao).insert(post2);
+
+        realPostRepository.insertPost(post2);
+
+        verify(mPostDao).insert(post2);
+    }
+
+    @Test
+    public void addPost() throws DatabaseException, InterruptedException, MissingFieldsException {
         Post post = new Post(
                 1,
-                "UUID",
-                "1",
-                1,
-                "Test",
-                new Date(),
+                "Type",
                 "DATA"
         );
 
-        Topic topic = new Topic(1, "/tum");
-
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
-
-        when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
-        when(mScampiPostSerializer.messageFromPost(post, topic, "MOCKUSER")).thenReturn(scampiMessage);
+        when(mScampiPostSerializer.messageFromPost(post)).thenReturn(scampiMessage);
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(new Topic(1, "Topic"));
 
         realPostRepository.addPost(post);
-        verify(mScampiPostSerializer).messageFromPost(post, topic, "MOCKUSER");
-        verify(mScampiBinder).publish(eq(scampiMessage), eq("/tum"));
+
         verify(mTopicRepository).getFinalTopic(1);
+        verify(mScampiPostSerializer).messageFromPost(argThat(argument -> {
+            return argument.getClass() == Post.class &&
+                    argument.getTypeId().equals("Type") &&
+                    argument.getData().equals("DATA") &&
+                    argument.getCreator().equals("MOCKUSER") &&
+                    argument.getCreatedAt() != null &&
+                    argument.getTopicName().equals("Topic");
+
+        }));
+        verify(mScampiBinder).publish(eq(scampiMessage), eq("Topic"));
+    }
+
+    @Test
+    public void addPostNoTopic() throws DatabaseException, InterruptedException, MissingFieldsException {
+        Post post = new Post(
+                1,
+                "Type",
+                "DATA"
+        );
+        when(mTopicRepository.getFinalTopic(1)).thenReturn(null);
+
+        realPostRepository.addPost(post);
+
+        verify(mTopicRepository).getFinalTopic(1);
+        verify(mScampiBinder, never()).publish(any(), any());
     }
 
     @Test
@@ -162,11 +220,7 @@ public class RealPostRepositoryTest {
     public void upVote() throws MissingFieldsException, InterruptedException {
         Post post = new Post(
                 1,
-                "UUID",
                 "1",
-                1,
-                "Test",
-                new Date(),
                 "DATA"
         );
 
@@ -189,11 +243,7 @@ public class RealPostRepositoryTest {
     public void duplicateVoteDB() throws MissingFieldsException, InterruptedException {
         Post post = new Post(
                 1,
-                "UUID",
                 "1",
-                1,
-                "Test",
-                new Date(),
                 "DATA"
         );
 
@@ -211,11 +261,7 @@ public class RealPostRepositoryTest {
     public void duplicateVoteBuffer() throws MissingFieldsException, InterruptedException {
         Post post = new Post(
                 1,
-                "UUID",
                 "1",
-                1,
-                "Test",
-                new Date(),
                 "DATA"
         );
 
@@ -283,7 +329,8 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void updatesVotesOnPostInsert() {
+    public void updatesVotesOnPostInsert() throws MissingRelatedDataException {
+        Topic topic = new Topic(1, "/foo");
 
         Vote vote = mock(Vote.class);
 
@@ -291,10 +338,13 @@ public class RealPostRepositoryTest {
         votes.add(vote);
         when(mVoteDao.getVotesByPostUUID("UUID2")).thenReturn(votes);
         when(mPostDao.insert(any(Post.class))).thenReturn(1L);
+        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
 
         Post post = new Post();
         post.setId(1);
         post.setUuid("UUID2");
+        post.setTopicName("/tum");
+
 
         realPostRepository.insertPost(post);
 

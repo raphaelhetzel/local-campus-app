@@ -2,8 +2,6 @@ package de.tum.localcampusapp.repository;
 
 import android.content.Context;
 
-import java.util.concurrent.Executors;
-
 import de.tum.localcampusapp.database.AppDatabase;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 
@@ -36,30 +34,26 @@ public class RepositoryLocator {
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
         userRepository = new UserRepository(applicationContext);
         topicRepository = new RealTopicRepository(appDatabase.getTopicDao());
-        scampiPostSerializer = new ScampiPostSerializer(topicRepository);
         postRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
                 appDatabase.getVoteDao(),
                 appDatabase.getPostExtensionDao(),
                 topicRepository,
-                userRepository,
-                scampiPostSerializer);
+                userRepository);
         initialized = true;
     }
 
     public static void reInitInMemory(Context applicationContext) {
         userRepository = new UserRepository(applicationContext);
         topicRepository = new InMemoryTopicRepository();
-        scampiPostSerializer = new ScampiPostSerializer(topicRepository);
-        postRepository = new InMemoryPostRepository();
+        postRepository = new InMemoryPostRepository(topicRepository);
         initialized = true;
     }
 
     // Warning: the real post repository currently depends on the real topic repository
-    public static void reInitCustom(UserRepository newUserRepository, TopicRepository newTopicRepository, PostRepository newPostRepository, ScampiPostSerializer newScampiPostSerializer) {
+    public static void reInitCustom(UserRepository newUserRepository, TopicRepository newTopicRepository, PostRepository newPostRepository) {
         userRepository = newUserRepository;
         topicRepository = newTopicRepository;
-        scampiPostSerializer = newScampiPostSerializer;
         postRepository = newPostRepository;
         initialized = true;
     }
@@ -86,15 +80,6 @@ public class RepositoryLocator {
         synchronized (lock) {
             if (initialized) {
                 return postRepository;
-            }
-            throw new RuntimeException("Not initialized");
-        }
-    }
-
-    public static ScampiPostSerializer getScampiPostSerializer() {
-        synchronized (lock) {
-            if (initialized) {
-                return scampiPostSerializer;
             }
             throw new RuntimeException("Not initialized");
         }

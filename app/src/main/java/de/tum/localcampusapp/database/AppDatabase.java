@@ -11,7 +11,7 @@ import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 
-@Database(version = 5, entities = {Topic.class, Post.class, Vote.class, PostExtension.class})
+@Database(version = 6, entities = {Topic.class, Post.class, Vote.class, PostExtension.class})
 @TypeConverters({Converters.class})
 abstract public class AppDatabase extends RoomDatabase {
     abstract public TopicDao getTopicDao();

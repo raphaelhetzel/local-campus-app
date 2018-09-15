@@ -85,7 +85,7 @@ public class TopicHandlerTest {
     }
 
     @Test
-    public void receivedMessageWithUnknownMessage() {
+    public void receivedMessageWithUnknownMessage() throws MissingRelatedDataException {
         TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteSerializer, mScampiPostExtensionSerializer);
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, "UNKNOWN");

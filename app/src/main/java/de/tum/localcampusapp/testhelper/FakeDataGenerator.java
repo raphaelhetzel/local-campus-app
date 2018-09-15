@@ -8,6 +8,7 @@ import java.util.Date;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
@@ -125,8 +126,12 @@ public class FakeDataGenerator {
 
     public void createNewFakePost(long id) throws DatabaseException {
         long currPostId = getPostId();
-        Post post = new Post(currPostId, "hello", "121221", id, "Alex", new Date(1992, 8, 23), "sample Post - postId: "+ currPostId);
-        postRepository.insertPost(post);
+        Post post = new Post(id,"1", "sample Post - postId: "+ currPostId);
+        try {
+            postRepository.insertPost(post);
+        } catch (MissingRelatedDataException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
@@ -119,19 +120,16 @@ public class FakeDataGenerator {
     }
 
 
-    public void createNewFakeComment(CommentHelper commentHelper, long postId, long commentId){
-        Comment comment = new Comment(postId, commentId, "Sample Comment - PostId: "+postId+", CommentId: "+commentId, new Date(1992, 8, 23));
-        commentHelper.insertComment(comment);
+    public void createNewFakeComment(CommentHelper commentHelper, long postId, long commentId) {
+        // Comment Helper needs to be deleted as it serves no purpose
+        postRepository.addPostExtension(new PostExtension(postId, "Sample Comment - PostId: "+postId+", CommentId: "));
     }
 
     public void createNewFakePost(long id) throws DatabaseException {
         long currPostId = getPostId();
         Post post = new Post(id,"1", "sample Post - postId: "+ currPostId);
-        try {
-            postRepository.insertPost(post);
-        } catch (MissingRelatedDataException e) {
-            e.printStackTrace();
-        }
+        postRepository.addPost(post);
+
     }
 
 }

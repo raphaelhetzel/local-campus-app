@@ -6,13 +6,10 @@ import android.content.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.repository.PostRepository;
-import de.tum.localcampusapp.repository.RealPostRepository;
 import de.tum.localcampusapp.repository.RealTopicRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;

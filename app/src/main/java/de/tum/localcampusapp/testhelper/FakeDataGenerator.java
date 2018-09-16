@@ -3,14 +3,11 @@ package de.tum.localcampusapp.testhelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.exception.MissingRelatedDataException;
-import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.TopicRepository;

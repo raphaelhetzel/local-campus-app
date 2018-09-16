@@ -5,6 +5,7 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,9 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 
 public class InMemoryPostRepository implements PostRepository {
+
+
+    static final String TAG = InMemoryPostRepository.class.getSimpleName();
 
     private final Handler handler;
     private volatile Object lock = new Object();
@@ -58,7 +62,7 @@ public class InMemoryPostRepository implements PostRepository {
     /// Post
 
     @Override
-    public LiveData<Post> getPost(long id) throws DatabaseException {
+    public LiveData<Post> getPost(long id) {
         MediatorLiveData<Post> liveData = new MediatorLiveData<>();
         liveData.addSource(posts, posts -> {
             List<Post> items = posts.stream().filter(p -> p.getId() == id).collect(Collectors.toList());
@@ -108,10 +112,12 @@ public class InMemoryPostRepository implements PostRepository {
     }
 
     @Override
-    public void addPost(Post post) throws DatabaseException {
+    public void addPost(Post post) {
         Topic related_topic = topicRepository.getFinalTopic(post.getTopicId());
-        if (related_topic == null)
-            throw new RuntimeException(); // Throw to make the error more noticeable
+        if (related_topic == null) {
+            Log.d(TAG, "Tried to insert Post, however the related Topic was missing. This is probably an error in the app!");
+            return;
+        }
         post.setTopicName(related_topic.getTopicName());
         if (post.getCreatedAt() == null) post.setCreatedAt(new Date());
         if (post.getCreator() == null || post.getCreator().isEmpty()) post.setCreator("MOCKUSER");
@@ -119,13 +125,13 @@ public class InMemoryPostRepository implements PostRepository {
             post.setUuid(UUID.randomUUID().toString());
         try {
             insertPost(post);
-        } catch (MissingRelatedDataException e) {
+        } catch (DatabaseException | MissingRelatedDataException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException {
+    public LiveData<List<Post>> getPostsforTopic(long topicId) {
         MediatorLiveData<List<Post>> liveData = new MediatorLiveData<>();
         liveData.addSource(posts, posts -> {
             List<Post> items = posts.stream().filter(p -> p.getTopicId() == topicId).collect(Collectors.toList());
@@ -147,6 +153,7 @@ public class InMemoryPostRepository implements PostRepository {
     public void insertPost(Post post) throws DatabaseException, MissingRelatedDataException {
         Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
         if (relatedTopic == null) throw new MissingRelatedDataException();
+        if(posts.getValue().stream().anyMatch(p -> p.getId() == post.getId())) throw new DatabaseException();
         handler.post(new InsertTask(post));
     }
 
@@ -164,13 +171,17 @@ public class InMemoryPostRepository implements PostRepository {
 
     @Override
     public void insertVote(Vote vote) throws DatabaseException {
+        if(votes.getValue().stream().anyMatch(v -> v.getId() == vote.getId())) throw new DatabaseException();
         handler.post(new InsertVoteTask(vote));
     }
 
     private void vote(long postId, long scoreInflunce) {
-        String userId = "MOCKCREATOR";
+        String userId = "MOCKUSER";
         Post post = posts.getValue().stream().filter(p -> p.getId() == postId).reduce(null, (cancat, post1) -> post1);
-        if (post == null) return;
+        if (post == null) {
+            Log.d(TAG, "Tried to insert Vote, however the related Post was missing. This is probably an error in the app!");
+            return;
+        }
         if (!votes.getValue().stream().anyMatch(v -> v.getPostId() == postId && v.getCreatorId().equals(userId))) {
             try {
                 insertVote(new Vote(UUID.randomUUID().toString(), post.getUuid(), userId, new Date(), scoreInflunce));
@@ -188,12 +199,19 @@ public class InMemoryPostRepository implements PostRepository {
         Post relatedPost = posts.getValue().stream()
                 .filter(post -> post.getId() == postExtension.getPostId())
                 .reduce(null, (acc, current) -> current);
-        if (relatedPost == null) throw new DatabaseException();
+        if (relatedPost == null) {
+            Log.d(TAG, "Tried to insert Post, however the related Topic was missing. This is probably an error in the app!");
+            return;
+        }
         postExtension.setPostUuid(relatedPost.getUuid());
         postExtension.setUuid(UUID.randomUUID().toString());
         postExtension.setCreatedAt(new Date());
         postExtension.setCreatorId("MOCKCREATOR");
-        insertPostExtension(postExtension);
+        try {
+            insertPostExtension(postExtension);
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -205,7 +223,8 @@ public class InMemoryPostRepository implements PostRepository {
     }
 
     @Override
-    public void insertPostExtension(PostExtension postExtension) {
+    public void insertPostExtension(PostExtension postExtension) throws DatabaseException {
+        if(postExtensions.getValue().stream().anyMatch(e -> e.getId() == postExtension.getId())) throw new DatabaseException();
         handler.post(new InsertPostExtensionTask(postExtension));
     }
 
@@ -231,7 +250,7 @@ public class InMemoryPostRepository implements PostRepository {
                 ArrayList<Post> temp_posts = new ArrayList<>(posts.getValue());
 
                 Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
-                // Actual exception thrown before so if this happens here it was deleted in the meantime
+                // Actual exception thrown before
                 if (relatedTopic == null) throw new RuntimeException();
 
                 post.setTopicId(relatedTopic.getId());
@@ -240,7 +259,7 @@ public class InMemoryPostRepository implements PostRepository {
                     post.setId(postId++);
                 } else {
                     if (temp_posts.stream().anyMatch(p -> p.getId() == post.getId()))
-                        throw new DatabaseException();
+                        throw new RuntimeException(); // Actual exception thrown before
                 }
                 temp_posts.add(post);
                 posts.setValue(temp_posts);
@@ -292,7 +311,7 @@ public class InMemoryPostRepository implements PostRepository {
                     vote.setId(voteId++);
                 } else {
                     if (temp_votes.stream().anyMatch(v -> v.getId() == vote.getId()))
-                        throw new DatabaseException();
+                        throw new RuntimeException(); // Actual Exception thrown before
                 }
 
                 Post related_post = temp_posts.stream().filter(p -> p.getUuid().equals(vote.getPostUuid()))
@@ -323,7 +342,7 @@ public class InMemoryPostRepository implements PostRepository {
                     postExtension.setId(extensionId++);
                 } else {
                     if (allPostExtensions.stream().anyMatch(postExtension -> postExtension.getId() == postExtension.getId()))
-                        throw new DatabaseException();
+                        throw new RuntimeException(); // Actual Exception thrown before
                 }
 
                 Post related_post = allPosts.stream().filter(p -> p.getUuid().equals(postExtension.getPostUuid()))

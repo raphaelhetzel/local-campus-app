@@ -17,7 +17,6 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import de.tum.localcampusapp.ServiceTestActivity;
 import de.tum.localcampusapp.database.PostDao;
 import de.tum.localcampusapp.database.PostExtensionDao;
 import de.tum.localcampusapp.database.VoteDao;
@@ -36,7 +35,7 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 public class RealPostRepository implements PostRepository {
 
-    static final String TAG = ServiceTestActivity.class.getSimpleName();
+    static final String TAG = RealPostRepository.class.getSimpleName();
 
     private final PostDao postDao;
     private final VoteDao voteDao;
@@ -106,27 +105,27 @@ public class RealPostRepository implements PostRepository {
     /// Post
 
     @Override
-    public LiveData<Post> getPost(long id) throws DatabaseException {
+    public LiveData<Post> getPost(long id) {
         return postDao.getPost(id);
     }
 
     @Override
-    public LiveData<Post> getPostByUUID(String uuid) throws DatabaseException {
+    public LiveData<Post> getPostByUUID(String uuid) {
         return postDao.getPostByUUID(uuid);
     }
 
     @Override
-    public Post getFinalPostByUUID(String uuid) throws DatabaseException {
+    public Post getFinalPostByUUID(String uuid) {
         return postDao.getFinalPostByUUID(uuid);
     }
 
     @Override
-    public void addPost(Post post) throws DatabaseException {
+    public void addPost(Post post) {
         executor.execute(new AddPostRunner(post));
     }
 
     @Override
-    public LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException {
+    public LiveData<List<Post>> getPostsforTopic(long topicId) {
         return postDao.getPostsforTopic(topicId);
     }
 
@@ -183,14 +182,17 @@ public class RealPostRepository implements PostRepository {
             if (serviceBound) {
                 try {
                     Topic topic = topicRepository.getFinalTopic(post.getTopicId());
-                    if (topic == null) return;
+                    if (topic == null) {
+                        Log.d(TAG, "Tried to insert Post, however the related Topic was missing. This is probably an error in the app!");
+                        return;
+                    }
                     post.setTopicName(topic.getTopicName());
                     post.setUuid(UUID.randomUUID().toString());
                     post.setCreator(userRepository.getId());
                     post.setCreatedAt(new Date());
                     SCAMPIMessage message = scampiPostSerializer.messageFromPost(post);
                     scampiBinder.publish(message, topic.getTopicName());
-                } catch (MissingFieldsException | InterruptedException | DatabaseException e) {
+                } catch (MissingFieldsException | InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {
@@ -211,10 +213,8 @@ public class RealPostRepository implements PostRepository {
         vote(postId, -1);
     }
 
-    private boolean vote(long postId, long scoreInfluce) {
+    private void vote(long postId, long scoreInfluce) {
         executor.execute(new VoteRunner(postId, userRepository.getId(), scoreInfluce));
-        return true;
-
     }
 
     @Override
@@ -262,8 +262,11 @@ public class RealPostRepository implements PostRepository {
                 try {
                     synchronized (voteLock) {
                         Post post = postDao.getFinalPost(postId);
+                        if (post == null) {
+                            Log.d(TAG, "Tried to insert Vote, however the related Post was missing. This is probably an error in the app!");
+                            return;
+                        }
 
-                        if (post == null) return;
                         if (voteBuffer.contains(post.getUuid())) return;
                         if (voteDao.getUserVote(postId, userId) != null) return;
 
@@ -281,7 +284,7 @@ public class RealPostRepository implements PostRepository {
 
                         voteBuffer.add(post.getUuid());
                     }
-                } catch (MissingFieldsException | InterruptedException | DatabaseException e) {
+                } catch (MissingFieldsException | InterruptedException e) {
                     e.printStackTrace();
                 }
 
@@ -296,7 +299,6 @@ public class RealPostRepository implements PostRepository {
 
     @Override
     public void addPostExtension(PostExtension postExtension) {
-        if (postExtension.getPostId() == 0) throw new DatabaseException();
         executor.execute(new AddPostExtensionRunner(postExtension));
     }
 
@@ -306,7 +308,7 @@ public class RealPostRepository implements PostRepository {
     }
 
     @Override
-    public void insertPostExtension(PostExtension postExtension) {
+    public void insertPostExtension(PostExtension postExtension) throws DatabaseException {
         try {
             synchronized (insertLock) {
                 Post relatedPost = postDao.getFinalPostByUUID(postExtension.getPostUuid());
@@ -336,9 +338,11 @@ public class RealPostRepository implements PostRepository {
         public void run() {
             if (serviceBound) {
                 try {
-                    if (postExtension.getPostId() == 0) return;
                     Post relatedPost = postDao.getFinalPost(postExtension.getPostId());
-                    if (relatedPost == null) return;
+                    if (relatedPost == null) {
+                        Log.d(TAG, "Tried to insert PostExtension, however the related Post was missing. This is probably an error in the app!");
+                        return;
+                    }
 
                     Topic topic = topicRepository.getFinalTopic(relatedPost.getTopicId());
 
@@ -350,7 +354,7 @@ public class RealPostRepository implements PostRepository {
                     SCAMPIMessage scampiMessage = scampiPostExtensionSerializer.postExtensionToMessage(postExtension);
                     scampiBinder.publish(scampiMessage, topic.getTopicName());
 
-                } catch (MissingFieldsException | InterruptedException | DatabaseException e) {
+                } catch (MissingFieldsException | InterruptedException e) {
                     e.printStackTrace();
                 }
             } else {

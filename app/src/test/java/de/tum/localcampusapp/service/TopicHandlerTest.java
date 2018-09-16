@@ -26,7 +26,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TopicHandlerTest {
@@ -85,7 +84,7 @@ public class TopicHandlerTest {
     }
 
     @Test
-    public void receivedMessageWithUnknownMessage() throws MissingRelatedDataException {
+    public void receivedMessageWithUnknownMessage() throws MissingRelatedDataException, DatabaseException {
         TopicHandler topicHandler = new TopicHandler(mPostRepository, mScampiPostSerializer, mScampiVoteSerializer, mScampiPostExtensionSerializer);
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, "UNKNOWN");

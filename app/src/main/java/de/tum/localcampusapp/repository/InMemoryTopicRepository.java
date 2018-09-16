@@ -32,12 +32,12 @@ public class InMemoryTopicRepository implements TopicRepository {
     }
 
     @Override
-    public LiveData<List<Topic>> getTopics() throws DatabaseException {
+    public LiveData<List<Topic>> getTopics() {
         return topics;
     }
 
     @Override
-    public LiveData<Topic> getTopic(long id) throws DatabaseException {
+    public LiveData<Topic> getTopic(long id) {
         return Transformations.map(topics, topics -> {
             List<Topic> items = topics.stream().filter(p -> p.getId() == id).collect(Collectors.toList());
             if (items.size() == 1) {
@@ -48,7 +48,7 @@ public class InMemoryTopicRepository implements TopicRepository {
     }
 
     @Override
-    public LiveData<Topic> getTopicByName(String topicName) throws DatabaseException {
+    public LiveData<Topic> getTopicByName(String topicName) {
         return Transformations.map(topics, topics -> {
             List<Topic> items = topics.stream().filter(p -> p.getTopicName().equals(topicName)).collect(Collectors.toList());
             if (items.size() == 1) {
@@ -59,13 +59,13 @@ public class InMemoryTopicRepository implements TopicRepository {
     }
 
     @Override
-    public Topic getFinalTopicByName(String topicName) throws DatabaseException {
+    public Topic getFinalTopicByName(String topicName) {
         List<Topic> all_topics = new ArrayList<>(topics.getValue());
         return all_topics.stream().filter(p -> p.getTopicName().equals(topicName)).reduce(null, (concat, topic) -> topic);
     }
 
     @Override
-    public Topic getFinalTopic(long id) throws DatabaseException {
+    public Topic getFinalTopic(long id) {
         List<Topic> all_topics = new ArrayList<>(topics.getValue());
         return all_topics.stream().filter(p -> p.getId() == id).reduce(null, (concat, topic) -> topic);
     }

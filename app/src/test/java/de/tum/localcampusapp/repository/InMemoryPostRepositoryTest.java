@@ -49,7 +49,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void addPost_getId_hasDefaults() throws DatabaseException, InterruptedException {
+    public void addPost_getId_hasDefaults() throws InterruptedException {
         Topic topic = new Topic(1, "/tum");
         Date date = new Date();
 
@@ -85,7 +85,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void add_getByUUID() throws DatabaseException, InterruptedException {
+    public void add_getByUUID() throws InterruptedException {
         String uuid = UUID.randomUUID().toString();
 
         Post post1 = new Post(1, "Type", "Data");
@@ -98,7 +98,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void add_getFinalByUUID() throws DatabaseException, InterruptedException {
+    public void add_getFinalByUUID() {
 
         String uuid = UUID.randomUUID().toString();
         Post post1 = new Post(1, "Type", "Data");
@@ -110,7 +110,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void add_getPostsForTopics() throws DatabaseException, InterruptedException {
+    public void add_getPostsForTopics() throws InterruptedException {
 
         Topic topic1 = new Topic(3, "/t1");
         Topic topic2 = new Topic(4, "/t2");
@@ -128,7 +128,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void upVote() throws DatabaseException {
+    public void upVote() {
 
         String uuid = UUID.randomUUID().toString();
         Post post1 = new Post(1, "Type", "Data");
@@ -140,7 +140,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void upVoteLiveDataChangesOnlyOnce() throws DatabaseException, InterruptedException {
+    public void upVoteLiveDataChangesOnlyOnce() throws InterruptedException {
 
         String uuid = UUID.randomUUID().toString();
         Post post1 = new Post(1, "Type", "Data");
@@ -157,7 +157,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void testMediator() throws DatabaseException, InterruptedException {
+    public void testMediator() throws InterruptedException {
 
         Post post1 = new Post(1, "Type", "Data1");
         post1.setId(1);
@@ -177,7 +177,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void downVote() throws DatabaseException {
+    public void downVote() {
 
         String uuid = UUID.randomUUID().toString();
         Post post1= new Post(1, "Type", "Data1");
@@ -224,7 +224,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void addPostExtension_getPostExtensionsForPost() throws DatabaseException, InterruptedException, MissingRelatedDataException {
+    public void addPostExtension_getPostExtensionsForPost() throws InterruptedException {
 
         String postUUID = UUID.randomUUID().toString();
 

@@ -1,6 +1,5 @@
 package de.tum.localcampusapp.repository;
 
-import android.database.SQLException;
 import android.database.sqlite.SQLiteConstraintException;
 
 import org.junit.Before;
@@ -25,7 +24,7 @@ public class RealTopicRepositoryTest {
         sqLiteConstraintException = mock(SQLiteConstraintException.class);
     }
 
-    @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
+    @Test(expected = DatabaseException.class)
     public void insertWithDuplicateId() throws DatabaseException {
         RealTopicRepository realTopicRepository = new RealTopicRepository(mTopicDao);
         Topic topic2 = new Topic(1, "/tum/garching");

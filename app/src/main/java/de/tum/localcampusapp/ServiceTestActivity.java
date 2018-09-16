@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
 
@@ -26,30 +25,22 @@ public class ServiceTestActivity extends AppCompatActivity {
         RepositoryLocator.init(getApplicationContext());
 
         setContentView(R.layout.activity_servicetest);
-        try {
-            RepositoryLocator.getTopicRepository().getTopics().observe(this, topics -> {
-                TextView textView = findViewById(R.id.centered_text);
-                textView.setText(topics.stream().map(t -> t.getTopicName()).reduce("", (concat, topic) -> concat+topic+"\n"));
-            });
 
-            RepositoryLocator.getPostRepository().getPostsforTopic(1).observe(this, posts -> {
-                TextView textView = findViewById(R.id.posts);
-                Log.d(TAG, Integer.toString(posts.size()));
-                textView.setText(posts.stream().map(t -> t.getUuid()).reduce("", (concat, topic) -> concat+topic+"\n"));
-            });
+        RepositoryLocator.getTopicRepository().getTopics().observe(this, topics -> {
+            TextView textView = findViewById(R.id.centered_text);
+            textView.setText(topics.stream().map(t -> t.getTopicName()).reduce("", (concat, topic) -> concat+topic+"\n"));
+        });
 
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
+        RepositoryLocator.getPostRepository().getPostsforTopic(1).observe(this, posts -> {
+            TextView textView = findViewById(R.id.posts);
+            Log.d(TAG, Integer.toString(posts.size()));
+            textView.setText(posts.stream().map(t -> t.getUuid()).reduce("", (concat, topic) -> concat+topic+"\n"));
+        });
 
         Button button = findViewById(R.id.test_button);
         button.setOnClickListener((view)-> {
             Post testpost = new Post(1, "1", "DATA");
-            try {
                 RepositoryLocator.getPostRepository().addPost(testpost);
-            } catch (DatabaseException e) {
-                e.printStackTrace();
-            }
         });
     }
 }

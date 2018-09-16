@@ -2,7 +2,6 @@ package de.tum.localcampusapp.serializer;
 
 import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -19,7 +18,7 @@ public class ScampiPostSerializer {
     public static final String DATA_FIELD = "data";
     public static final String TOPIC_FIELD = "topic";
 
-    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, DatabaseException, WrongParserException {
+    public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, WrongParserException {
         if (!messageIsPost(scampiMessage)) throw new WrongParserException();
         if (messageIsMissingFields(scampiMessage)) throw new MissingFieldsException();
 

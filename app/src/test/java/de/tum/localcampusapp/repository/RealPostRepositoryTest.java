@@ -117,7 +117,7 @@ public class RealPostRepositoryTest {
     }
 
 
-    @Test(expected = de.tum.localcampusapp.exception.DatabaseException.class)
+    @Test(expected = DatabaseException.class)
     public void insertPostWithDuplicateId() throws DatabaseException, MissingRelatedDataException {
         Topic topic = new Topic(1, "/tum");
         Post post2 = new Post();
@@ -156,7 +156,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void addPost() throws DatabaseException, InterruptedException, MissingFieldsException {
+    public void addPost() throws InterruptedException, MissingFieldsException {
         Post post = new Post(
                 1,
                 "Type",
@@ -183,7 +183,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void addPostNoTopic() throws DatabaseException, InterruptedException, MissingFieldsException {
+    public void addPostNoTopic() throws InterruptedException {
         Post post = new Post(
                 1,
                 "Type",
@@ -191,7 +191,12 @@ public class RealPostRepositoryTest {
         );
         when(mTopicRepository.getFinalTopic(1)).thenReturn(null);
 
-        realPostRepository.addPost(post);
+        // Ignore Log.d not mocked error as mocking Log.d directly would require PowerMock / Robolectric
+        try {
+            realPostRepository.addPost(post);
+        } catch (RuntimeException e) {
+            if (!e.getMessage().contains("android.util.Log not mocked")) throw e;
+        }
 
         verify(mTopicRepository).getFinalTopic(1);
         verify(mScampiBinder, never()).publish(any(), any());
@@ -240,7 +245,7 @@ public class RealPostRepositoryTest {
 
 
     @Test
-    public void duplicateVoteDB() throws MissingFieldsException, InterruptedException {
+    public void duplicateVoteDB() throws InterruptedException {
         Post post = new Post(
                 1,
                 "1",
@@ -273,12 +278,12 @@ public class RealPostRepositoryTest {
         when(mScampiVoteSerializer.voteToMessage(any(Vote.class))).thenReturn(scampiMessage);
 
         realPostRepository.upVote(1);
-        realPostRepository.upVote(2);
+        realPostRepository.upVote(1);
         verify(mScampiBinder, times(1)).publish(any(), eq("/tum"));
     }
 
     @Test
-    public void insertVoteWithoutExistingPost() {
+    public void insertVoteWithoutExistingPost() throws DatabaseException {
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
@@ -288,12 +293,13 @@ public class RealPostRepositoryTest {
         when(mPostDao.getFinalPostByUUID("UUID2")).thenReturn(null);
 
         realPostRepository.insertVote(vote);
+
         assertEquals(0L, vote.getPostId());
         verify(mVoteDao).insert(vote);
     }
 
     @Test
-    public void insertVoteWithExistingPost() {
+    public void insertVoteWithExistingPost() throws DatabaseException {
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
@@ -312,7 +318,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void insertExistingUserVote() {
+    public void insertExistingUserVote() throws DatabaseException {
 
         Vote vote = new Vote();
         vote.setUuid("UUID");
@@ -329,7 +335,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void updatesVotesOnPostInsert() throws MissingRelatedDataException {
+    public void updatesVotesOnPostInsert() throws MissingRelatedDataException, DatabaseException {
         Topic topic = new Topic(1, "/foo");
 
         Vote vote = mock(Vote.class);
@@ -370,6 +376,7 @@ public class RealPostRepositoryTest {
         when(mTopicRepository.getFinalTopic(1)).thenReturn(topic);
         when(mScampiPostExtensionSerializer.postExtensionToMessage(any(PostExtension.class))).thenReturn(scampiMessage);
 
+
         realPostRepository.addPostExtension(testPostExtension);
 
         verify(mPostDao).getFinalPost(1);
@@ -391,7 +398,12 @@ public class RealPostRepositoryTest {
 
         when(mPostDao.getFinalPost(1)).thenReturn(null);
 
-        realPostRepository.addPostExtension(testPostExtension);
+        // Ignore Log.d not mocked error as mocking Log.d directly would require PowerMock / Robolectric
+        try {
+            realPostRepository.addPostExtension(testPostExtension);
+        } catch (RuntimeException e) {
+            if (!e.getMessage().contains("android.util.Log not mocked")) throw e;
+        }
 
         verify(mPostDao).getFinalPost(1);
         verify(mTopicRepository, never()).getFinalTopic(1);
@@ -401,7 +413,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void insertPostExtensionRelatedPost() {
+    public void insertPostExtensionRelatedPost() throws DatabaseException {
 
         Post post = new Post();
         post.setId(1);
@@ -424,7 +436,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void insertPostExtensionNoRelatedPost() {
+    public void insertPostExtensionNoRelatedPost() throws DatabaseException {
 
         Date date = new Date();
 
@@ -444,7 +456,7 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void insertDuplicatePostExtensionIgnored() {
+    public void insertDuplicatePostExtensionIgnored() throws DatabaseException {
 
         Date date = new Date();
 

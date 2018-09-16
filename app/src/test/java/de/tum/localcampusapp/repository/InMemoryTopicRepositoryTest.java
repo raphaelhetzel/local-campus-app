@@ -57,7 +57,7 @@ public class InMemoryTopicRepositoryTest {
     }
 
     @Test
-    public void insert_getFinalByName() throws DatabaseException, InterruptedException {
+    public void insert_getFinalByName() throws DatabaseException {
         Topic topic = new Topic(1, "/tum");
         Topic topic2 = new Topic(2, "/tum/garching");
         repository.insertTopic(topic);
@@ -67,7 +67,7 @@ public class InMemoryTopicRepositoryTest {
     }
 
     @Test
-    public void insert_getFinal() throws DatabaseException, InterruptedException {
+    public void insert_getFinal() throws DatabaseException {
         Topic topic = new Topic(1, "/tum");
         Topic topic2 = new Topic(2, "/tum/garching");
         repository.insertTopic(topic);

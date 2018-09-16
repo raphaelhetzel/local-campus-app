@@ -27,25 +27,28 @@ public interface PostRepository {
 
     /// Post
 
-    LiveData<Post> getPost(long id) throws DatabaseException;
+    LiveData<Post> getPost(long id);
 
     // could be removed
-    LiveData<Post> getPostByUUID(String uuid) throws DatabaseException;
+    LiveData<Post> getPostByUUID(String uuid);
 
     // could be removed by preventing duplicated in the insert method
-    Post getFinalPostByUUID(String uuid) throws DatabaseException;
+    Post getFinalPostByUUID(String uuid);
 
-    void addPost(Post post) throws DatabaseException;
+    //Won't raise on missing related data as it will most likely run in the background
+    void addPost(Post post);
 
-    LiveData<List<Post>> getPostsforTopic(long topicId) throws DatabaseException;
+    LiveData<List<Post>> getPostsforTopic(long topicId);
 
     void insertPost(Post post) throws DatabaseException, MissingRelatedDataException;
 
 
     /// Vote
 
+    //Won't raise on missing related data as it will most likely run in the background
     void upVote(long postId);
 
+    //Won't raise on missing related data as it will most likely run in the background
     void downVote(long postId);
 
     void insertVote(Vote vote) throws DatabaseException;
@@ -53,9 +56,10 @@ public interface PostRepository {
 
     /// PostExtension
 
+    //Won't raise on missing related data as it will most likely run in the background
     void addPostExtension(PostExtension postExtension);
 
     LiveData<List<PostExtension>> getPostExtensionsForPost(long postId);
 
-    void insertPostExtension(PostExtension postExtension);
+    void insertPostExtension(PostExtension postExtension) throws DatabaseException;
 }

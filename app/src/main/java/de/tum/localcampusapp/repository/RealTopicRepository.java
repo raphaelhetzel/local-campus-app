@@ -17,33 +17,32 @@ public class RealTopicRepository implements TopicRepository {
     }
 
     @Override
-    public LiveData<List<Topic>> getTopics() throws DatabaseException {
+    public LiveData<List<Topic>> getTopics() {
         return topicDao.getTopics();
     }
 
     @Override
-    public LiveData<Topic> getTopic(long id) throws DatabaseException {
+    public LiveData<Topic> getTopic(long id) {
         return topicDao.getTopic(id);
     }
 
     @Override
-    public LiveData<Topic> getTopicByName(String topicName) throws DatabaseException {
+    public LiveData<Topic> getTopicByName(String topicName) {
         return topicDao.getByName(topicName);
     }
 
     @Override
-    public Topic getFinalTopicByName(String topicName) throws DatabaseException {
+    public Topic getFinalTopicByName(String topicName) {
         return topicDao.getFinalByName(topicName);
     }
 
     @Override
-    public Topic getFinalTopic(long id) throws DatabaseException {
+    public Topic getFinalTopic(long id) {
         return topicDao.getFinalTopic(id);
     }
 
     /*
-        TODO: make it clear in the name that this method can handle existing topics
-        in a future version we might need duplicates to remove topics if a router
+        TODO: in a future version we might need duplicates to remove topics if a router
         gets out of range (we will then need a device id in the entity)
      */
     @Override

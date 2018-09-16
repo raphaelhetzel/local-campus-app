@@ -9,9 +9,7 @@ import java.util.Date;
 import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.Vote;
-import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
-import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
@@ -29,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 public class ScampiVoteSerializerTest {
 
     @Test
-    public void messageToVote() throws DatabaseException, WrongParserException, MissingFieldsException {
+    public void messageToVote() throws WrongParserException, MissingFieldsException {
         ScampiVoteSerializer scampiVoteSerializer = new ScampiVoteSerializer();
         Date date = new Date();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
@@ -73,7 +71,7 @@ public class ScampiVoteSerializerTest {
     }
 
     @Test(expected = WrongParserException.class)
-    public void wrongParser() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
+    public void wrongParser() throws WrongParserException, MissingFieldsException {
         ScampiVoteSerializer scampiVoteSerializer = new ScampiVoteSerializer();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_POST);
@@ -82,7 +80,7 @@ public class ScampiVoteSerializerTest {
     }
 
     @Test(expected = MissingFieldsException.class)
-    public void missingFieldsFromMessage() throws DatabaseException, MissingRelatedDataException, WrongParserException, MissingFieldsException {
+    public void missingFieldsFromMessage() throws WrongParserException, MissingFieldsException {
         ScampiVoteSerializer scampiVoteDeSerializer = new ScampiVoteSerializer();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().build();
         scampiMessage.putString(MESSAGE_TYPE_FIELD, MESSAGE_TYPE_VOTE);

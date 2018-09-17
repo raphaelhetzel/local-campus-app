@@ -48,14 +48,14 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         holder.itemView.setOnLongClickListener((View v) -> {
             //FakeDataGenerator.getInstance().insertNewTopic("Fake elements name");
             return true;
-                });
+        });
 
         holder.parentLayout.setOnClickListener((View v) -> {
-                selectedTopicId = topic.getId();
-                Intent intent = new Intent(context, PostsActivity.class);
-                intent.putExtra("topicId", String.valueOf(selectedTopicId));
-                Log.d(TAG, "topic_id clicked: "+String.valueOf(selectedTopicId));
-                context.startActivity(intent);
+            selectedTopicId = topic.getId();
+            Intent intent = new Intent(context, PostsActivity.class);
+            intent.putExtra("topicId", String.valueOf(selectedTopicId));
+            Log.d(TAG, "topic_id clicked: "+String.valueOf(selectedTopicId));
+            context.startActivity(intent);
         });
 
     }
@@ -69,6 +69,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         this.topicList = topics;
         notifyDataSetChanged();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

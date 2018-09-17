@@ -40,7 +40,7 @@ public class TopicsActivity extends AppCompatActivity {
 //        RepositoryLocator.initInMemory(getApplicationContext());
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
 //        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
-
+//        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
         try {
             viewModel = new TopicsViewModel(getApplicationContext());
         } catch (DatabaseException e) {
@@ -59,6 +59,7 @@ public class TopicsActivity extends AppCompatActivity {
                 mTopicsViewAdapter.setItems(topics);
             }
         });
+
 
     }
 

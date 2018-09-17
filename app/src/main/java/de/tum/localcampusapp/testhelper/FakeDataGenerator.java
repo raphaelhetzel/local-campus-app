@@ -1,13 +1,18 @@
 package de.tum.localcampusapp.testhelper;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.generator.JSONParser;
+import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.TopicRepository;
@@ -110,9 +115,9 @@ public class FakeDataGenerator {
         }
     }
 
-    public void createSeveralFakePosts(int count, long id) throws DatabaseException {
+    public void createSeveralFakePosts(int count, long id, Context context) throws DatabaseException {
         for(int i=0; i<count; i++){
-            createNewFakePost(id);
+            createNewFakePost(id, context);
         }
     }
 
@@ -122,7 +127,7 @@ public class FakeDataGenerator {
         postRepository.addPostExtension(new PostExtension(postId, "Sample Comment - PostId: "+postId+", CommentId: "));
     }
 
-    public void createNewFakePost(long id) throws DatabaseException {
+    public void createNewFakePost(long id, Context context) throws DatabaseException {
         long currPostId = getPostId();
         Post post = new Post(id,"1", "sample Post - postId: "+ currPostId);
         postRepository.addPost(post);

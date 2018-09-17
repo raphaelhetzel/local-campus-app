@@ -38,5 +38,11 @@ public class ColorGenerator {
         return postsColor.get(postId);
     }
 
+    public int getColor(Context context){
+        int[] appColors = context.getResources().getIntArray(R.array.CampusAppColors);
+        int randomColor = appColors[new Random().nextInt(appColors.length)];
+        return randomColor;
+    }
+
 
 }

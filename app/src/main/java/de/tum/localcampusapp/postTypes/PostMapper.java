@@ -30,7 +30,6 @@ public class PostMapper {
 
     public PostMapper(Post post){
         this.post = post;
-     //   setInternalRating(post.getScore());
     }
 
     public String getDate(){
@@ -88,6 +87,5 @@ public class PostMapper {
         this.internalRating = post.getScore() - downSet * ((float) diffDays);
         return internalRating;
     }
-
 
 }

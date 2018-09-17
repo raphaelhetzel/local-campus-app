@@ -1,5 +1,6 @@
 package de.tum.localcampusapp.Activities;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +28,9 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.generator.DateTransformer;
+import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.Comment;
+import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostCommentActivity extends AppCompatActivity {
@@ -45,9 +50,7 @@ public class PostCommentActivity extends AppCompatActivity {
     private ImageView dislike;
     private TextView numLikes;
 
-    private Post post;
-
-    private ColorGenerator colorGenerator = ColorGenerator.getInstance();
+    private PostMapper postMapper;
 
 
     @Override
@@ -61,7 +64,7 @@ public class PostCommentActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
-        Log.d(TAG, "post_id received: "+ String.valueOf(postId));
+        Log.d(TAG, "post_id received: " + String.valueOf(postId));
 
 
         try {
@@ -70,43 +73,60 @@ public class PostCommentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        mCommentsViewAdapter = new PostCommentViewAdapter(new ArrayList<Comment>(), this);
+        mCommentsViewAdapter = new PostCommentViewAdapter(new ArrayList<>());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_comments);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mCommentsViewAdapter);
 
-        viewModel.getLiveDataPost().observe(PostCommentActivity.this, new Observer<Post>() {
+        viewModel.getLiveDataPost().observe(PostCommentActivity.this, new Observer<PostMapper>() {
             @Override
-            public void onChanged(@Nullable Post post) {
-                updatePostVariables(post);
+            public void onChanged(PostMapper postMapper) {
+                try {
+                    mCommentsViewAdapter.setBackColor(postMapper.getColor());
+                    updatePostVariables(postMapper);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
-
-        viewModel.getLiveDataComments().observe(PostCommentActivity.this, new Observer<List<Comment>>() {
+        viewModel.getLiveDataComments().observe(PostCommentActivity.this,  new Observer<List<Comment>>() {
             @Override
             public void onChanged(@Nullable List<Comment> comments) {
                 mCommentsViewAdapter.setItems(comments);
             }
         });
 
+
+    }
+
+    private void updatePostVariables(PostMapper postMapper) {
+        postDate.setText(postMapper.getDate());
+
+        try {
+            int color = postMapper.getColor();
+            rootLayout.setBackgroundColor(color);
+            postParentLayout.setBackgroundColor(color);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        postType.setText(postMapper.getType());
+        numLikes.setText(postMapper.getLikesString());
+
+        try {
+            postText.setText(postMapper.getTextComment());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private void setPostVariables(){
+    private void setPostVariables () {
 
         rootLayout = findViewById(R.id.posts_comment_layout);
-
         postParentLayout = findViewById(R.id.posts_template_layout);
-
-        /*
-        // Find the root view
-        View root = postParentLayout.getRootView();
-
-        // Set the color
-        root.setBackgroundColor(getResources().getColor(android.R.color.black));
-        */
 
         postDate = findViewById(R.id.post_date);
         postType = findViewById(R.id.post_type);
@@ -143,28 +163,16 @@ public class PostCommentActivity extends AppCompatActivity {
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RepositoryLocator.getPostRepository().upVote(post.getId());
+                RepositoryLocator.getPostRepository().upVote(viewModel.getPostId());
             }
         });
 
         dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RepositoryLocator.getPostRepository().upVote(post.getId());
+                RepositoryLocator.getPostRepository().upVote(viewModel.getPostId());
             }
         });
 
     }
-
-    private void updatePostVariables(Post post){
-        this.post = post;
-        int color = colorGenerator.getColor(post.getId());
-        rootLayout.setBackgroundColor(color);
-        postParentLayout.setBackgroundColor(color);
-        postDate.setText(DateTransformer.getTimeDate(post.getCreatedAt()));
-        postType.setText(String.valueOf(post.getTypeId()));
-        postText.setText(post.getData());
-        numLikes.setText(String.valueOf(post.getScore()));
-    }
-
 }

@@ -1,10 +1,8 @@
 package de.tum.localcampusapp.Activities;
 
-import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,11 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.tum.localcampusapp.R;
-import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
 
 public class PostsActivity extends AppCompatActivity{
@@ -27,7 +21,9 @@ public class PostsActivity extends AppCompatActivity{
 
         private RecyclerView mRecyclerView;
         private PostsViewModel viewModel;
-        private PostsViewAdapter mPostsViewAdapter;
+        private PostsAdapterModel adapterModel;
+
+        private PostsAdapter mPostsViewAdapter;
 
 
         @Override
@@ -43,26 +39,20 @@ public class PostsActivity extends AppCompatActivity{
 
             try {
                 viewModel = new PostsViewModel(topicId, getApplicationContext());
+                adapterModel = new PostsAdapterModel(topicId, getApplicationContext());
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
 
-            mPostsViewAdapter = new PostsViewAdapter(new ArrayList<Post>(),this);
+
+            mPostsViewAdapter = new PostsAdapter(adapterModel, getApplicationContext(), PostsActivity.this);
 
             mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerView.setAdapter(mPostsViewAdapter);
 
 
-            viewModel.getLiveDataPosts().observe(PostsActivity.this, new Observer<List<Post>>() {
-                @Override
-                public void onChanged(@Nullable List<Post> posts) {
-                    mPostsViewAdapter.setItems(posts);
-                }
-            });
-
             FloatingActionButton fab = findViewById(R.id.fab);
-
 
             fab.setOnClickListener((View v) -> {
                 final EditText editText = new EditText(PostsActivity.this);
@@ -75,7 +65,7 @@ public class PostsActivity extends AppCompatActivity{
                             public void onClick(DialogInterface dialog, int which) {
                                 String textData = String.valueOf(editText.getText());
                                 try {
-                                    viewModel.addPost(textData);
+                                    viewModel.addPost(textData, getApplicationContext());
                                 } catch (DatabaseException e) {
                                     e.printStackTrace();
                                 }

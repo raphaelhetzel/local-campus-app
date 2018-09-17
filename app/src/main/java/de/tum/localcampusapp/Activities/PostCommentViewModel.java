@@ -7,31 +7,24 @@ import android.content.Context;
 
 import org.json.JSONException;
 
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.generator.JSONParser;
-import de.tum.localcampusapp.postTypes.CommentLocater;
 import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.postTypes.PostMapperHelper;
-import de.tum.localcampusapp.repository.InMemoryPostRepository;
 import de.tum.localcampusapp.postTypes.Comment;
-import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class PostCommentViewModel extends ViewModel {
 
     private LiveData<List<Comment>> liveDataComments;
-    private LiveData<PostMapper> livePost;
+    private LiveData<PostMapper> livePostMapper;
     private long postId;
-    CommentHelper commentHelper;
     PostMapperHelper postMapperHelper;
     private PostRepository postRepository;
 
@@ -41,7 +34,6 @@ public class PostCommentViewModel extends ViewModel {
         this.postId = postId;
         this.postRepository = RepositoryLocator.getPostRepository();
 
-        commentHelper = CommentLocater.getInstance().getCommentHelper();
         liveDataComments = Transformations.map(postRepository.getPostExtensionsForPost(postId), postExtensions -> {
             return postExtensions.stream().map(postExtension -> {
                 return new Comment(postId,
@@ -51,24 +43,19 @@ public class PostCommentViewModel extends ViewModel {
             }).collect(Collectors.toList());
         });
 
-
         postMapperHelper = new PostMapperHelper(postId, true);
-        livePost = postMapperHelper.tranformPost();
+        livePostMapper = postMapperHelper.tranformPost();
 
-
-        //TODO: delete after DB is up
         //FakeDataGenerator.getInstance().createSeveralFakeComments(3, commentHelper, postId, 1);
     }
 
     public void addComment(String commentData) throws DatabaseException {
-
             String jsonText = JSONParser.makeJsonCommentOutput(commentData);
-
             postRepository.addPostExtension(new PostExtension(getPostId(), jsonText));
     }
 
     public LiveData<PostMapper> getLiveDataPost() {
-        return livePost;
+        return livePostMapper;
     }
 
     public LiveData<List<Comment>> getLiveDataComments(){
@@ -82,6 +69,14 @@ public class PostCommentViewModel extends ViewModel {
 
     public long getPostId(){
         return postId;
+    }
+
+    public void upVote(){
+        postRepository.upVote(postId);
+    }
+
+    public void downVote(){
+        postRepository.downVote(postId);
     }
 
 }

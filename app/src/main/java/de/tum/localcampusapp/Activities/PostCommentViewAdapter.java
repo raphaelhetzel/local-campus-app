@@ -1,9 +1,5 @@
 package de.tum.localcampusapp.Activities;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
-import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +12,6 @@ import org.json.JSONException;
 import java.util.List;
 
 import de.tum.localcampusapp.R;
-import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.generator.DateTransformer;
 import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.Comment;
@@ -26,7 +21,6 @@ public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentView
     private static final String TAG = PostCommentViewAdapter.class.getSimpleName();
 
     private List<Comment> commentsList;
-    private LifecycleOwner lifecycleOwner;
     private int color;
 
 

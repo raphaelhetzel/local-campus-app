@@ -28,14 +28,12 @@ public class PostsViewModel extends ViewModel {
     public PostsViewModel(long topicId, Context context) throws DatabaseException{
         this.topicId = topicId;
 
-        //TODO: delete after DB is up
-//        FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId, context);
+        //FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId, context);
 
         postRepository = RepositoryLocator.getPostRepository();
         liveDataPosts = postRepository.getPostsforTopic(topicId);
         postMapperHelper = new PostMapperHelper(postRepository.getPostsforTopic(topicId));
         liveDataMapped = postMapperHelper.transformPosts();
-
     }
 
     public void addPost(String dataText, Context context) throws DatabaseException {

@@ -114,7 +114,7 @@ public class FakeDataGenerator {
 
     public void createSeveralFakeComments(int count, CommentHelper commentHelper, long postId, long commentId){
         for(int i=0; i<count; i++){
-            createNewFakeComment(commentHelper, postId, commentId++);
+            createNewFakeComment(postId, commentId++);
         }
     }
 
@@ -125,7 +125,7 @@ public class FakeDataGenerator {
     }
 
 
-    public void createNewFakeComment(CommentHelper commentHelper, long postId, long commentId) {
+    public void createNewFakeComment(long postId, long commentId) {
         // Comment Helper needs to be deleted as it serves no purpose
         postRepository.addPostExtension(new PostExtension(postId, "Sample Comment - PostId: "+postId+", CommentId: "));
     }

@@ -64,8 +64,6 @@ public class PostCommentActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
-        Log.d(TAG, "post_id received: " + String.valueOf(postId));
-
 
         try {
             viewModel = new PostCommentViewModel(postId, getApplicationContext());
@@ -163,14 +161,14 @@ public class PostCommentActivity extends AppCompatActivity {
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RepositoryLocator.getPostRepository().upVote(viewModel.getPostId());
+                viewModel.upVote();
             }
         });
 
         dislike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RepositoryLocator.getPostRepository().upVote(viewModel.getPostId());
+                viewModel.downVote();
             }
         });
 

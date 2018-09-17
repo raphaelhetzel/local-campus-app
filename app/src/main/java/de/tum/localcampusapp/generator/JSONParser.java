@@ -22,7 +22,7 @@ public class JSONParser{
     }
 
     public static String makeJsonPostOutput(String textInput, Context context) {
-        int color = ColorGenerator.getInstance().getColor(context);
+        int color = ColorGenerator.getColor(context);
 
         JSONObject jsonObj = new JSONObject();
         try {

@@ -54,7 +54,6 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
             selectedTopicId = topic.getId();
             Intent intent = new Intent(context, PostsActivity.class);
             intent.putExtra("topicId", String.valueOf(selectedTopicId));
-            Log.d(TAG, "topic_id clicked: "+String.valueOf(selectedTopicId));
             context.startActivity(intent);
         });
 

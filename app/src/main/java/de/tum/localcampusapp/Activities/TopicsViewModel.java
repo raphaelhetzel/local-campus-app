@@ -26,9 +26,7 @@ public class TopicsViewModel extends ViewModel{
     TopicRepository topicRepository;
 
     public TopicsViewModel(Context applicationContext) throws DatabaseException{
-
-        //TODO: Replace fakeData with Database
-       // FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);
+        // FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);
 
         topicRepository = RepositoryLocator.getTopicRepository();
         liveDataTopics = topicRepository.getTopics();

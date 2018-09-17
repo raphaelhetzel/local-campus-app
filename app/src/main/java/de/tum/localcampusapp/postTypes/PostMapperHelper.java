@@ -58,18 +58,20 @@ public class PostMapperHelper {
 
 
     public LiveData<List<PostMapper>> transformPosts(){
-        List<PostMapper> postMappers= new ArrayList<>();
         ArrayList<Long> ids = new ArrayList<>();
         return Transformations.map(listPosts, (List<Post> listPosts) -> {
-            Log.d("ListPosts: ", Integer.toString(listPosts.size())+ " postMappersLisT: "+postMappers.size());
-
+//            Log.d("ListPosts: ", Integer.toString(listPosts.size())+ " postMappersLisT: "+postMappers.size());
+            List<PostMapper> postMappers= new ArrayList<>();
             for (Post post : listPosts) {
-                PostMapper pp = new PostMapper(post);
-                if(!ids.contains(pp.getId())){
-                    postMappers.add(pp);
-                    ids.add(post.getId());
-                }
+                postMappers.add(new PostMapper(post));
             }
+//            for (Post post : listPosts) {
+//                PostMapper pp = new PostMapper(post);
+//                if(!ids.contains(pp.getId())){
+//                    postMappers.add(pp);
+//                    ids.add(post.getId());
+//                }
+//            }
             return comparison(postMappers);
         });
 

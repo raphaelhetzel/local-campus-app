@@ -33,28 +33,38 @@ public class PostCommentViewModel extends ViewModel {
     private long postId;
     CommentHelper commentHelper;
     PostMapperHelper postMapperHelper;
+    private PostRepository postRepository;
 
 
     public PostCommentViewModel(long postId, Context context) throws DatabaseException{
 
         this.postId = postId;
+        this.postRepository = RepositoryLocator.getPostRepository();
 
         commentHelper = CommentLocater.getInstance().getCommentHelper();
-        liveDataComments = commentHelper.getCommentsforPost(postId);
+        liveDataComments = Transformations.map(postRepository.getPostExtensionsForPost(postId), postExtensions -> {
+            return postExtensions.stream().map(postExtension -> {
+                return new Comment(postId,
+                        1,
+                        postExtension.getData(),
+                        postExtension.getCreatedAt());
+            }).collect(Collectors.toList());
+        });
+
 
         postMapperHelper = new PostMapperHelper(postId, true);
         livePost = postMapperHelper.tranformPost();
 
+
         //TODO: delete after DB is up
-        FakeDataGenerator.getInstance().createSeveralFakeComments(3, commentHelper, postId, 1);
+        //FakeDataGenerator.getInstance().createSeveralFakeComments(3, commentHelper, postId, 1);
     }
 
     public void addComment(String commentData) throws DatabaseException {
-            long commentId = FakeDataGenerator.getInstance().getCommentId();
 
             String jsonText = JSONParser.makeJsonCommentOutput(commentData);
 
-            commentHelper.insertComment(new Comment(postId, commentId, jsonText, new Date()));
+            postRepository.addPostExtension(new PostExtension(getPostId(), jsonText));
     }
 
     public LiveData<PostMapper> getLiveDataPost() {

@@ -15,6 +15,7 @@ import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
 
 public class FakeDataGenerator {
@@ -34,6 +35,8 @@ public class FakeDataGenerator {
     private static FakeDataGenerator instance = new FakeDataGenerator();
 
     private FakeDataGenerator() {
+        this.topicRepository = RepositoryLocator.getTopicRepository();
+        this.postRepository = RepositoryLocator.getPostRepository();
     }
 
     public static FakeDataGenerator getInstance(){

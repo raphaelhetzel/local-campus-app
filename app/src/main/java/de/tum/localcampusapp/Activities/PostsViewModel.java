@@ -14,6 +14,7 @@ import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.postTypes.PostMapperHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
+import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class PostsViewModel extends ViewModel {
 
@@ -28,7 +29,7 @@ public class PostsViewModel extends ViewModel {
         this.topicId = topicId;
 
         //TODO: delete after DB is up
-        //FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId, context);
+//        FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId, context);
 
         postRepository = RepositoryLocator.getPostRepository();
         liveDataPosts = postRepository.getPostsforTopic(topicId);

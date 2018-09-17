@@ -108,7 +108,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
         holder.like.setOnClickListener((View v) -> {
             RepositoryLocator.getPostRepository().upVote(postMapper.getId());
-            Log.d("touchedLikes: ", Long.toString(postMapper.getLikes()) + " scoreInternal: "+postMapper.getInternalRating());
         });
 
         holder.dislike.setOnClickListener((View v) -> {
@@ -119,6 +118,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
+        if(postsList == null) return 0;
         return postsList.size();
     }
 

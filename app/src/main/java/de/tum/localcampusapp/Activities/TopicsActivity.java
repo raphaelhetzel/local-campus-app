@@ -17,6 +17,7 @@ import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
+import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 
 public class TopicsActivity extends AppCompatActivity {

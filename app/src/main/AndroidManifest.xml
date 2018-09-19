@@ -14,12 +14,20 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".Activities.TopicsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".Activities.PostsActivity"
             android:label="@string/app_name" />
+
+        <activity
+            android:name=".Activities.ShowPostActivity"
+            android:label="LocalCampusApp" />
 
         <activity
             android:name=".Activities.PostCommentActivity"
@@ -28,11 +36,6 @@
         <activity
             android:name=".TestHostActivity"
             android:label="LocalCampusApp">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service

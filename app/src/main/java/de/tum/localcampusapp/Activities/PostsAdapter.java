@@ -100,7 +100,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
             int clickedPosition = holder.getAdapterPosition();
             selectedPostId = postsList.get(clickedPosition).getId();
-            Intent intent = new Intent(context, PostCommentActivity.class);
+            Intent intent = new Intent(context, ShowPostActivity.class);
             intent.putExtra("selectedPostId", String.valueOf(selectedPostId));
             context.startActivity(intent);
         });

@@ -15,6 +15,7 @@ import java.util.List;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
+import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
 import de.tum.localcampusapp.testhelper.FakeDataGenerator;
@@ -37,6 +38,7 @@ public class TopicsActivity extends AppCompatActivity {
         //Real Data
         super.startService(new Intent(this, AppLibService.class));
         RepositoryLocator.init(getApplicationContext());
+        ExtensionLoader.init(this.getApplicationContext());
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());

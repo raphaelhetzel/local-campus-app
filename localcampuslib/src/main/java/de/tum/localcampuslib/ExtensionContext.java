@@ -21,7 +21,7 @@ public class ExtensionContext extends ContextWrapper {
             Constructor<AssetManager> assetManagerConstructor = AssetManager.class.getConstructor();
             assetManager = assetManagerConstructor.newInstance();
             Method addAssetPath = assetManager.getClass().getMethod("addAssetPath", String.class);
-            addAssetPath.invoke(assetManager, "/data/local/tmp/testjars/load.apk");
+            addAssetPath.invoke(assetManager, apkPath);
             Resources superRes = super.getResources();
             Resources childResources = new Resources(assetManager, superRes.getDisplayMetrics(), superRes.getConfiguration());
             this.resources = childResources;

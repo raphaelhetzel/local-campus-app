@@ -8,11 +8,11 @@ import android.arch.persistence.room.PrimaryKey;
 import java.util.Date;
 import java.util.Objects;
 
-import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
+import de.tum.localcampuslib.entity.IPostExtension;
 
 @Entity(tableName = "post_extensions",
         indices = {@Index(value = "uuid", unique = true), @Index(value = "post_uuid")})
-public class PostExtension {
+public class PostExtension implements IPostExtension {
     @PrimaryKey(autoGenerate = true)
     private long id;
 

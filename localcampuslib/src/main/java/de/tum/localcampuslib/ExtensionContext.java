@@ -1,4 +1,4 @@
-package de.tum.testlibrary;
+package de.tum.localcampuslib;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -47,10 +47,5 @@ public class ExtensionContext extends ContextWrapper {
 
         Log.d("RAH","called assets");
         return this.assetManager;
-    }
-
-    @Override
-    public String getPackageName() {
-        return "de.tum.testextension";
     }
 }

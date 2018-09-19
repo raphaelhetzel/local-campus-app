@@ -1,29 +1,31 @@
 package de.tum.localcampusapp;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import dalvik.system.DexClassLoader;
-import de.tum.localcampusapp.entity.Post;
+import de.tum.localcampusapp.extensioninterface.RealAddPostDataProvider;
+import de.tum.localcampusapp.extensioninterface.RealShowPostDataProvider;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
-import de.tum.testlibrary.BaseFragment;
+import de.tum.localcampuslib.AddPostDataProvider;
+import de.tum.localcampuslib.AddPostFragment;
+import de.tum.localcampuslib.AddPostHostActivity;
+import de.tum.localcampuslib.BaseFragment;
+import de.tum.localcampuslib.ExtensionContext;
+import de.tum.localcampuslib.ShowPostFragment;
+import de.tum.localcampuslib.ShowPostHostActivity;
+import de.tum.localcampuslib.ShowPostDataProvider;
 
-public class ServiceTestActivity extends AppCompatActivity {
+public class TestHostActivity extends AddPostHostActivity {
 
-    static final String TAG = ServiceTestActivity.class.getSimpleName();
+    static final String TAG = TestHostActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,31 +111,56 @@ public class ServiceTestActivity extends AppCompatActivity {
                         + "com.registry.Registry");
 
                 Class<?> classToLoad = (Class<?>) classloader
-                        .loadClass("de.tum.testextension.Registry");
+                        .loadClass("de.tum.localcampusextension.Registry");
 
-                Field classesField = classToLoad.getDeclaredField("_classes");
+                //Field showPostFragmentClassField = classToLoad.getDeclaredField("showPostFragmentClass");
 
-                ArrayList<Class<?>> classes = (ArrayList<Class<?>>) classesField.get(null);
+                //Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) showPostFragmentClassField.get(null);
 
-                for(Class<?> cls : classes) {
-                    Log.v("loadDexClasses", "Class loaded " + cls.getName());
+                //Object instance = showPostFragmentClass.newInstance();
 
-                    if (cls.getName().contains("TestFragment")) {
-                        Log.v("loadDexClasses", "return instance");
 
-                        Method createInstance = cls.getMethod("createInstance", String.class);
-                        Object instance = createInstance.invoke(null, "Foo");
-                        return (BaseFragment) instance;
-                    }
-                }
+                Field addPostFragmentClassField = classToLoad.getDeclaredField("addPostFragmentClass");
+
+                Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) addPostFragmentClassField.get(null);
+
+                Object instance = addPostFragmentClass.newInstance();
+                return (BaseFragment) instance;
+
             }
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException e) {
             e.printStackTrace();
         }
         return null;
     }
+
+    @Override
+    public AddPostDataProvider getAddPostDataProvider() {
+        return new RealAddPostDataProvider(1, "ee5afd62-6e72-4728-8404-e91d7ea2c303");
+    }
+
+    @Override
+    public Context getFragmentContext() {
+        return new ExtensionContext(this, "/data/local/tmp/testjars/load.apk");
+    }
+
+    @Override
+    public void finishActivity() {
+        //finish();
+        Log.d("RAH", "activity should die");
+    }
+
+//    @Override
+//    public ShowPostDataProvider getDataProvider() {
+//        return new RealShowPostDataProvider(1);
+//    }
+//
+//    @Override
+//    public Context getFragmentContext() {
+//        return new ExtensionContext(this, "/data/local/tmp/testjars/load.apk");
+//    }
+
+
 }

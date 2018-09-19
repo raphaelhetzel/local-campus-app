@@ -9,12 +9,14 @@ import android.arch.persistence.room.PrimaryKey;
 import java.util.Date;
 import java.util.Objects;
 
+import de.tum.localcampuslib.entity.IPost;
+
 @Entity(tableName = "posts", foreignKeys = @ForeignKey(entity = Topic.class,
         parentColumns = "id",
         childColumns = "topic_id",
         onDelete = ForeignKey.CASCADE,
         onUpdate = ForeignKey.NO_ACTION), indices = {@Index(value = "uuid", unique = true)})
-public class Post {
+public class Post implements IPost {
 
     @PrimaryKey(autoGenerate = true)
     private long id;

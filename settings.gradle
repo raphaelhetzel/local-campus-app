@@ -1,1 +1,1 @@
-include ':app', ':localfragmentlib', ':testextension'
+include ':app', ':localcampuslib', ':testextension'

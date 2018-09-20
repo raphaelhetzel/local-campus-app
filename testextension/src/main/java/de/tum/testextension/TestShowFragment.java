@@ -28,9 +28,6 @@ public class TestShowFragment extends ShowPostFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        Log.d("RAH", "fragment called");
-
         LayoutInflater newInflator = inflater.cloneInContext(getContext());
 
         View view = newInflator.inflate(R.layout.fragment_test, null, false);

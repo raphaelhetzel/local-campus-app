@@ -29,7 +29,6 @@ public class TestHostActivity extends ShowPostHostActivity {
         RepositoryLocator.init(getApplicationContext());
 
         Fragment testFragment = RepositoryLocator.getExtensionRepository().getShowPostFragmentFor(POST_TYPE);
-        Log.d("RAH", testFragment.toString());
         if(testFragment == null) {
             Log.d(TAG, "fragment not found");
             return;
@@ -57,7 +56,6 @@ public class TestHostActivity extends ShowPostHostActivity {
 //    @Override
 //    public void finishActivity() {
 //        //finish();
-//        Log.d("RAH", "activity should die");
 //    }
 
     @Override

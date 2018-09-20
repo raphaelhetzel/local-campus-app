@@ -38,14 +38,11 @@ public class ExtensionContext extends ContextWrapper {
 
     @Override
     public Resources getResources() {
-        Log.d("RAH","called resources");
         return this.resources;
     }
 
     @Override
     public AssetManager getAssets() {
-
-        Log.d("RAH","called assets");
         return this.assetManager;
     }
 }

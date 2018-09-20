@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.ExtensionInfo;
 import de.tum.localcampuslib.AddPostFragment;
-import de.tum.localcampuslib.ExtensionContext;
+import de.tum.localcampusapp.extensioninterface.ExtensionContext;
 import de.tum.localcampuslib.ShowPostFragment;
 
 public class ExtensionRepository {

@@ -1,4 +1,4 @@
-package de.tum.localcampuslib;
+package de.tum.localcampusapp.extensioninterface;
 
 import android.content.Context;
 import android.content.ContextWrapper;

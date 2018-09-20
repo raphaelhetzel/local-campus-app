@@ -1,26 +1,13 @@
 package de.tum.localcampusapp;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.io.File;
-import java.lang.reflect.Field;
-
-import dalvik.system.DexClassLoader;
-import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
-import de.tum.localcampusapp.extensioninterface.RealAddPostDataProvider;
 import de.tum.localcampusapp.extensioninterface.RealShowPostDataProvider;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
-import de.tum.localcampuslib.AddPostDataProvider;
-import de.tum.localcampuslib.AddPostFragment;
-import de.tum.localcampuslib.AddPostHostActivity;
-import de.tum.localcampuslib.BaseFragment;
-import de.tum.localcampuslib.ExtensionContext;
-import de.tum.localcampuslib.ShowPostFragment;
 import de.tum.localcampuslib.ShowPostHostActivity;
 import de.tum.localcampuslib.ShowPostDataProvider;
 

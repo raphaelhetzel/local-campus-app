@@ -1,18 +1,14 @@
 package de.tum.localcampusapp.extensioninterface;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 
 import dalvik.system.DexClassLoader;
 import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampuslib.AddPostFragment;
-import de.tum.localcampuslib.ExtensionContext;
 import de.tum.localcampuslib.ShowPostFragment;
 
 public class ExtensionLoader {

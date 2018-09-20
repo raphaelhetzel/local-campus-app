@@ -4,16 +4,13 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 
-import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampuslib.AddPostFragment;
-import de.tum.localcampuslib.ExtensionContext;
 import de.tum.localcampuslib.ShowPostFragment;
 
 import static junit.framework.TestCase.assertEquals;

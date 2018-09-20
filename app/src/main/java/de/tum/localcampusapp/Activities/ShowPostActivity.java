@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.extensioninterface.RealShowPostDataProvider;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampuslib.BaseFragment;
@@ -31,21 +30,21 @@ public class ShowPostActivity extends ShowPostHostActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-        setContentView(R.layout.activity_show_post);
+        setContentView(R.layout.activity_fragment_host);
 
         Intent intent = getIntent();
-        if(!intent.hasExtra("selectedPostId")) finish();
+        if (!intent.hasExtra("selectedPostId")) finish();
         long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
 
 
         // TODO: Evaluate whether a direct query on the main thread is better
         RepositoryLocator.getPostRepository().getPost(postId).observe(this, livePost -> {
             this.post = livePost;
-            if(post == null) return;
+            if (post == null) return;
 
             this.showPostDataProvider = new RealShowPostDataProvider(post.getId());
             this.fragment = RepositoryLocator.getExtensionRepository().getShowPostFragmentFor(post.getTypeId());
-            if(fragment == null) {
+            if (fragment == null) {
                 Toast toast = Toast.makeText(this, UNKNOWN_POST_TYPE_WARNING, Toast.LENGTH_SHORT);
                 toast.show();
                 this.finish();

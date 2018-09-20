@@ -55,25 +55,11 @@ public class PostsActivity extends AppCompatActivity{
             FloatingActionButton fab = findViewById(R.id.fab);
 
             fab.setOnClickListener((View v) -> {
-                final EditText editText = new EditText(PostsActivity.this);
-                AlertDialog dialog = new AlertDialog.Builder(PostsActivity.this)
-                        .setTitle("New Post")
-                        .setMessage("Add post text below")
-                        .setView(editText)
-                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String textData = String.valueOf(editText.getText());
-                                try {
-                                    viewModel.addPost(textData, getApplicationContext());
-                                } catch (DatabaseException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                dialog.show();
+                Intent addPostIntent = new Intent(this, AddPostActivity.class);
+                addPostIntent.putExtra("selectedTopicId", String.valueOf(topicId));
+                // TODO: replace with Real Type (needs a picker)
+                addPostIntent.putExtra("selectedPostType", "ee5afd62-6e72-4728-8404-e91d7ea2c303");
+                this.startActivity(addPostIntent);
             });
 
         }

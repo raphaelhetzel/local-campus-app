@@ -28,6 +28,9 @@
         <activity
             android:name=".Activities.ShowPostActivity"
             android:label="LocalCampusApp" />
+        <activity
+            android:name=".Activities.AddPostActivity"
+            android:label="LocalCampusApp" />
 
         <activity
             android:name=".Activities.PostCommentActivity"

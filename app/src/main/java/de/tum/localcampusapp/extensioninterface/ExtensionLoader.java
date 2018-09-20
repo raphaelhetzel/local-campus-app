@@ -10,86 +10,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import dalvik.system.DexClassLoader;
+import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampuslib.AddPostFragment;
+import de.tum.localcampuslib.ExtensionContext;
 import de.tum.localcampuslib.ShowPostFragment;
 
 public class ExtensionLoader {
     static final String TAG = ExtensionLoader.class.getSimpleName();
 
-    public static volatile Map<String, Class<? extends AddPostFragment>> addPostFragmentClasses = new HashMap<>();
-    public static volatile Map<String, Class<? extends ShowPostFragment>> showPostFragmentClasses = new HashMap<>();
-    public static volatile Map<String, String> typeDescriptions = new HashMap< >();
-    public static volatile Map<String, String> paths = new HashMap< >();
-    public static ClassLoader systemClassLoader;
+    private ClassLoader systemClassLoader;
+    private ExtensionRepository extensionRepository;
 
-    public static void init(Context context) {
-        systemClassLoader = context.getClassLoader();
-        loadFiles();
-        Log.d("RAH", "Packages: "+ addPostFragmentClasses.size());
+    public ExtensionLoader(Context context, ExtensionRepository extensionRepository) {
+        this.systemClassLoader = context.getClassLoader();
+        this.extensionRepository = extensionRepository;
     }
 
-    public static ShowPostFragment getShowPostFragmentFor(String uuid) {
-        if(!addPostFragmentClasses.containsKey(uuid)) {
-            Log.d(TAG, "showPostFragmentClass not found!");
-            return null;
-        }
-        try {
-            return (ShowPostFragment) showPostFragmentClasses.get(uuid).newInstance();
-        }   catch (InstantiationException | IllegalAccessException e) {
-            Log.d(TAG, "Could not instantiate show Fragment class");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static AddPostFragment getaddPostFragmentFor(String uuid) {
-        if(!addPostFragmentClasses.containsKey(uuid)) {
-            Log.d(TAG, "addPostFragmentClass not found!");
-            return null;
-        }
-        try {
-            return (AddPostFragment) addPostFragmentClasses.get(uuid).newInstance();
-        }   catch (InstantiationException | IllegalAccessException e) {
-            Log.d(TAG, "Could not instantiate show Fragment class");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static String getDescriptionFor(String uuid) {
-        if(!typeDescriptions.containsKey(uuid)) {
-            Log.d(TAG, "Description not found!");
-            return null;
-        }
-        return typeDescriptions.get(uuid);
-    }
-
-    public static String getPathFor(String uuid) {
-        if(!typeDescriptions.containsKey(uuid)) {
-            Log.d(TAG, "Path not found!");
-            return null;
-        }
-        return paths.get(uuid);
-    }
-
-    private static boolean loadFiles() {
-
-        //TODO: move to app storage to make it more secure
-        File[] apkFiles = new File("data/local/tmp/testjars/").listFiles();
-
-        boolean newFilesLoaded = false;
-        for(File apkFile : apkFiles) {
-            if(loadAPK(apkFile)) {
-                newFilesLoaded = true;
-            }
-        }
-        return newFilesLoaded;
-    }
-
-    private static boolean loadAPK(File apkFile) {
+    public void loadAPK(File apkFile) {
 
         //File apkFile = new File("/data/local/tmp/testjars/", filename+".apk");
-        if(!apkFile.exists()) return false;
+        if(!apkFile.exists()) return;
 
         final DexClassLoader apkClassLoader = new DexClassLoader(
                 apkFile.getAbsolutePath(), "",
@@ -112,22 +52,27 @@ public class ExtensionLoader {
             Field showPostFragmentClassField = registryClass.getDeclaredField("showPostFragmentClass");
             Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) showPostFragmentClassField.get(null);
 
-            if(showPostFragmentClasses.containsKey(apkUUID)) return false;
-            showPostFragmentClasses.put(apkUUID, showPostFragmentClass);
-            addPostFragmentClasses.put(apkUUID, addPostFragmentClass);
-            typeDescriptions.put(apkUUID, typeDescription);
-            paths.put(apkUUID,  apkFile.getAbsolutePath());
-            return true;
+            extensionRepository.registerExtension(apkUUID, typeDescription,showPostFragmentClass, addPostFragmentClass, apkFile.getAbsolutePath());
 
         } catch (ClassNotFoundException e) {
             Log.d(TAG, "Extension is missing Mandatory Class");
-            return false;
+            return;
         } catch (IllegalAccessException e) {
             Log.d(TAG, "Extension is missing Mandatory Field in the Registry");
-            return false;
+            return;
         } catch (NoSuchFieldException e) {
             Log.d(TAG, "Extension is missing Mandatory Field in the Registry");
-            return false;
+            return;
+        }
+    }
+
+    public void loadAPKFiles() {
+
+        //TODO: move to app storage to make it more secure
+        File[] apkFiles = new File("data/local/tmp/testjars/").listFiles();
+
+        for(File apkFile : apkFiles) {
+            loadAPK(apkFile);
         }
     }
 }

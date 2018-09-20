@@ -3,6 +3,7 @@ package de.tum.localcampusapp.repository;
 import android.content.Context;
 
 import de.tum.localcampusapp.database.AppDatabase;
+import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 
 public class RepositoryLocator {
@@ -10,8 +11,9 @@ public class RepositoryLocator {
     private static volatile boolean initialized = false;
     private static volatile UserRepository userRepository;
     private static volatile TopicRepository topicRepository;
-    private static volatile ScampiPostSerializer scampiPostSerializer;
     private static volatile PostRepository postRepository;
+    private static volatile ExtensionRepository extensionRepository;
+    private static volatile ExtensionLoader extensionLoader;
     private static final Object lock = new Object();
 
 
@@ -40,6 +42,8 @@ public class RepositoryLocator {
                 appDatabase.getPostExtensionDao(),
                 topicRepository,
                 userRepository);
+        extensionRepository = new ExtensionRepository();
+        extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
         initialized = true;
     }
 
@@ -47,14 +51,18 @@ public class RepositoryLocator {
         userRepository = new UserRepository(applicationContext);
         topicRepository = new InMemoryTopicRepository();
         postRepository = new InMemoryPostRepository(topicRepository);
+        extensionRepository = new ExtensionRepository();
+        extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
         initialized = true;
     }
 
     // Warning: the real post repository currently depends on the real topic repository
-    public static void reInitCustom(UserRepository newUserRepository, TopicRepository newTopicRepository, PostRepository newPostRepository) {
+    public static void reInitCustom(UserRepository newUserRepository, TopicRepository newTopicRepository, PostRepository newPostRepository, ExtensionRepository newExtensionRepository, ExtensionLoader newExtensionLoader) {
         userRepository = newUserRepository;
         topicRepository = newTopicRepository;
         postRepository = newPostRepository;
+        extensionRepository = newExtensionRepository;
+        extensionLoader = newExtensionLoader;
         initialized = true;
     }
 
@@ -85,12 +93,32 @@ public class RepositoryLocator {
         }
     }
 
+    public static ExtensionRepository getExtensionRepository() {
+        synchronized (lock) {
+            if (initialized) {
+                return extensionRepository;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
+    public static ExtensionLoader getExtensionLoader() {
+        synchronized (lock) {
+            if (initialized) {
+                return extensionLoader;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
     public static void reset() {
         synchronized (lock) {
             if (initialized) {
                 topicRepository = null;
                 postRepository = null;
-                scampiPostSerializer = null;
+                userRepository = null;
+                extensionRepository = null;
+                extensionLoader = null;
                 initialized = false;
             }
         }

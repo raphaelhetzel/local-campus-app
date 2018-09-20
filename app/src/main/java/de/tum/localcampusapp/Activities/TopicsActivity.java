@@ -38,7 +38,7 @@ public class TopicsActivity extends AppCompatActivity {
         //Real Data
         super.startService(new Intent(this, AppLibService.class));
         RepositoryLocator.init(getApplicationContext());
-        ExtensionLoader.init(this.getApplicationContext());
+        RepositoryLocator.getExtensionLoader().loadAPKFiles();
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());

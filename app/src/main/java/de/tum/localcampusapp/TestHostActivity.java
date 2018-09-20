@@ -37,13 +37,11 @@ public class TestHostActivity extends ShowPostHostActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_servicetest);
 
-        ExtensionLoader.init(this.getApplicationContext());
-
 
         super.startService( new Intent( this, AppLibService.class ) );
         RepositoryLocator.init(getApplicationContext());
 
-        Fragment testFragment = ExtensionLoader.getShowPostFragmentFor(POST_TYPE);
+        Fragment testFragment = RepositoryLocator.getExtensionRepository().getShowPostFragmentFor(POST_TYPE);
         Log.d("RAH", testFragment.toString());
         if(testFragment == null) {
             Log.d(TAG, "fragment not found");
@@ -82,8 +80,7 @@ public class TestHostActivity extends ShowPostHostActivity {
 
     @Override
     public Context getFragmentContext() {
-        Log.d("RAH", ExtensionLoader.getPathFor(POST_TYPE));
-        return new ExtensionContext(this, ExtensionLoader.getPathFor(POST_TYPE));
+        return RepositoryLocator.getExtensionRepository().getContextFor(POST_TYPE, this);
     }
 
 

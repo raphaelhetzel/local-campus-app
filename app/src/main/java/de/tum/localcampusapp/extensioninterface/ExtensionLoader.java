@@ -70,7 +70,7 @@ public class ExtensionLoader {
 
         //TODO: move to app storage to make it more secure
         File[] apkFiles = new File("data/local/tmp/testjars/").listFiles();
-
+        if (apkFiles == null) return;
         for(File apkFile : apkFiles) {
             loadAPK(apkFile);
         }

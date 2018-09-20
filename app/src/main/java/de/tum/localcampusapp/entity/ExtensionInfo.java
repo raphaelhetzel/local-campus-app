@@ -1,5 +1,6 @@
 package de.tum.localcampusapp.entity;
 
+import java.io.File;
 import java.util.Objects;
 
 import de.tum.localcampusapp.repository.ExtensionRepository;
@@ -7,10 +8,12 @@ import de.tum.localcampusapp.repository.ExtensionRepository;
 public class ExtensionInfo {
     private String extensionUUID;
     private String description;
+    private File extensionFile;
 
-    public ExtensionInfo(String extensionUUID, String description) {
+    public ExtensionInfo(String extensionUUID, String description, File extensionFile) {
         this.description = description;
         this.extensionUUID = extensionUUID;
+        this.extensionFile = extensionFile;
     }
 
     public String getDescription() {
@@ -21,18 +24,20 @@ public class ExtensionInfo {
         return extensionUUID;
     }
 
+    public File getExtensionFile() {
+        return extensionFile;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExtensionInfo that = (ExtensionInfo) o;
-        return Objects.equals(getDescription(), that.getDescription()) &&
-                Objects.equals(getExtensionUUID(), that.getExtensionUUID());
+        return Objects.equals(getExtensionUUID(), that.getExtensionUUID());
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(getDescription(), getExtensionUUID());
+        return Objects.hash(getExtensionUUID());
     }
 }

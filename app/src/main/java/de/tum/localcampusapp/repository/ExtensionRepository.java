@@ -2,6 +2,7 @@ package de.tum.localcampusapp.repository;
 
 import android.content.Context;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,8 @@ public class ExtensionRepository {
     // To be used with the create post extension type selection
     public List<ExtensionInfo> getExtensions() {
         return extensionStorage.entrySet().stream().map((entry -> {
-            return new ExtensionInfo(entry.getKey(), entry.getValue().typeDescription);
+            File extensionFile = (entry.getValue().apkPath == null || entry.getValue().apkPath.isEmpty()) ? null : new File(entry.getValue().apkPath);
+            return new ExtensionInfo(entry.getKey(), entry.getValue().typeDescription, extensionFile);
         })).collect(Collectors.toList());
     }
 

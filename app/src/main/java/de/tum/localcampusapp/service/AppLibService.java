@@ -26,6 +26,8 @@ import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+import static de.tum.localcampusapp.service.ExtensionHandler.EXTENSION_SERVICE;
+
 public class AppLibService extends Service implements AppLibLifecycleListener {
 
     public static final String DISCOVERY_SERVICE = "discovery";
@@ -39,6 +41,8 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     private ScheduledExecutorService scheduledExecutor;
 
     private DiscoveryHandler discoveryHandler;
+
+    private ExtensionHandler extensionHandler;
 
     private Binder binder;
 
@@ -78,6 +82,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     public void onCreate() {
         moveToForeGround();
         RepositoryLocator.init(getApplicationContext());
+        RepositoryLocator.getExtensionLoader().loadAPKFiles();
 
         super.onCreate();
         Log.d(TAG, "onCreate");
@@ -89,9 +94,12 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
         appLib = AppLib.builder().build();
         this.discoveryHandler = new DiscoveryHandler(appLib);
+        this.extensionHandler = new ExtensionHandler(this);
+
         appLib.addLifecycleListener(this);
         try {
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
+            appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -116,6 +124,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         this.scampiId = scampiId;
         Log.d(TAG, "AppLib connected: " + scampiId);
         clear_preconnect_buffer();
+        extensionHandler.publishLocalAPKFiles();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package de.tum.localcampusapp.extensioninterface;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -16,6 +17,7 @@ public class ExtensionLoader {
 
     private ClassLoader systemClassLoader;
     private ExtensionRepository extensionRepository;
+    private boolean loaded = false;
 
     public ExtensionLoader(Context context, ExtensionRepository extensionRepository) {
         this.systemClassLoader = context.getClassLoader();
@@ -63,12 +65,15 @@ public class ExtensionLoader {
     }
 
     public void loadAPKFiles() {
-
+        if(loaded == true) return;
         //TODO: move to app storage to make it more secure
-        File[] apkFiles = new File("data/local/tmp/testjars/").listFiles();
+        File dlDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS );
+        File[] apkFiles = new File( dlDir, "localcampusjars" ).listFiles();
         if (apkFiles == null) return;
         for(File apkFile : apkFiles) {
             loadAPK(apkFile);
         }
+        loaded = true;
     }
 }

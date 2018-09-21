@@ -1,10 +1,13 @@
 package de.tum.localcampusapp.repository;
 
 import android.content.Context;
+import android.content.Intent;
 
 import de.tum.localcampusapp.database.AppDatabase;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
+import de.tum.localcampusapp.extensioninterface.ExtensionPublisher;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
+import de.tum.localcampusapp.service.AppLibService;
 
 public class RepositoryLocator {
 
@@ -14,6 +17,7 @@ public class RepositoryLocator {
     private static volatile PostRepository postRepository;
     private static volatile ExtensionRepository extensionRepository;
     private static volatile ExtensionLoader extensionLoader;
+    private static volatile ExtensionPublisher extensionPublisher;
     private static final Object lock = new Object();
 
 
@@ -36,14 +40,27 @@ public class RepositoryLocator {
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
         userRepository = new UserRepository(applicationContext);
         topicRepository = new RealTopicRepository(appDatabase.getTopicDao());
-        postRepository = new RealPostRepository(applicationContext,
+        RealPostRepository realPostRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
                 appDatabase.getVoteDao(),
                 appDatabase.getPostExtensionDao(),
                 topicRepository,
                 userRepository);
+
+        // Service depends on RealPostRepository for inserting, but RealPostRepository
+        // depends on the service for application layer (not a problem if initialized correctly,
+        // just not as nice as clean as possible
+        // TODO refactor this by splitting service and app layer repositories. (Big change)
+        applicationContext.startService(new Intent(applicationContext, AppLibService.class));
+        realPostRepository.bindService();
+        postRepository = realPostRepository;
+
         extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
+
+        extensionPublisher = new ExtensionPublisher(applicationContext, extensionRepository);
+        extensionPublisher.bindService();
+
         initialized = true;
     }
 
@@ -53,16 +70,24 @@ public class RepositoryLocator {
         postRepository = new InMemoryPostRepository(topicRepository);
         extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
+        // TODO
+        extensionPublisher = null;
         initialized = true;
     }
 
     // Warning: the real post repository currently depends on the real topic repository
-    public static void reInitCustom(UserRepository newUserRepository, TopicRepository newTopicRepository, PostRepository newPostRepository, ExtensionRepository newExtensionRepository, ExtensionLoader newExtensionLoader) {
+    public static void reInitCustom(UserRepository newUserRepository,
+                                    TopicRepository newTopicRepository,
+                                    PostRepository newPostRepository,
+                                    ExtensionRepository newExtensionRepository,
+                                    ExtensionLoader newExtensionLoader,
+                                    ExtensionPublisher newExtensionPublisher) {
         userRepository = newUserRepository;
         topicRepository = newTopicRepository;
         postRepository = newPostRepository;
         extensionRepository = newExtensionRepository;
         extensionLoader = newExtensionLoader;
+        extensionPublisher = newExtensionPublisher;
         initialized = true;
     }
 
@@ -111,6 +136,15 @@ public class RepositoryLocator {
         }
     }
 
+    public static ExtensionPublisher getExtensionPublisher() {
+        synchronized (lock) {
+            if (initialized) {
+                return extensionPublisher;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
     public static void reset() {
         synchronized (lock) {
             if (initialized) {
@@ -119,6 +153,7 @@ public class RepositoryLocator {
                 userRepository = null;
                 extensionRepository = null;
                 extensionLoader = null;
+                extensionPublisher = null;
                 initialized = false;
             }
         }

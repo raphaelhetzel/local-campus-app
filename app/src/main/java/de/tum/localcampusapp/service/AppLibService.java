@@ -60,6 +60,15 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     }
 
+    public void subscribeToExtensionService() {
+        try {
+            Log.d("RAH", "subscribe");
+            appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class Message {
         public SCAMPIMessage scampiMessage;
         public String targetService;
@@ -81,8 +90,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     @Override
     public void onCreate() {
         moveToForeGround();
-        RepositoryLocator.init(getApplicationContext());
-        RepositoryLocator.getExtensionLoader().loadAPKFiles();
 
         super.onCreate();
         Log.d(TAG, "onCreate");
@@ -99,7 +106,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         appLib.addLifecycleListener(this);
         try {
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
-            appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -124,7 +130,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         this.scampiId = scampiId;
         Log.d(TAG, "AppLib connected: " + scampiId);
         clear_preconnect_buffer();
-        extensionHandler.publishLocalAPKFiles();
+        //extensionHandler.publishLocalAPKFiles();
     }
 
     @Override
@@ -226,6 +232,10 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     public class ScampiBinder extends Binder {
         public void publish(SCAMPIMessage scampiMessage, String service) throws InterruptedException {
             AppLibService.this.publish(scampiMessage, service);
+        }
+
+        public void subscribeToExtensionService() {
+            AppLibService.this.subscribeToExtensionService();
         }
     }
 }

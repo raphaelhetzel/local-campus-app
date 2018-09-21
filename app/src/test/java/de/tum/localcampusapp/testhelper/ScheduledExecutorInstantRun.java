@@ -1,19 +1,21 @@
 package de.tum.localcampusapp.testhelper;
 
-import android.os.Handler;
-
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import static org.mockito.AdditionalMatchers.eq;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
-public class ExecutorInstantRun {
-    public static Executor getMockExecutor() {
-        Executor mockExecutor = mock(Executor.class);
+public class ScheduledExecutorInstantRun {
+    public static ScheduledExecutorService getMockExecutor() {
+        ScheduledExecutorService mockExecutor = mock(ScheduledExecutorService.class);
         doAnswer(new Answer() {
 
             @Override

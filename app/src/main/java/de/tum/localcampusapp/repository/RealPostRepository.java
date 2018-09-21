@@ -37,6 +37,8 @@ public class RealPostRepository implements PostRepository {
 
     static final String TAG = RealPostRepository.class.getSimpleName();
 
+    private final Context applicationContext;
+
     private final PostDao postDao;
     private final VoteDao voteDao;
     private final PostExtensionDao postExtensionDao;
@@ -86,6 +88,7 @@ public class RealPostRepository implements PostRepository {
                               ScampiVoteSerializer scampiVoteSerializer,
                               ScampiPostExtensionSerializer scampiPostExtensionSerializer,
                               Executor executor) {
+        this.applicationContext = applicationContext;
         this.postDao = postDao;
         this.voteDao = voteDao;
         this.postExtensionDao = postExtensionDao;
@@ -97,7 +100,9 @@ public class RealPostRepository implements PostRepository {
         this.userRepository = userRepository;
 
         this.voteBuffer = Collections.synchronizedSet(new HashSet<String>());
+    }
 
+    public void bindService() {
         Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
         applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
     }

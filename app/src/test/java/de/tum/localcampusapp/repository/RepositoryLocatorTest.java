@@ -10,6 +10,7 @@ import org.junit.rules.TestRule;
 
 import de.tum.localcampusapp.database.TopicDao;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
+import de.tum.localcampusapp.extensioninterface.ExtensionPublisher;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -40,6 +41,7 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), RealTopicRepository.class);
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
+        assertEquals(RepositoryLocator.getExtensionPublisher().getClass(), ExtensionPublisher.class);
     }
 
     @Test
@@ -50,6 +52,7 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), InMemoryTopicRepository.class);
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
+        assertEquals(RepositoryLocator.getExtensionPublisher(), null);
     }
 
     @Test
@@ -66,11 +69,13 @@ public class RepositoryLocatorTest {
                 new RealTopicRepository(mTopicDao),
                 new InMemoryPostRepository(new InMemoryTopicRepository()),
                 new ExtensionRepository(),
-                new ExtensionLoader(mock(Context.class),new ExtensionRepository()));
+                new ExtensionLoader(mock(Context.class), new ExtensionRepository()),
+                new ExtensionPublisher(mock(Context.class), mock(ExtensionRepository.class)));
         assertEquals(RepositoryLocator.getUserRepository().getClass(), UserRepository.class);
         assertEquals(RepositoryLocator.getPostRepository().getClass(), InMemoryPostRepository.class);
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), RealTopicRepository.class);
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
+        assertEquals(RepositoryLocator.getExtensionPublisher().getClass(), ExtensionPublisher.class);
     }
 }

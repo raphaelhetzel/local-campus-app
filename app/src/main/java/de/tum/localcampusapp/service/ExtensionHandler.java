@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.IOException;
 
+import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.entity.ExtensionInfo;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
@@ -27,41 +28,41 @@ public class ExtensionHandler implements MessageReceivedCallback {
     private File extensionFolder;
     private ExtensionRepository extensionRepository;
     private ExtensionLoader extensionLoader;
-    private ScampiExtensionSerializer extensionSerialier;
-    private AppLibService appLibService;
+    private PermissionManager permissionManager;
 
     public ExtensionHandler(AppLibService appLibService) {
-        this(appLibService,
-                RepositoryLocator.getExtensionRepository(),
+                this(RepositoryLocator.getExtensionRepository(),
                 RepositoryLocator.getExtensionLoader(),
-                new ScampiExtensionSerializer());
+                new PermissionManager(appLibService.getApplicationContext()),
+                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS ), "localcampusjars"));
     }
 
-    public ExtensionHandler(AppLibService appLibService, ExtensionRepository extensionRepository, ExtensionLoader extensionLoader, ScampiExtensionSerializer extensionSerializer) {
+    public ExtensionHandler(ExtensionRepository extensionRepository, ExtensionLoader extensionLoader, PermissionManager permissionManager, File extensionFolder) {
         this.extensionRepository = extensionRepository;
         this.extensionLoader = extensionLoader;
-        this.extensionSerialier = extensionSerializer;
-        this.appLibService = appLibService;
-
-        File dlDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS );
-
-        this.extensionFolder = new File( dlDir, "localcampusjars" );
+        this.permissionManager = permissionManager;
+        this.extensionFolder = extensionFolder;
         extensionFolder.mkdirs();
     }
 
     @Override
     public void messageReceived(SCAMPIMessage scampiMessage, String service) {
-
         if (!ScampiExtensionSerializer.messageIsExtension(scampiMessage)) return;
         if (!ScampiExtensionSerializer.messageHasRequiredFields(scampiMessage)) return;
+        if(! permissionManager.hasStoragePermission()) {
+            Log.d(TAG,"Received Extension Message, but the app has no permission to store it.");
+            scampiMessage.close();
+            return;
+        }
 
         String extensionUUID = scampiMessage.getString(UUID_FIELD);
 
 
         if (extensionRepository.extensionExists(extensionUUID)) return;
 
-        File targetFile = new File(extensionFolder, extensionUUID + ".apk");
+        String targetPath = extensionUUID+".apk";
+
+        File targetFile = new File(extensionFolder, targetPath);
 
         try {
             scampiMessage.copyBinary(BINARY_FIELD, targetFile);
@@ -71,19 +72,6 @@ public class ExtensionHandler implements MessageReceivedCallback {
             e.printStackTrace();
         } finally {
             scampiMessage.close();
-        }
-    }
-
-    public void publishLocalAPKFiles() {
-        for (ExtensionInfo extensionInfo : extensionRepository.getExtensions()) {
-            if (extensionInfo.getExtensionFile() == null) return;
-            try {
-                SCAMPIMessage scampiMessage = extensionSerialier.extensionToMessage(extensionInfo.getExtensionFile(), extensionInfo.getExtensionUUID());
-                appLibService.publish(scampiMessage, EXTENSION_SERVICE);
-            } catch (MissingFieldsException | InterruptedException e) {
-                // This should not happen...
-                e.printStackTrace();
-            }
         }
     }
 

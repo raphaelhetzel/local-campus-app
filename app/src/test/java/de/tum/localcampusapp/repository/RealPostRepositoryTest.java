@@ -103,6 +103,7 @@ public class RealPostRepositoryTest {
                 mScampiVoteSerializer,
                 mScampiPostExtensionSerializer,
                 mExecutor);
+        realPostRepository.bindService();
     }
 
     @Test

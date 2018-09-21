@@ -16,13 +16,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.service.AppLibService;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
+
+import static de.tum.localcampusapp.PermissionManager.PERMISSION_STORAGE;
 
 
 public class TopicsActivity extends AppCompatActivity {
@@ -32,7 +33,6 @@ public class TopicsActivity extends AppCompatActivity {
     private TopicsViewModel viewModel;
     private TopicsViewAdapter mTopicsViewAdapter;
 
-    private static final String PERMISSION_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private static final int PERMISSIONS_REQUEST = 10;
 
 
@@ -41,23 +41,22 @@ public class TopicsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topics);
-        if(!hasPermission()) {
-            requestPermission();
-        } else {
-            onCreateWithPermissions();
-        }
-    }
 
-    private void onCreateWithPermissions() {
-        //Real Data
-        super.startService(new Intent(this, AppLibService.class));
+        // Real Data
         RepositoryLocator.init(getApplicationContext());
-        RepositoryLocator.getExtensionLoader().loadAPKFiles();
+
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
 //        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 //        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
+
+        if(! new PermissionManager(this.getApplicationContext()).hasStoragePermission()) {
+            requestStoragePermission();
+        } else {
+            enableAPKExtensions();
+        }
+
         try {
             viewModel = new TopicsViewModel(getApplicationContext());
         } catch (DatabaseException e) {
@@ -78,39 +77,23 @@ public class TopicsActivity extends AppCompatActivity {
         });
     }
 
+    public void enableAPKExtensions() {
+        RepositoryLocator.getExtensionLoader().loadAPKFiles();
+        RepositoryLocator.getExtensionPublisher().enableSharing();
+    }
+
     @Override
-    public void onRequestPermissionsResult(
-            final int requestCode,
-            final String permissions[],
-            final int[] grantResults ) {
-        switch ( requestCode ) {
-            case PERMISSIONS_REQUEST: {
-                if ( grantResults.length > 0
-                        && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED ) {
-                    this.onCreateWithPermissions();
-                } else {
-                    requestPermission();
-                }
-            }
-        }
-    }
-
-    private boolean hasPermission() {
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            return checkSelfPermission( PERMISSION_STORAGE ) == PackageManager.PERMISSION_GRANTED;
+    public void onRequestPermissionsResult(final int requestCode, final String permissions[], final int[] grantResults ) {
+        if ( requestCode == PERMISSIONS_REQUEST && grantResults.length > 0 && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED ) {
+            this.enableAPKExtensions();
         } else {
-            return true;
+            Toast.makeText( this, "Application does not have storage Permission," +
+                    " APK Extensions are now disabled", Toast.LENGTH_LONG ).show();
         }
     }
 
-    private void requestPermission() {
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
-            if ( shouldShowRequestPermissionRationale( PERMISSION_STORAGE ) ) {
-                Toast.makeText( this, "Storage permission are "
-                        + "required for this application", Toast.LENGTH_LONG ).show();
-            }
-            requestPermissions( new String[] { PERMISSION_STORAGE }, PERMISSIONS_REQUEST );
-        }
+    private void requestStoragePermission() {
+        requestPermissions( new String[] { PERMISSION_STORAGE }, PERMISSIONS_REQUEST );
     }
 
 }

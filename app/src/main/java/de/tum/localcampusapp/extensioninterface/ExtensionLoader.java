@@ -45,8 +45,6 @@ public class ExtensionLoader {
             Class<?> registryClass = (Class<?>) apkClassLoader
                     .loadClass("de.tum.localcampusextension.Registry");
 
-            Log.d("RAH", "Classfound");
-
             Field typeIdField = registryClass.getDeclaredField("typeId");
             String apkUUID = (String) typeIdField.get(null);
 

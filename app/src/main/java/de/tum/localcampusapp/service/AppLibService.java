@@ -62,7 +62,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     public void subscribeToExtensionService() {
         try {
-            Log.d("RAH", "subscribe");
             appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
         } catch (InterruptedException e) {
             e.printStackTrace();

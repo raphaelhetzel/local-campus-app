@@ -6,7 +6,8 @@ import android.content.Intent;
 import de.tum.localcampusapp.database.AppDatabase;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.extensioninterface.ExtensionPublisher;
-import de.tum.localcampusapp.serializer.ScampiPostSerializer;
+import de.tum.localcampusapp.extensioninterface.RealExtensionPublisher;
+import de.tum.localcampusapp.extensioninterface.StubExtensionPublisher;
 import de.tum.localcampusapp.service.AppLibService;
 
 public class RepositoryLocator {
@@ -49,7 +50,7 @@ public class RepositoryLocator {
 
         // Service depends on RealPostRepository for inserting, but RealPostRepository
         // depends on the service for application layer (not a problem if initialized correctly,
-        // just not as nice as clean as possible
+        // just not as nice and clean as possible)
         // TODO refactor this by splitting service and app layer repositories. (Big change)
         applicationContext.startService(new Intent(applicationContext, AppLibService.class));
         realPostRepository.bindService();
@@ -58,8 +59,9 @@ public class RepositoryLocator {
         extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
 
-        extensionPublisher = new ExtensionPublisher(applicationContext, extensionRepository);
-        extensionPublisher.bindService();
+        RealExtensionPublisher realExtensionPublisher = new RealExtensionPublisher(applicationContext, extensionRepository);
+        realExtensionPublisher.bindService();
+        extensionPublisher = realExtensionPublisher;
 
         initialized = true;
     }
@@ -70,8 +72,7 @@ public class RepositoryLocator {
         postRepository = new InMemoryPostRepository(topicRepository);
         extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
-        // TODO
-        extensionPublisher = null;
+        extensionPublisher = new StubExtensionPublisher();
         initialized = true;
     }
 

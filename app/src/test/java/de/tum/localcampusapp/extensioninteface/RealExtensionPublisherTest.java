@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.entity.ExtensionInfo;
 import de.tum.localcampusapp.exception.MissingFieldsException;
-import de.tum.localcampusapp.extensioninterface.ExtensionPublisher;
+import de.tum.localcampusapp.extensioninterface.RealExtensionPublisher;
 import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampusapp.serializer.ScampiExtensionSerializer;
 import de.tum.localcampusapp.service.AppLibService;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExtensionPublisherTest {
+public class RealExtensionPublisherTest {
 
     private ExtensionRepository mExtensionRepository;
     private PermissionManager mPermissionManager;
@@ -73,13 +73,13 @@ public class ExtensionPublisherTest {
 
     @Test
     public void sharingEnabled() throws MissingFieldsException, InterruptedException {
-        ExtensionPublisher extensionPublisher = new ExtensionPublisher(mExtensionRepository,
+        RealExtensionPublisher realExtensionPublisher = new RealExtensionPublisher(mExtensionRepository,
                 mContext,
                 mPermissionManager,
                 mExtensionSerializer,
                 mExecutorService
         );
-        extensionPublisher.bindService();
+        realExtensionPublisher.bindService();
 
         File mExtensionFile = new File("/foo/bar");
         SCAMPIMessage mScampiMessage = SCAMPIMessage.builder().build();
@@ -93,7 +93,7 @@ public class ExtensionPublisherTest {
         when(mExtensionRepository.getExtensions()).thenReturn(extensionInfos);
         when(mExtensionSerializer.extensionToMessage(mExtensionFile, "UUID")).thenReturn(mScampiMessage);
 
-        extensionPublisher.enableSharing();
+        realExtensionPublisher.enableSharing();
 
         verify(mScampiBinder).subscribeToExtensionService();
         verify(mExtensionSerializer).extensionToMessage(mExtensionFile, "UUID");

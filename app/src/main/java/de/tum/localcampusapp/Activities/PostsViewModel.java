@@ -4,17 +4,14 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 
-import java.util.Date;
 import java.util.List;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.postTypes.PostMapperHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
 
 public class PostsViewModel extends ViewModel {
 
@@ -39,7 +36,7 @@ public class PostsViewModel extends ViewModel {
     public void addPost(String dataText, Context context) throws DatabaseException {
         String typeId = "1";
 
-        String parsedJsonData = JSONParser.makeJsonPostOutput(dataText, context);
+        String parsedJsonData = PostMapper.makeJsonPostOutput(dataText, context);
 
         postRepository.addPost(new Post(topicId, typeId, parsedJsonData));
 

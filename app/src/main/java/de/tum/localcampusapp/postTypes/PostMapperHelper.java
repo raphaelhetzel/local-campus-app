@@ -3,13 +3,11 @@ package de.tum.localcampusapp.postTypes;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.repository.PostRepository;
@@ -24,6 +22,20 @@ public class PostMapperHelper {
     private PostRepository postRepository;
     private LiveData<Post> livePost;
 
+
+    //Testing Contructor
+    public PostMapperHelper(PostRepository postRepository, long topicId){
+        this.postRepository = postRepository;
+        listPosts = postRepository.getPostsforTopic(topicId);
+        this.topicId = topicId;
+    }
+
+    //Testing Contructor
+    public PostMapperHelper(PostRepository postRepository, long postId, boolean arg){
+        this.postRepository = postRepository;
+        livePost = postRepository.getPost(postId);
+        this.postId = postId;
+    }
 
     public PostMapperHelper(long topicId){
         postRepository = RepositoryLocator.getPostRepository();
@@ -41,13 +53,11 @@ public class PostMapperHelper {
         this.listPosts = listPosts;
     }
 
-
     public LiveData<PostMapper> tranformPost(){
         return Transformations.map(livePost, (Post livePost) -> {
-           return new PostMapper(livePost);
+            return PostMapper.getWorkingPostMapper(livePost);
         });
     }
-
 
     public List<PostMapper> comparison(List<PostMapper> pm){
         Comparator<PostMapper> pmComparator = Comparator.comparingDouble(PostMapper::getInternalRating);
@@ -56,25 +66,18 @@ public class PostMapperHelper {
         return pm;
     }
 
-
     public LiveData<List<PostMapper>> transformPosts(){
-        ArrayList<Long> ids = new ArrayList<>();
         return Transformations.map(listPosts, (List<Post> listPosts) -> {
 //            Log.d("ListPosts: ", Integer.toString(listPosts.size())+ " postMappersLisT: "+postMappers.size());
             List<PostMapper> postMappers= new ArrayList<>();
             for (Post post : listPosts) {
-                postMappers.add(new PostMapper(post));
+                PostMapper pm = PostMapper.getWorkingPostMapper(post);
+                if(pm!=null){
+                    postMappers.add(pm);
+                }
             }
-//            for (Post post : listPosts) {
-//                PostMapper pp = new PostMapper(post);
-//                if(!ids.contains(pp.getId())){
-//                    postMappers.add(pp);
-//                    ids.add(post.getId());
-//                }
-//            }
             return comparison(postMappers);
         });
-
     }
 
 }

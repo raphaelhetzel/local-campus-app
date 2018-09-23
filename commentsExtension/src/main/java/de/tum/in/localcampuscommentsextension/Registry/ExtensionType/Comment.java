@@ -1,4 +1,4 @@
-package de.tum.localcampusapp.postTypes;
+package de.tum.in.localcampuscommentsextension.Registry.ExtensionType;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,6 +1,5 @@
 package de.tum.localcampusapp.Activities;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,20 +17,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.localcampusapp.R;
-import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.generator.ColorGenerator;
-import de.tum.localcampusapp.generator.DateTransformer;
-import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.Comment;
 import de.tum.localcampusapp.postTypes.PostMapper;
-import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostCommentActivity extends AppCompatActivity {
 
@@ -89,7 +81,7 @@ public class PostCommentActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getLiveDataComments().observe(PostCommentActivity.this,  new Observer<List<Comment>>() {
+        viewModel.getFilteredLiveComments().observe(PostCommentActivity.this,  new Observer<List<Comment>>() {
             @Override
             public void onChanged(@Nullable List<Comment> comments) {
                 mCommentsViewAdapter.setItems(comments);
@@ -102,22 +94,15 @@ public class PostCommentActivity extends AppCompatActivity {
     private void updatePostVariables(PostMapper postMapper) {
         postDate.setText(postMapper.getDate());
 
-        try {
-            int color = postMapper.getColor();
-            rootLayout.setBackgroundColor(color);
-            postParentLayout.setBackgroundColor(color);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        int color = postMapper.getColor();
+        rootLayout.setBackgroundColor(color);
+        postParentLayout.setBackgroundColor(color);
 
         postType.setText(postMapper.getType());
         numLikes.setText(postMapper.getLikesString());
 
-        try {
-            postText.setText(postMapper.getTextComment());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        postText.setText(postMapper.getTextComment());
+
     }
 
 

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.List;
 
 import de.tum.localcampusapp.R;
-import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 
@@ -79,22 +75,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
         PostMapper postMapper = postsList.get(position);
 
-        try {
-            holder.parentLayout.setBackgroundColor(postMapper.getColor());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        holder.parentLayout.setBackgroundColor(postMapper.getColor());
         holder.postType.setText(postMapper.getType());
         holder.postDate.setText(postMapper.getDate());
-
-        try {
-            holder.postText.setText(postMapper.getTextComment());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        holder.postText.setText(postMapper.getTextComment());
         holder.numLikes.setText(postMapper.getLikesString());
-
 
         holder.parentLayout.setOnClickListener((View v) -> {
 

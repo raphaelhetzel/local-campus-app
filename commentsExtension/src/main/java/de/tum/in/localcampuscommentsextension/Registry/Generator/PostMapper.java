@@ -1,43 +1,43 @@
-package de.tum.localcampusapp.postTypes;
+package de.tum.in.localcampuscommentsextension.Registry.Generator;
 
 import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import de.tum.localcampusapp.entity.Post;
-import de.tum.localcampusapp.generator.ColorGenerator;
-import de.tum.localcampusapp.generator.DateTransformer;
+import de.tum.localcampuslib.ShowPostDataProvider;
 
 public class PostMapper {
     private String text;
     private int color;
-    private Post post;
     private float internalRating;
+    private String date;
+
     private static final String ATTR_COLOR = "color";
     private static final String ATTR_DATA = "text";
 
+    private ShowPostDataProvider showPostDataProvider;
 
-    public static PostMapper getWorkingPostMapper(Post post) {
+    public static PostMapper getWorkingPostMapper(ShowPostDataProvider showPostDataProvider) {
         try {
-            JSONObject obj = new JSONObject(post.getData());
+            JSONObject obj = new JSONObject(showPostDataProvider.getPost().getValue().getData());
             String text = obj.getString(ATTR_DATA);
             int color = obj.getInt(ATTR_COLOR);
-            return new PostMapper(post, text, color);
+            return new PostMapper(showPostDataProvider, text, color);
         } catch (JSONException e) {
             return null;
         }
     }
 
-    private PostMapper(Post post, String text, int color) {
-        this.post = post;
+    private PostMapper(ShowPostDataProvider showPostDataProvider, String text, int color) {
+        this.showPostDataProvider = showPostDataProvider;
         this.text = text;
         this.color = color;
+
+
     }
 
+    /*
     public String getDate() {
         return DateTransformer.getTimeDate(post.getCreatedAt());
     }
@@ -69,22 +69,12 @@ public class PostMapper {
     public String getType() {
         return post.getTypeId();
     }
-
-    public float getInternalRating() {
-        this.internalRating = calculateRating(post.getCreatedAt(), post.getScore());
-        return internalRating;
-    }
-
-    public float calculateRating(Date createdAt, long score){
-        float downSet = new Float(0.000003);
-        long diff = createdAt.getTime() - new Date().getTime();
-        long diffSeconds = TimeUnit.SECONDS.convert(diff,TimeUnit.MILLISECONDS);
-        float rating = score + downSet * ((float) diffSeconds) ;
-        return rating;
-    }
+*/
 
     public static String makeJsonPostOutput(String textInput, Context context) {
-        int color = ColorGenerator.getColor(context);
+      //  int color = ColorGenerator.getColor(context);
+        //TODO: Figure out what to do with colors as we cannot reach apps resources
+        int color = 10;
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put(ATTR_DATA, textInput);

@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-
 import java.util.List;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.generator.DateTransformer;
-import de.tum.localcampusapp.generator.JSONParser;
 import de.tum.localcampusapp.postTypes.Comment;
 
 public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentViewAdapter.ViewHolder>{
@@ -43,11 +40,7 @@ public class PostCommentViewAdapter extends RecyclerView.Adapter<PostCommentView
         holder.parentLayout.setBackgroundColor(color);
 
         holder.dateText.setText(DateTransformer.getTimeDate(comment.getUpdatedComment()));
-        try {
-            holder.commentText.setText(JSONParser.getText(comment.getData()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        holder.commentText.setText(comment.getData());
     }
 
     @Override

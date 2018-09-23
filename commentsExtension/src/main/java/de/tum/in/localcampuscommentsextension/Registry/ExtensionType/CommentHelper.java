@@ -1,4 +1,4 @@
-package de.tum.localcampusapp.postTypes;
+package de.tum.in.localcampuscommentsextension.Registry.ExtensionType;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

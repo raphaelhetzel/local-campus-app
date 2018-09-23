@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
@@ -24,7 +25,9 @@ import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
+import fi.tkk.netlab.dtn.scampi.applib.LocationUpdateCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
+import fi.tkk.netlab.dtn.scampi.applib.impl.parser.Protocol;
 
 import static de.tum.localcampusapp.service.ExtensionHandler.EXTENSION_SERVICE;
 
@@ -99,12 +102,12 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
 
         appLib = AppLib.builder().build();
-        this.discoveryHandler = new DiscoveryHandler(appLib);
+        this.discoveryHandler = new DiscoveryHandler((LifecycleOwner) this, appLib);
         this.extensionHandler = new ExtensionHandler(this);
-
         appLib.addLifecycleListener(this);
         try {
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
+            appLib.startLocationUpdates(new LocationHandler());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -129,7 +132,6 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         this.scampiId = scampiId;
         Log.d(TAG, "AppLib connected: " + scampiId);
         clear_preconnect_buffer();
-        //extensionHandler.publishLocalAPKFiles();
     }
 
     @Override

@@ -19,6 +19,7 @@ public class RepositoryLocator {
     private static volatile ExtensionRepository extensionRepository;
     private static volatile ExtensionLoader extensionLoader;
     private static volatile ExtensionPublisher extensionPublisher;
+    private static volatile LocationRepository locationRepository;
     private static final Object lock = new Object();
 
 
@@ -40,6 +41,7 @@ public class RepositoryLocator {
     public static void reInit(Context applicationContext) {
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
         userRepository = new UserRepository(applicationContext);
+        LocationRepository locationRepository = new LocationRepository(applicationContext);
         topicRepository = new RealTopicRepository(appDatabase.getTopicDao());
         RealPostRepository realPostRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
@@ -63,11 +65,14 @@ public class RepositoryLocator {
         realExtensionPublisher.bindService();
         extensionPublisher = realExtensionPublisher;
 
+
         initialized = true;
     }
 
     public static void reInitInMemory(Context applicationContext) {
         userRepository = new UserRepository(applicationContext);
+        LocationRepository locationRepository = new LocationRepository(applicationContext);
+
         topicRepository = new InMemoryTopicRepository();
         postRepository = new InMemoryPostRepository(topicRepository);
         extensionRepository = new ExtensionRepository();
@@ -82,13 +87,15 @@ public class RepositoryLocator {
                                     PostRepository newPostRepository,
                                     ExtensionRepository newExtensionRepository,
                                     ExtensionLoader newExtensionLoader,
-                                    ExtensionPublisher newExtensionPublisher) {
+                                    ExtensionPublisher newExtensionPublisher,
+                                    LocationRepository newLocationRepository) {
         userRepository = newUserRepository;
         topicRepository = newTopicRepository;
         postRepository = newPostRepository;
         extensionRepository = newExtensionRepository;
         extensionLoader = newExtensionLoader;
         extensionPublisher = newExtensionPublisher;
+        locationRepository = newLocationRepository;
         initialized = true;
     }
 
@@ -141,6 +148,15 @@ public class RepositoryLocator {
         synchronized (lock) {
             if (initialized) {
                 return extensionPublisher;
+            }
+            throw new RuntimeException("Not initialized");
+        }
+    }
+
+    public static LocationRepository getLocationRepository() {
+        synchronized (lock) {
+            if (initialized) {
+                return locationRepository;
             }
             throw new RuntimeException("Not initialized");
         }

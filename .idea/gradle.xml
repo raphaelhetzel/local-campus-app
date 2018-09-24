@@ -10,7 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/commentsExtension" />
+            <option value="$PROJECT_DIR$/commentsExtensionModule" />
             <option value="$PROJECT_DIR$/localcampuslib" />
+            <option value="$PROJECT_DIR$/postcreater" />
             <option value="$PROJECT_DIR$/testextension" />
           </set>
         </option>

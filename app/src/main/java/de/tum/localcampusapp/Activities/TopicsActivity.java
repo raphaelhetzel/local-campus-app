@@ -1,13 +1,10 @@
 package de.tum.localcampusapp.Activities;
 
-import android.Manifest;
 import android.arch.lifecycle.Observer;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,12 +13,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RepositoryLocator;
-import de.tum.localcampusapp.service.AppLibService;
+import de.tum.localcampuslib.AddPostFragment;
+import de.tum.localcampuslib.ShowPostFragment;
 
 import static de.tum.localcampusapp.PermissionManager.PERMISSION_STORAGE;
 
@@ -44,6 +43,14 @@ public class TopicsActivity extends AppCompatActivity {
 
         // Real Data
         RepositoryLocator.init(getApplicationContext());
+
+
+        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) AddPostFragment.class;
+        Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) CommentShowFragment.class;
+
+        RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"
+                , showPostFragmentClass, addPostFragmentClass, "");
+
 
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());

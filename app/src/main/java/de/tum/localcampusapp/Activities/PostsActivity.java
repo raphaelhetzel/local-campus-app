@@ -1,16 +1,13 @@
 package de.tum.localcampusapp.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.exception.DatabaseException;
@@ -58,7 +55,8 @@ public class PostsActivity extends AppCompatActivity{
                 Intent addPostIntent = new Intent(this, AddPostActivity.class);
                 addPostIntent.putExtra("selectedTopicId", String.valueOf(topicId));
                 // TODO: replace with Real Type (needs a picker)
-                addPostIntent.putExtra("selectedPostType", "ee5afd62-6e72-4728-8404-e91d7ea2c303");
+                //addPostIntent.putExtra("selectedPostType", "ee5afd62-6e72-4728-8404-e91d7ea2c303"); //changed
+                addPostIntent.putExtra("selectedPostType","6ed88f3a-5895-4cac-b096-d260ecc9b71d");
                 this.startActivity(addPostIntent);
             });
 

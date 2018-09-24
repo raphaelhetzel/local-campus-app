@@ -45,4 +45,5 @@ dependencies {
     testImplementation "android.arch.core:core-testing:$lifecycle_version"
     implementation project(':localcampuslib')
     implementation project(':commentsExtensionModule')
+    implementation project(':postcreater')
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
+import de.tum.in.postcreater.Fragments.PostAddFragment;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
@@ -45,7 +46,7 @@ public class TopicsActivity extends AppCompatActivity {
         RepositoryLocator.init(getApplicationContext());
 
 
-        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) AddPostFragment.class;
+        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) PostAddFragment.class;
         Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) CommentShowFragment.class;
 
         RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"

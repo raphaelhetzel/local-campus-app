@@ -1,29 +1,52 @@
 package de.tum.localcampusapp.repository;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Transformations;
+import android.util.Log;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import de.tum.localcampusapp.database.LocationTopicMappingDao;
 import de.tum.localcampusapp.database.TopicDao;
+import de.tum.localcampusapp.entity.LocationTopicMapping;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 
 public class RealTopicRepository implements TopicRepository {
 
+    private final LocationRepository locationRepository;
     private final TopicDao topicDao;
+    private final LocationTopicMappingDao locationTopicMappingDao;
 
-    public RealTopicRepository(TopicDao topicDao) {
+    public RealTopicRepository(LocationRepository locationRepository, TopicDao topicDao, LocationTopicMappingDao locationTopicMappingDao) {
         this.topicDao = topicDao;
+        this.locationTopicMappingDao = locationTopicMappingDao;
+        this.locationRepository = locationRepository;
     }
 
     @Override
-    public LiveData<List<Topic>> getTopics() {
+    public  LiveData<List<Topic>> getTopics() {
         return topicDao.getTopics();
     }
 
     @Override
-    public LiveData<Topic> getTopic(long id) {
+    public  synchronized LiveData<List<Topic>> getTopicsForCurrentLocation() {
+        return Transformations.switchMap(locationRepository.getCurrentLocation(), currentLocation -> {
+            Log.d("RAH", "Transformation called"+currentLocation);
+            return topicDao.getTopicsForLocation(currentLocation);
+        });
+    }
+
+    @Override
+    public  LiveData<Topic> getTopic(long id) {
         return topicDao.getTopic(id);
+    }
+
+    @Override
+    public  synchronized List<Topic> getFinalTopicsForCurrentLocation() {
+        return topicDao.getFinalTopicsForLocation(locationRepository.getFinalCurrentLocation());
     }
 
     @Override
@@ -41,25 +64,26 @@ public class RealTopicRepository implements TopicRepository {
         return topicDao.getFinalTopic(id);
     }
 
-    /*
-        TODO: in a future version we might need duplicates to remove topics if a router
-        gets out of range (we will then need a device id in the entity)
-     */
     @Override
-    public void insertTopic(Topic topic) throws DatabaseException {
-        try {
-            topicDao.insert(topic);
+    public synchronized void insertTopic(String topicName, String locationId) {
+
+        long topicId;
+        Topic existingTopic = getFinalTopicByName(topicName);
+        if(existingTopic == null || existingTopic.getId() == 0) {
+            Topic topic = new Topic();
+            topic.setTopicName(topicName);
+            topicId = topicDao.insert(topic);
+        } else {
+            topicId = existingTopic.getId();
         }
-        // Catches both the case where the topic id and the topic_name is duplicate
+
+        try {
+            locationTopicMappingDao.insert(new LocationTopicMapping(topicId, locationId));
+        }
         catch (android.database.sqlite.SQLiteConstraintException e) {
-            /*
-                Ignore duplicate topics, while matching a String isn't ideal
-                this should be fine as the string is verified by a test
-             */
-            if (e.getMessage().contains("topics.topic_name")) {
-                return;
+            if(!e.getMessage().contains("UNIQUE constraint failed")) {
+                throw e;
             }
-            throw new DatabaseException();
         }
     }
 }

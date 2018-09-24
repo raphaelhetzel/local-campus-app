@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
+import de.tum.localcampusapp.database.LocationTopicMappingDao;
 import de.tum.localcampusapp.database.TopicDao;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.extensioninterface.RealExtensionPublisher;
@@ -69,8 +70,8 @@ public class RepositoryLocatorTest {
     public void reInitCustom() {
         // This would not work for the current implementation of the repositories
         RepositoryLocator.reInitCustom(new UserRepository(mock(Context.class)),
-                new RealTopicRepository(mTopicDao),
-                new InMemoryPostRepository(new InMemoryTopicRepository()),
+                new RealTopicRepository( new LocationRepository(mock(Context.class)), mTopicDao, mock(LocationTopicMappingDao.class)),
+                new InMemoryPostRepository(new InMemoryTopicRepository(new LocationRepository(mock(Context.class)))),
                 new ExtensionRepository(),
                 new ExtensionLoader(mock(Context.class), new ExtensionRepository()),
                 new RealExtensionPublisher(mock(Context.class), mock(ExtensionRepository.class)),

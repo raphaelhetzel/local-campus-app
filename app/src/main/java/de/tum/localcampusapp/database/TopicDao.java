@@ -13,7 +13,7 @@ import de.tum.localcampusapp.entity.Topic;
 public interface TopicDao {
 
     @Insert
-    void insert(Topic topic);
+    long insert(Topic topic);
 
     @Query("SELECT * FROM topics WHERE id = :id")
     LiveData<Topic> getTopic(long id);
@@ -29,5 +29,13 @@ public interface TopicDao {
 
     @Query("SELECT * FROM topics WHERE id = :id")
     Topic getFinalTopic(long id);
+
+    @Query("SELECT topics.id AS id, topics.topic_name AS topic_name FROM (SELECT * FROM location_topic_mapping WHERE location_id LIKE :locationId) AS current_location" +
+            " INNER JOIN topics ON current_location.topic_id = topics.id")
+    LiveData<List<Topic>> getTopicsForLocation(String locationId);
+
+    @Query("SELECT topics.id AS id, topics.topic_name AS topic_name FROM (SELECT * FROM location_topic_mapping WHERE location_id LIKE :locationId) AS current_location" +
+            " INNER JOIN topics ON current_location.topic_id = topics.id")
+    List<Topic> getFinalTopicsForLocation(String locationId);
 
 }

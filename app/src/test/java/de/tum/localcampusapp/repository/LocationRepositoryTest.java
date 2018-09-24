@@ -55,6 +55,16 @@ public class LocationRepositoryTest {
     }
 
     @Test
+    public void GetFinalLocation() throws InterruptedException {
+        SharedPreferences.Editor mEditor = mock(SharedPreferences.Editor.class);
+        when(mSharedPreferences.edit()).thenReturn(mEditor);
+        LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);
+        locationRepository.setCurrentLocation("newLocation");
+
+        assertEquals(locationRepository.getFinalCurrentLocation(), "newLocation");
+    }
+
+    @Test
     public void LoadSavedLocation() throws InterruptedException {
         when(mSharedPreferences.getString("current_location", "no_location")).thenReturn("oldLocation");
         LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);

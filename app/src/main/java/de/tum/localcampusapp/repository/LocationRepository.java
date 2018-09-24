@@ -39,6 +39,12 @@ public class LocationRepository {
         }
     }
 
+    public String getFinalCurrentLocation() {
+        synchronized (lock) {
+            return this.current_location.getValue();
+        }
+    }
+
     public void setCurrentLocation(String locationId) {
         this.handler.post(() -> {
             synchronized (lock) {

@@ -3,9 +3,12 @@ package de.tum.localcampusapp.service;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
@@ -29,52 +32,45 @@ public class DiscoveryHandler implements MessageReceivedCallback {
     private final AppLib appLib;
     private final Set<String> subscriptions;
 
-    private String currentLocationId;
-
     private final Object lock = new Object();
 
-    public DiscoveryHandler(LifecycleOwner serviceLifecylce, AppLib appLib) {
-        this(serviceLifecylce, appLib, RepositoryLocator.getTopicRepository(), RepositoryLocator.getLocationRepository());
+    public DiscoveryHandler(AppLib appLib) {
+        this(appLib, RepositoryLocator.getTopicRepository());
     }
 
-    public DiscoveryHandler(LifecycleOwner serviceLifecycle, AppLib appLib, TopicRepository topicRepository, LocationRepository locationRepository) {
+
+    public DiscoveryHandler(AppLib appLib, TopicRepository topicRepository) {
         this.topicRepository = topicRepository;
         this.appLib = appLib;
         this.subscriptions = new HashSet<>();
-        locationRepository.getCurrentLocation().observeForever(locationId -> {
-            synchronized (lock) {
-                System.out.println("called");
-                this.currentLocationId = locationId;
-                locationChanged(locationId);
-            }
-        });
     }
 
     @Override
     public void messageReceived(SCAMPIMessage scampiMessage, String service) {
         if (scampiMessage.hasString("topicName") && scampiMessage.hasString("deviceId")) {
-            Topic topic = new Topic();
-            topic.setTopicName(scampiMessage.getString("topicName"));
-            try {
-                topicRepository.insertTopic(topic);
-                // insert locationToTopicMapping
-            } catch (DatabaseException e) {
-                e.printStackTrace();
-            }
-            synchronized (lock) {
-                String topicLocationId = scampiMessage.getString("deviceId");
-                System.out.println(currentLocationId);
-                if(topicLocationId.equals(currentLocationId)) {
-                    subscribeToTopic(topic.getTopicName());
-                }
-            }
+            String topicName = scampiMessage.getString("topicName");
+            String locationId = scampiMessage.getString("deviceId");
+            Log.d("RAH", "MESSAGE:"+ topicName + " " + locationId);
+            topicRepository.insertTopic(topicName, locationId);
         }
         scampiMessage.close();
     }
 
-    private void locationChanged(String locationId) {
-        // query location to topic mappings
-        // Change subscriptions to the topics available at the new location
+    public void locationChanged(List<Topic> currentLocationTopics) {
+            Log.d("RAH", "TOPICS"+currentLocationTopics.size());
+            Set<String> oldSubscriptions = new HashSet<>(subscriptions);
+            Set<String> newSubscriptions = currentLocationTopics.stream().map(topic -> topic.getTopicName()).collect(Collectors.toSet());
+
+            oldSubscriptions.removeAll(newSubscriptions);
+            newSubscriptions.removeAll(oldSubscriptions);
+
+            for(String topic : oldSubscriptions) {
+                unsubscribeFromTopic(topic);
+            }
+
+            for(String topic : newSubscriptions) {
+                subscribeToTopic(topic);
+            }
     }
 
     private void subscribeToTopic(String topicName) {
@@ -82,7 +78,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
             synchronized (subscriptions) {
                 if(!this.subscriptions.contains(topicName)) {
                     // TODO: change back to the short constructor
-                    appLib.subscribe(topicName, new TopicHandler(null,
+                    appLib.subscribe(topicName, new TopicHandler(RepositoryLocator.getPostRepository(),
                             new ScampiPostSerializer(),
                             new ScampiVoteSerializer(),
                             new ScampiPostExtensionSerializer()));
@@ -97,7 +93,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
     private void unsubscribeFromTopic(String topicName) {
         try {
             synchronized (subscriptions) {
-                if(!this.subscriptions.contains(topicName)) {
+                if(this.subscriptions.contains(topicName)) {
                     appLib.unsubscribe(topicName);
                     this.subscriptions.remove(topicName);
                 }

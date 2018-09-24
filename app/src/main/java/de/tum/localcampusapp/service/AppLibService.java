@@ -47,6 +47,8 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     private ExtensionHandler extensionHandler;
 
+    private LocationHandler locationHandler;
+
     private Binder binder;
 
     private volatile String scampiId;
@@ -102,12 +104,14 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
 
         appLib = AppLib.builder().build();
-        this.discoveryHandler = new DiscoveryHandler((LifecycleOwner) this, appLib);
+        this.discoveryHandler = new DiscoveryHandler(appLib);
         this.extensionHandler = new ExtensionHandler(this);
+        this.locationHandler = new LocationHandler();
+
         appLib.addLifecycleListener(this);
         try {
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
-            appLib.startLocationUpdates(new LocationHandler());
+            subscribeToLocationUpdates();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -220,6 +224,13 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void subscribeToLocationUpdates() throws InterruptedException {
+        appLib.startLocationUpdates(this.locationHandler);
+        RepositoryLocator.getTopicRepository().getTopicsForCurrentLocation().observeForever(topics -> {
+            discoveryHandler.locationChanged(topics);
+        });
     }
 
 

@@ -102,10 +102,10 @@ public class FakeDataGenerator {
         try {
             Log.d("FakeDataGenerator", "insert: "+ getNameWithId(elementsName, id));
             if(topicRepository!=null){
-                topicRepository.insertTopic(new Topic(id, getNameWithId(elementsName, id)));
+                topicRepository.insertTopic(getNameWithId(elementsName, id), "no_location");
             }
             else{
-                topicRepository.insertTopic(new Topic(id, getNameWithId(elementsName, id)));
+                topicRepository.insertTopic(getNameWithId(elementsName, id), "no_location");
             }
         }catch (Exception e){
             e.printStackTrace();

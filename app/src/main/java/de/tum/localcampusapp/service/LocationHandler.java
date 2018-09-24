@@ -1,5 +1,7 @@
 package de.tum.localcampusapp.service;
 
+import android.util.Log;
+
 import de.tum.localcampusapp.repository.LocationRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
@@ -20,15 +22,16 @@ public class LocationHandler implements LocationUpdateCallback {
 
     @Override
     public void locationUpdated(AppLib appLib, double v, double v1, double v2, double v3, long l) {
-        // Unused
+        // Unused / Deprecated
     }
 
     @Override
     public void gpsLocationUpdated(Protocol.GpsLocation gpsLocation) {
-        locationRepository.setCurrentLocation(buildLocationId(gpsLocation));
+       locationRepository.setCurrentLocation(buildLocationId(gpsLocation));
+        Log.d("RAH", "Size:"+ RepositoryLocator.getTopicRepository().getFinalTopicsForCurrentLocation().size());
     }
 
     private String buildLocationId(Protocol.GpsLocation gpsLocation) {
-        return "LAT:"+gpsLocation.latitude+",LON:"+gpsLocation.longitude;
+        return "LAT:"+(gpsLocation.latitude)+",LON:"+gpsLocation.longitude;
     }
 }

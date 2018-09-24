@@ -107,37 +107,12 @@ public class TopicDaoTest {
         assertEquals(LiveDataHelper.getValue(result_topic).getTopicName(), "/tum");
     }
 
-    // Ensure the error message contains the field to allow inserting duplicate messages
     @Test
-    public void insertDuplicate() {
-        Topic topic = new Topic();
-        topic.setTopicName("/tum");
-        Topic topic2 = new Topic();
-        topic2.setTopicName("/tum");
-        boolean thrown = false;
-
-        topicDao.insert(topic);
-        try {
-            topicDao.insert(topic2);
-        } catch (SQLiteConstraintException e) {
-            if (e.getMessage().contains("topics.topic_name")) {
-                thrown = true;
-            } else {
-                throw e;
-            }
-        }
-        assertEquals(thrown, true);
-    }
-
-    @Test
-    public void insert_getByName_getById() throws InterruptedException {
+    public void insert_getById() throws InterruptedException {
         Topic topic = new Topic();
         topic.setTopicName("/tum");
 
-        topicDao.insert(topic);
-
-        Topic uuid_topic = topicDao.getFinalByName("/tum");
-        long id = uuid_topic.getId();
+        long id = topicDao.insert(topic);
 
         LiveData<Topic> id_topic = topicDao.getTopic(id);
         assertEquals(LiveDataHelper.getValue(id_topic).getTopicName(), topic.getTopicName());

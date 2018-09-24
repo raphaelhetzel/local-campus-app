@@ -26,10 +26,10 @@ public class RepositoryLocator {
     // Needs to be called before any Repository is used.
     // Service should be explicitly started before.
     public static void init(Context applicationContext) {
-        synchronized (lock) {
+        //synchronized (lock) {
             if (initialized == false) reInit(applicationContext);
 
-        }
+        //}
     }
 
     public static void initInMemory(Context applicationContext) {
@@ -41,8 +41,8 @@ public class RepositoryLocator {
     public static void reInit(Context applicationContext) {
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
         userRepository = new UserRepository(applicationContext);
-        LocationRepository locationRepository = new LocationRepository(applicationContext);
-        topicRepository = new RealTopicRepository(appDatabase.getTopicDao());
+        locationRepository = new LocationRepository(applicationContext);
+        topicRepository = new RealTopicRepository(locationRepository, appDatabase.getTopicDao(), appDatabase.getLocationTopicMappingDao());
         RealPostRepository realPostRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
                 appDatabase.getVoteDao(),
@@ -71,9 +71,9 @@ public class RepositoryLocator {
 
     public static void reInitInMemory(Context applicationContext) {
         userRepository = new UserRepository(applicationContext);
-        LocationRepository locationRepository = new LocationRepository(applicationContext);
+        locationRepository = new LocationRepository(applicationContext);
 
-        topicRepository = new InMemoryTopicRepository();
+        topicRepository = new InMemoryTopicRepository(locationRepository);
         postRepository = new InMemoryPostRepository(topicRepository);
         extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
@@ -101,64 +101,43 @@ public class RepositoryLocator {
 
     public static UserRepository getUserRepository() {
         synchronized (lock) {
-            if (initialized) {
                 return userRepository;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static TopicRepository getTopicRepository() {
         synchronized (lock) {
-            if (initialized) {
                 return topicRepository;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static PostRepository getPostRepository() {
         synchronized (lock) {
-            if (initialized) {
                 return postRepository;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static ExtensionRepository getExtensionRepository() {
         synchronized (lock) {
-            if (initialized) {
                 return extensionRepository;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static ExtensionLoader getExtensionLoader() {
         synchronized (lock) {
-            if (initialized) {
                 return extensionLoader;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static ExtensionPublisher getExtensionPublisher() {
         synchronized (lock) {
-            if (initialized) {
                 return extensionPublisher;
-            }
-            throw new RuntimeException("Not initialized");
         }
     }
 
     public static LocationRepository getLocationRepository() {
         synchronized (lock) {
-            if (initialized) {
-                return locationRepository;
-            }
-            throw new RuntimeException("Not initialized");
+            return locationRepository;
         }
     }
 

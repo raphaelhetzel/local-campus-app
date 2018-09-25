@@ -9,6 +9,7 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
+import de.tum.localcampusapp.repository.NetworkLayerPostRepository;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiMessageTypes;
@@ -26,20 +27,20 @@ public class TopicHandler implements MessageReceivedCallback {
 
     public static final String TAG = TopicHandler.class.getSimpleName();
 
-    private final PostRepository postRepository;
+    private final NetworkLayerPostRepository postRepository;
     private final ScampiPostSerializer scampiPostSerializer;
     private final ScampiVoteSerializer scampiVoteSerializer;
     private final ScampiPostExtensionSerializer scampiPostExtensionSerializer;
 
     public TopicHandler() {
-        this(RepositoryLocator.getPostRepository(),
+        this(RepositoryLocator.getNetworkLayerPostRepository(),
                 new ScampiPostSerializer(),
                 new ScampiVoteSerializer(),
                 new ScampiPostExtensionSerializer());
     }
 
 
-    public TopicHandler(PostRepository postRepository, ScampiPostSerializer scampiPostSerializer, ScampiVoteSerializer scampiVoteSerializer, ScampiPostExtensionSerializer scampiPostExtensionSerializer) {
+    public TopicHandler(NetworkLayerPostRepository postRepository, ScampiPostSerializer scampiPostSerializer, ScampiVoteSerializer scampiVoteSerializer, ScampiPostExtensionSerializer scampiPostExtensionSerializer) {
         this.postRepository = postRepository;
         this.scampiPostSerializer = scampiPostSerializer;
         this.scampiVoteSerializer = scampiVoteSerializer;

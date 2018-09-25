@@ -27,7 +27,9 @@ public class ExtensionLoaderTest {
     @Test
     public void testAPKloading() {
         Context context = InstrumentationRegistry.getTargetContext();
-        RepositoryLocator.init(context);
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            RepositoryLocator.initInMemory(context);
+        });
 
         assertEquals(0, RepositoryLocator.getExtensionRepository().getExtensions().size());
         RepositoryLocator.getExtensionLoader().loadAPK(new File(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "localcampusjars"), "test.apk"));

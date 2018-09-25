@@ -44,7 +44,7 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
         assertEquals(RepositoryLocator.getExtensionPublisher().getClass(), RealExtensionPublisher.class);
-        assertEquals(RepositoryLocator.getLocationRepository().getClass(), LocationRepository.class);
+        assertEquals(RepositoryLocator.getLocationRepository().getClass(), PersistentLocationRepository.class);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class RepositoryLocatorTest {
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
         assertEquals(RepositoryLocator.getExtensionPublisher().getClass(), StubExtensionPublisher.class);
-        assertEquals(RepositoryLocator.getLocationRepository().getClass(), LocationRepository.class);
+        assertEquals(RepositoryLocator.getLocationRepository().getClass(), InMemoryLocationRepository.class);
     }
 
     @Test
@@ -70,18 +70,19 @@ public class RepositoryLocatorTest {
     public void reInitCustom() {
         // This would not work for the current implementation of the repositories
         RepositoryLocator.reInitCustom(new UserRepository(mock(Context.class)),
-                new RealTopicRepository( new LocationRepository(mock(Context.class)), mTopicDao, mock(LocationTopicMappingDao.class)),
-                new InMemoryPostRepository(new InMemoryTopicRepository(new LocationRepository(mock(Context.class)))),
+                new RealTopicRepository( new PersistentLocationRepository(mock(Context.class)), mTopicDao, mock(LocationTopicMappingDao.class)),
+                new InMemoryPostRepository(new InMemoryTopicRepository(new PersistentLocationRepository(mock(Context.class)))),
                 new ExtensionRepository(),
                 new ExtensionLoader(mock(Context.class), new ExtensionRepository()),
                 new RealExtensionPublisher(mock(Context.class), mock(ExtensionRepository.class)),
-                new LocationRepository(mock(Context.class)));
+                new PersistentLocationRepository(mock(Context.class)),
+                new InMemoryPostRepository(new InMemoryTopicRepository(new PersistentLocationRepository(mock(Context.class)))));
         assertEquals(RepositoryLocator.getUserRepository().getClass(), UserRepository.class);
         assertEquals(RepositoryLocator.getPostRepository().getClass(), InMemoryPostRepository.class);
         assertEquals(RepositoryLocator.getTopicRepository().getClass(), RealTopicRepository.class);
         assertEquals(RepositoryLocator.getExtensionRepository().getClass(), ExtensionRepository.class);
         assertEquals(RepositoryLocator.getExtensionLoader().getClass(), ExtensionLoader.class);
         assertEquals(RepositoryLocator.getExtensionPublisher().getClass(), RealExtensionPublisher.class);
-        assertEquals(RepositoryLocator.getLocationRepository().getClass(), LocationRepository.class);
+        assertEquals(RepositoryLocator.getLocationRepository().getClass(), PersistentLocationRepository.class);
     }
 }

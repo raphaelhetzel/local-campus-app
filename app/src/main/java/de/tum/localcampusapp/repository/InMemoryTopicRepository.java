@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Topic;
-import de.tum.localcampusapp.exception.DatabaseException;
 
 // This is just a Mock and should not be used in Production!
 

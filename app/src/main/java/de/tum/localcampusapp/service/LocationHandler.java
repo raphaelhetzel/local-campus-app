@@ -1,7 +1,5 @@
 package de.tum.localcampusapp.service;
 
-import android.util.Log;
-
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

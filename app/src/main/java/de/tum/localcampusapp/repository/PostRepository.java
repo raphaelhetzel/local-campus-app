@@ -40,8 +40,6 @@ public interface PostRepository {
 
     LiveData<List<Post>> getPostsforTopic(long topicId);
 
-    void insertPost(Post post) throws DatabaseException, MissingRelatedDataException;
-
 
     /// Vote
 
@@ -51,8 +49,6 @@ public interface PostRepository {
     //Won't raise on missing related data as it will most likely run in the background
     void downVote(long postId);
 
-    void insertVote(Vote vote) throws DatabaseException;
-
 
     /// PostExtension
 
@@ -60,6 +56,4 @@ public interface PostRepository {
     void addPostExtension(PostExtension postExtension);
 
     LiveData<List<PostExtension>> getPostExtensionsForPost(long postId);
-
-    void insertPostExtension(PostExtension postExtension) throws DatabaseException;
 }

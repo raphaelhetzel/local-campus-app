@@ -33,7 +33,7 @@ import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import de.tum.localcampusapp.service.AppLibService;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
-public class RealPostRepository implements PostRepository {
+public class RealPostRepository implements PostRepository, NetworkLayerPostRepository {
 
     static final String TAG = RealPostRepository.class.getSimpleName();
 

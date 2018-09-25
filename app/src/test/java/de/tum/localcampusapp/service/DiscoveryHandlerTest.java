@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,6 +19,7 @@ import java.util.List;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RealTopicRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
@@ -48,6 +50,7 @@ public class DiscoveryHandlerTest {
     public void initializeMocks() {
         this.mAppLib = mock(AppLib.class);
         this.mTopicRepository = mock(RealTopicRepository.class);
+        RepositoryLocator.initInMemory(mock(Context.class));
 
         this.mLifeCycleOwner = mock(LifecycleOwner.class);
         LifecycleRegistry lifecycle = new LifecycleRegistry(mock(LifecycleOwner.class));

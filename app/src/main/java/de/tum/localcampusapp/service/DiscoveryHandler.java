@@ -1,9 +1,6 @@
 package de.tum.localcampusapp.service;
 
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.content.Context;
-import android.util.Log;
 
 import java.util.HashSet;
 import java.util.List;
@@ -11,8 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.entity.Topic;
-import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.repository.LocationRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
 import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
@@ -21,9 +16,6 @@ import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
-
-import static java.lang.Thread.sleep;
-
 public class DiscoveryHandler implements MessageReceivedCallback {
 
     public static final String TAG = DiscoveryHandler.class.getSimpleName();
@@ -78,10 +70,7 @@ public class DiscoveryHandler implements MessageReceivedCallback {
             synchronized (subscriptions) {
                 if(!this.subscriptions.contains(topicName)) {
                     // TODO: change back to the short constructor
-                    appLib.subscribe(topicName, new TopicHandler(RepositoryLocator.getPostRepository(),
-                            new ScampiPostSerializer(),
-                            new ScampiVoteSerializer(),
-                            new ScampiPostExtensionSerializer()));
+                    appLib.subscribe(topicName, new TopicHandler());
                     this.subscriptions.add(topicName);
                 }
             }

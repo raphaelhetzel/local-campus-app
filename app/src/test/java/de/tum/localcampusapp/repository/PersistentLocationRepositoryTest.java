@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LocationRepositoryTest {
+public class PersistentLocationRepositoryTest {
 
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
@@ -37,18 +37,18 @@ public class LocationRepositoryTest {
     @Test
     public void DefaultLocation() throws InterruptedException {
         when(mSharedPreferences.getString("current_location", "no_location")).thenReturn("no_location");
-        LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);
-        assertEquals(LiveDataHelper.getValue(locationRepository.getCurrentLocation()), "no_location");
+        PersistentLocationRepository persistentLocationRepository = new PersistentLocationRepository(mSharedPreferences, mHandler);
+        assertEquals(LiveDataHelper.getValue(persistentLocationRepository.getCurrentLocation()), "no_location");
     }
 
     @Test
     public void SetGetLocation() throws InterruptedException {
         SharedPreferences.Editor mEditor = mock(SharedPreferences.Editor.class);
         when(mSharedPreferences.edit()).thenReturn(mEditor);
-        LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);
-        locationRepository.setCurrentLocation("newLocation");
+        PersistentLocationRepository persistentLocationRepository = new PersistentLocationRepository(mSharedPreferences, mHandler);
+        persistentLocationRepository.setCurrentLocation("newLocation");
 
-        assertEquals(LiveDataHelper.getValue(locationRepository.getCurrentLocation()), "newLocation");
+        assertEquals(LiveDataHelper.getValue(persistentLocationRepository.getCurrentLocation()), "newLocation");
 
         verify(mEditor).putString("current_location", "newLocation");
         verify(mEditor).commit();
@@ -58,16 +58,16 @@ public class LocationRepositoryTest {
     public void GetFinalLocation() throws InterruptedException {
         SharedPreferences.Editor mEditor = mock(SharedPreferences.Editor.class);
         when(mSharedPreferences.edit()).thenReturn(mEditor);
-        LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);
-        locationRepository.setCurrentLocation("newLocation");
+        PersistentLocationRepository persistentLocationRepository = new PersistentLocationRepository(mSharedPreferences, mHandler);
+        persistentLocationRepository.setCurrentLocation("newLocation");
 
-        assertEquals(locationRepository.getFinalCurrentLocation(), "newLocation");
+        assertEquals(persistentLocationRepository.getFinalCurrentLocation(), "newLocation");
     }
 
     @Test
     public void LoadSavedLocation() throws InterruptedException {
         when(mSharedPreferences.getString("current_location", "no_location")).thenReturn("oldLocation");
-        LocationRepository locationRepository = new LocationRepository(mSharedPreferences, mHandler);
-        assertEquals(LiveDataHelper.getValue(locationRepository.getCurrentLocation()), "oldLocation");
+        PersistentLocationRepository persistentLocationRepository = new PersistentLocationRepository(mSharedPreferences, mHandler);
+        assertEquals(LiveDataHelper.getValue(persistentLocationRepository.getCurrentLocation()), "oldLocation");
     }
 }

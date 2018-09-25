@@ -20,7 +20,7 @@ import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 
-public class InMemoryPostRepository implements PostRepository {
+public class InMemoryPostRepository implements PostRepository, NetworkLayerPostRepository {
 
 
     static final String TAG = InMemoryPostRepository.class.getSimpleName();

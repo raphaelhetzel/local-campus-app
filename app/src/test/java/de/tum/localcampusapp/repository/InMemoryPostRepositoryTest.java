@@ -36,7 +36,7 @@ public class InMemoryPostRepositoryTest {
     Handler mockHandler = HandlerInstantRun.getMockHandler();
     TopicRepository mTopicRepository;
 
-    PostRepository repository;
+    InMemoryPostRepository repository;
 
     @Before
     public void setupRepositoryandMock() {

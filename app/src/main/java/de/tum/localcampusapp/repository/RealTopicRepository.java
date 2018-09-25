@@ -1,18 +1,14 @@
 package de.tum.localcampusapp.repository;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Transformations;
-import android.util.Log;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.tum.localcampusapp.database.LocationTopicMappingDao;
 import de.tum.localcampusapp.database.TopicDao;
 import de.tum.localcampusapp.entity.LocationTopicMapping;
 import de.tum.localcampusapp.entity.Topic;
-import de.tum.localcampusapp.exception.DatabaseException;
 
 public class RealTopicRepository implements TopicRepository {
 

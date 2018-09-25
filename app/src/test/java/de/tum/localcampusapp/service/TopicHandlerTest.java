@@ -11,6 +11,7 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
+import de.tum.localcampusapp.repository.NetworkLayerPostRepository;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
 import de.tum.localcampusapp.serializer.ScampiPostSerializer;
@@ -30,14 +31,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TopicHandlerTest {
 
-    PostRepository mPostRepository;
+    NetworkLayerPostRepository mPostRepository;
     private ScampiPostSerializer mScampiPostSerializer;
     private ScampiVoteSerializer mScampiVoteSerializer;
     private ScampiPostExtensionSerializer mScampiPostExtensionSerializer;
 
     @Before
     public void initializeMocks() {
-        this.mPostRepository = mock(PostRepository.class);
+        this.mPostRepository = mock(NetworkLayerPostRepository.class);
         this.mScampiPostSerializer = mock(ScampiPostSerializer.class);
         this.mScampiVoteSerializer = mock(ScampiVoteSerializer.class);
         this.mScampiPostExtensionSerializer = mock(ScampiPostExtensionSerializer.class);

@@ -13,19 +13,40 @@ import de.tum.localcampusapp.service.AppLibService;
 public class RepositoryLocator {
 
     private static volatile boolean initialized = false;
-    private static volatile UserRepository userRepository;
-    private static volatile LocationRepository locationRepository;
-    private static volatile TopicRepository topicRepository;
-    private static volatile ExtensionRepository extensionRepository;
-    private static volatile PostRepository postRepository;
 
-    private static volatile ExtensionLoader extensionLoader;
-    private static volatile ExtensionPublisher extensionPublisher;
+    private static final Container<UserRepository> userRepository = new Container<>();
+    private static final Container<LocationRepository> locationRepository = new Container<>();
+    private static final Container<TopicRepository> topicRepository = new Container<>();
+    private static final Container<ExtensionRepository> extensionRepository  = new Container<>();
+    private static final Container<PostRepository> postRepository  = new Container<>();
+    private static final Container<NetworkLayerPostRepository> networkLayerPostRepository= new Container<>();
+    private static final Container<ExtensionLoader> extensionLoader = new Container<>();
+    private static final Container<ExtensionPublisher> extensionPublisher = new Container<>();
     private static final Object lock = new Object();
+
+    private static class Container<T> {
+        private T content;
+        private boolean initialized = false;
+        public synchronized void init(T newContent) {
+            content = newContent;
+            initialized = true;
+        }
+
+        public synchronized T getValue() {
+            if(! initialized)
+                // catch potential dependency issues early on.
+                throw new RuntimeException("Unitialized");
+            return content;
+        }
+
+        public synchronized void reset() {
+            this.content = null;
+            this.initialized = false;
+        }
+    }
 
 
     // Needs to be called before any Repository is used.
-    // Service should be explicitly started before.
     public static void init(Context applicationContext) {
         synchronized (lock) {
             if (initialized == false) reInit(applicationContext);
@@ -39,44 +60,52 @@ public class RepositoryLocator {
     }
 
     public static void reInit(Context applicationContext) {
+
+        // Repositories the service might depend on (implicit, explicit impossible due to the limited
+        // data you can pass to the service start.
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
-        userRepository = new UserRepository(applicationContext);
-        locationRepository = new LocationRepository(applicationContext);
-        extensionRepository = new ExtensionRepository();
-        topicRepository = new RealTopicRepository(locationRepository, appDatabase.getTopicDao(), appDatabase.getLocationTopicMappingDao());
+        userRepository.init(new UserRepository(applicationContext));
+        locationRepository.init(new PersistentLocationRepository(applicationContext));
+        extensionRepository.init(new ExtensionRepository());
+        extensionLoader.init(new ExtensionLoader(applicationContext, getExtensionRepository()));
+        topicRepository.init(new RealTopicRepository(getLocationRepository(), appDatabase.getTopicDao(), appDatabase.getLocationTopicMappingDao()));
+
         RealPostRepository realPostRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
                 appDatabase.getVoteDao(),
                 appDatabase.getPostExtensionDao(),
-                topicRepository,
-                userRepository);
+                getTopicRepository(),
+                getUserRepository());
+        networkLayerPostRepository.init(realPostRepository);
 
-        // Service depends on RealPostRepository for inserting, but RealPostRepository
-        // depends on the service for application layer (not a problem if initialized correctly,
-        // just not as nice and clean as possible)
-        // TODO refactor this by splitting service and app layer repositories. (Big change)
+        // The Service depends on RealPostRepository for inserting and other database activities,
+        // but RealPostRepository depends on the service for the application layer functionality,
+        // thats why the interfaces are split. TODO split implementation
         applicationContext.startService(new Intent(applicationContext, AppLibService.class));
-        realPostRepository.bindService();
-        postRepository = realPostRepository;
-        extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
 
-        RealExtensionPublisher realExtensionPublisher = new RealExtensionPublisher(applicationContext, extensionRepository);
+        // Repositories that depend on the Service
+        realPostRepository.bindService();
+        postRepository.init(realPostRepository);
+
+        RealExtensionPublisher realExtensionPublisher = new RealExtensionPublisher(applicationContext, getExtensionRepository());
         realExtensionPublisher.bindService();
-        extensionPublisher = realExtensionPublisher;
+        extensionPublisher.init(realExtensionPublisher);
 
 
         initialized = true;
     }
 
     public static void reInitInMemory(Context applicationContext) {
-        userRepository = new UserRepository(applicationContext);
-        locationRepository = new LocationRepository(applicationContext);
+        userRepository.init( new UserRepository(applicationContext));
+        locationRepository.init(new InMemoryLocationRepository());
 
-        topicRepository = new InMemoryTopicRepository(locationRepository);
-        postRepository = new InMemoryPostRepository(topicRepository);
-        extensionRepository = new ExtensionRepository();
-        extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
-        extensionPublisher = new StubExtensionPublisher();
+        topicRepository.init(new InMemoryTopicRepository(getLocationRepository()));
+        InMemoryPostRepository newPostRepository = new InMemoryPostRepository(getTopicRepository());
+        postRepository.init(newPostRepository);
+        networkLayerPostRepository.init(newPostRepository);
+        extensionRepository.init(new ExtensionRepository());
+        extensionLoader.init(new ExtensionLoader(applicationContext, getExtensionRepository()));
+        extensionPublisher.init(new StubExtensionPublisher());
         initialized = true;
     }
 
@@ -87,68 +116,60 @@ public class RepositoryLocator {
                                     ExtensionRepository newExtensionRepository,
                                     ExtensionLoader newExtensionLoader,
                                     ExtensionPublisher newExtensionPublisher,
-                                    LocationRepository newLocationRepository) {
-        userRepository = newUserRepository;
-        topicRepository = newTopicRepository;
-        postRepository = newPostRepository;
-        extensionRepository = newExtensionRepository;
-        extensionLoader = newExtensionLoader;
-        extensionPublisher = newExtensionPublisher;
-        locationRepository = newLocationRepository;
+                                    PersistentLocationRepository newLocationRepository,
+                                    NetworkLayerPostRepository newNetworkLayerPostRepository) {
+        userRepository.init(newUserRepository);
+        topicRepository.init(newTopicRepository);
+        postRepository.init(newPostRepository);
+        extensionRepository.init(newExtensionRepository);
+        extensionLoader.init(newExtensionLoader);
+        extensionPublisher.init(newExtensionPublisher);
+        locationRepository.init(newLocationRepository);
+        networkLayerPostRepository.init(newNetworkLayerPostRepository);
         initialized = true;
     }
 
     public static UserRepository getUserRepository() {
-        synchronized (lock) {
-            return userRepository;
-        }
+        return userRepository.getValue();
     }
 
     public static TopicRepository getTopicRepository() {
-        synchronized (lock) {
-            return topicRepository;
-        }
+        return topicRepository.getValue();
     }
 
     public static PostRepository getPostRepository() {
-        synchronized (lock) {
-            return postRepository;
-        }
+        return postRepository.getValue();
     }
 
     public static ExtensionRepository getExtensionRepository() {
-        synchronized (lock) {
-            return extensionRepository;
-        }
+        return extensionRepository.getValue();
     }
 
     public static ExtensionLoader getExtensionLoader() {
-        synchronized (lock) {
-            return extensionLoader;
-        }
+        return extensionLoader.getValue();
     }
 
     public static ExtensionPublisher getExtensionPublisher() {
-        synchronized (lock) {
-            return extensionPublisher;
-        }
+        return extensionPublisher.getValue();
     }
 
     public static LocationRepository getLocationRepository() {
-        synchronized (lock) {
-            return locationRepository;
-        }
+        return locationRepository.getValue();
+    }
+
+    public static NetworkLayerPostRepository getNetworkLayerPostRepository() {
+        return networkLayerPostRepository.getValue();
     }
 
     public static void reset() {
         synchronized (lock) {
             if (initialized) {
-                topicRepository = null;
-                postRepository = null;
-                userRepository = null;
-                extensionRepository = null;
-                extensionLoader = null;
-                extensionPublisher = null;
+                topicRepository.reset();
+                postRepository.reset();
+                userRepository.reset();
+                extensionRepository.reset();
+                extensionLoader.reset();
+                extensionPublisher.reset();
                 initialized = false;
             }
         }

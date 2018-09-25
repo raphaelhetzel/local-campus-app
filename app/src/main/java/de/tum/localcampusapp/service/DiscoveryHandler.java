@@ -34,15 +34,17 @@ public class DiscoveryHandler implements MessageReceivedCallback {
 
     private final Object lock = new Object();
 
-    public DiscoveryHandler(AppLib appLib) {
-        this(appLib, RepositoryLocator.getTopicRepository());
+    public DiscoveryHandler(AppLib appLib, LifecycleOwner lifecycleOwner) {
+        this(appLib, lifecycleOwner, RepositoryLocator.getTopicRepository());
     }
 
 
-    public DiscoveryHandler(AppLib appLib, TopicRepository topicRepository) {
+    public DiscoveryHandler(AppLib appLib, LifecycleOwner lifecycleOwner, TopicRepository topicRepository) {
         this.topicRepository = topicRepository;
         this.appLib = appLib;
         this.subscriptions = new HashSet<>();
+
+        topicRepository.getTopicsForCurrentLocation().observe(lifecycleOwner, topics -> locationChanged(topics));
     }
 
     @Override
@@ -50,14 +52,12 @@ public class DiscoveryHandler implements MessageReceivedCallback {
         if (scampiMessage.hasString("topicName") && scampiMessage.hasString("deviceId")) {
             String topicName = scampiMessage.getString("topicName");
             String locationId = scampiMessage.getString("deviceId");
-            Log.d("RAH", "MESSAGE:"+ topicName + " " + locationId);
             topicRepository.insertTopic(topicName, locationId);
         }
         scampiMessage.close();
     }
 
-    public void locationChanged(List<Topic> currentLocationTopics) {
-            Log.d("RAH", "TOPICS"+currentLocationTopics.size());
+    private void locationChanged(List<Topic> currentLocationTopics) {
             Set<String> oldSubscriptions = new HashSet<>(subscriptions);
             Set<String> newSubscriptions = currentLocationTopics.stream().map(topic -> topic.getTopicName()).collect(Collectors.toSet());
 

@@ -14,22 +14,22 @@ public class RepositoryLocator {
 
     private static volatile boolean initialized = false;
     private static volatile UserRepository userRepository;
+    private static volatile LocationRepository locationRepository;
     private static volatile TopicRepository topicRepository;
-    private static volatile PostRepository postRepository;
     private static volatile ExtensionRepository extensionRepository;
+    private static volatile PostRepository postRepository;
+
     private static volatile ExtensionLoader extensionLoader;
     private static volatile ExtensionPublisher extensionPublisher;
-    private static volatile LocationRepository locationRepository;
     private static final Object lock = new Object();
 
 
     // Needs to be called before any Repository is used.
     // Service should be explicitly started before.
     public static void init(Context applicationContext) {
-        //synchronized (lock) {
+        synchronized (lock) {
             if (initialized == false) reInit(applicationContext);
-
-        //}
+        }
     }
 
     public static void initInMemory(Context applicationContext) {
@@ -42,6 +42,7 @@ public class RepositoryLocator {
         AppDatabase appDatabase = AppDatabase.buildDatabase(applicationContext);
         userRepository = new UserRepository(applicationContext);
         locationRepository = new LocationRepository(applicationContext);
+        extensionRepository = new ExtensionRepository();
         topicRepository = new RealTopicRepository(locationRepository, appDatabase.getTopicDao(), appDatabase.getLocationTopicMappingDao());
         RealPostRepository realPostRepository = new RealPostRepository(applicationContext,
                 appDatabase.getPostDao(),
@@ -57,8 +58,6 @@ public class RepositoryLocator {
         applicationContext.startService(new Intent(applicationContext, AppLibService.class));
         realPostRepository.bindService();
         postRepository = realPostRepository;
-
-        extensionRepository = new ExtensionRepository();
         extensionLoader = new ExtensionLoader(applicationContext, extensionRepository);
 
         RealExtensionPublisher realExtensionPublisher = new RealExtensionPublisher(applicationContext, extensionRepository);
@@ -101,37 +100,37 @@ public class RepositoryLocator {
 
     public static UserRepository getUserRepository() {
         synchronized (lock) {
-                return userRepository;
+            return userRepository;
         }
     }
 
     public static TopicRepository getTopicRepository() {
         synchronized (lock) {
-                return topicRepository;
+            return topicRepository;
         }
     }
 
     public static PostRepository getPostRepository() {
         synchronized (lock) {
-                return postRepository;
+            return postRepository;
         }
     }
 
     public static ExtensionRepository getExtensionRepository() {
         synchronized (lock) {
-                return extensionRepository;
+            return extensionRepository;
         }
     }
 
     public static ExtensionLoader getExtensionLoader() {
         synchronized (lock) {
-                return extensionLoader;
+            return extensionLoader;
         }
     }
 
     public static ExtensionPublisher getExtensionPublisher() {
         synchronized (lock) {
-                return extensionPublisher;
+            return extensionPublisher;
         }
     }
 

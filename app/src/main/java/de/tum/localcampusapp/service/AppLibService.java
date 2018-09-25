@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleService;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
@@ -31,7 +32,7 @@ import fi.tkk.netlab.dtn.scampi.applib.impl.parser.Protocol;
 
 import static de.tum.localcampusapp.service.ExtensionHandler.EXTENSION_SERVICE;
 
-public class AppLibService extends Service implements AppLibLifecycleListener {
+public class AppLibService extends LifecycleService implements AppLibLifecycleListener {
 
     public static final String DISCOVERY_SERVICE = "discovery";
 
@@ -55,12 +56,13 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
     private volatile boolean connected;
     private volatile List<Message> preconnect_buffer = new ArrayList<>();
 
+    /// API, called via the Binder
     public void publish(SCAMPIMessage message, String service) throws InterruptedException {
         if (this.connected) {
             publish_now(message, service);
         } else {
             preconnect_buffer.add(new Message(message, service));
-            Log.d(TAG, "Buffered Message");
+            Log.v(TAG, "Buffered Message");
         }
 
     }
@@ -73,17 +75,7 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         }
     }
 
-    private class Message {
-        public SCAMPIMessage scampiMessage;
-        public String targetService;
-
-        public Message(SCAMPIMessage scampiMessage, String targetService) {
-            this.scampiMessage = scampiMessage;
-            this.targetService = targetService;
-        }
-    }
-
-    // Service Lifecycle
+    /// Service Lifecycle
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -93,10 +85,10 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     @Override
     public void onCreate() {
-        moveToForeGround();
-
+        Log.v(TAG, "onCreate");
         super.onCreate();
-        Log.d(TAG, "onCreate");
+
+        moveToForeGround();
 
         this.scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
@@ -104,14 +96,14 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
 
         appLib = AppLib.builder().build();
-        this.discoveryHandler = new DiscoveryHandler(appLib);
+        this.discoveryHandler = new DiscoveryHandler(appLib, (LifecycleOwner) this);
         this.extensionHandler = new ExtensionHandler(this);
         this.locationHandler = new LocationHandler();
 
         appLib.addLifecycleListener(this);
         try {
+            appLib.startLocationUpdates(locationHandler);
             appLib.subscribe(DISCOVERY_SERVICE, this.discoveryHandler);
-            subscribeToLocationUpdates();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -122,41 +114,51 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
 
     @Override
     public void onDestroy() {
-
+        Log.v(TAG, "onDestroy");
         super.onDestroy();
-        appLib.stop();
-        Log.d(TAG, "onDestroy");
 
+        appLib.stop();
     }
 
-    // Scampi Lifecycle
+    /// Scampi Lifecycle
     @Override
     public void onConnected(String scampiId) {
+        Log.v(TAG, "AppLib connected: " + scampiId);
         this.connected = true;
         this.scampiId = scampiId;
-        Log.d(TAG, "AppLib connected: " + scampiId);
         clear_preconnect_buffer();
     }
 
     @Override
     public void onDisconnected() {
+        Log.v(TAG, "AppLib disconnected");
         this.connected = false;
         this.scampiId = null;
-        Log.d(TAG, "AppLib disconnected");
         this.scheduleConnect(RECONNECT_PERIOD, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void onConnectFailed() {
-        Log.d(TAG, "AppLib connect failed");
+        Log.v(TAG, "AppLib connect failed");
         this.scheduleConnect(RECONNECT_PERIOD, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void onStopped() {
+        Log.v(TAG, "AppLib stopped");
         this.connected = false;
         this.scampiId = null;
-        Log.d(TAG, "AppLib stopped");
+    }
+
+    // Helper class for buffering received Messages while Scampi is not connected
+    private class Message {
+        public SCAMPIMessage scampiMessage;
+        public String targetService;
+
+        public Message(SCAMPIMessage scampiMessage, String targetService) {
+            this.scampiMessage = scampiMessage;
+            this.targetService = targetService;
+        }
     }
 
 
@@ -165,17 +167,17 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         this.scheduledExecutor.schedule(() -> {
             AppLib.State state = this.appLib.getLifecycleState();
             if (state == AppLib.State.IDLE || state == AppLib.State.NEW) {
-                Log.d(TAG, "Trying to connect AppLib");
+                Log.v(TAG, "Trying to connect AppLib");
                 this.appLib.connect();
             } else {
-                Log.d(TAG, "Can't connect, lifecycle state: " + state);
+                Log.v(TAG, "Can't connect, lifecycle state: " + state);
             }
         }, delay, unit);
     }
 
     private void publish_now(SCAMPIMessage message, String service) throws InterruptedException {
         this.appLib.publish(message, service, (appLib, scampiMessage) -> {
-            Log.d(TAG, "Message: " + scampiMessage.getAppTag() + " published");
+            Log.v(TAG, "Message: " + scampiMessage.getAppTag() + " published");
         });
     }
 
@@ -226,18 +228,12 @@ public class AppLibService extends Service implements AppLibLifecycleListener {
         }
     }
 
-    private void subscribeToLocationUpdates() throws InterruptedException {
-        appLib.startLocationUpdates(this.locationHandler);
-        RepositoryLocator.getTopicRepository().getTopicsForCurrentLocation().observeForever(topics -> {
-            discoveryHandler.locationChanged(topics);
-        });
-    }
 
-
-    //Bind
+    // Service Binding
 
     @Override
     public IBinder onBind(Intent intent) {
+        super.onBind(intent);
         return binder;
     }
 

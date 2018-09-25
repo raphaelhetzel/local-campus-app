@@ -2,6 +2,11 @@ package de.tum.localcampusapp.service;
 
 import android.util.Log;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import de.tum.localcampusapp.repository.LocationRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
@@ -28,10 +33,14 @@ public class LocationHandler implements LocationUpdateCallback {
     @Override
     public void gpsLocationUpdated(Protocol.GpsLocation gpsLocation) {
        locationRepository.setCurrentLocation(buildLocationId(gpsLocation));
-        Log.d("RAH", "Size:"+ RepositoryLocator.getTopicRepository().getFinalTopicsForCurrentLocation().size());
     }
 
     private String buildLocationId(Protocol.GpsLocation gpsLocation) {
-        return "LAT:"+(gpsLocation.latitude)+",LON:"+gpsLocation.longitude;
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        formatter.applyPattern("+000.000000;-000.000000");
+        formatter.setRoundingMode(RoundingMode.DOWN);
+        String formatedLatitude = formatter.format(gpsLocation.latitude);
+        String formatedLongitude = formatter.format(gpsLocation.longitude);
+        return "LAT:"+formatedLatitude+",LON:"+formatedLongitude;
     }
 }

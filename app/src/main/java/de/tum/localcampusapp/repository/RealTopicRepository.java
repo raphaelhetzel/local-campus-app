@@ -34,7 +34,6 @@ public class RealTopicRepository implements TopicRepository {
     @Override
     public  synchronized LiveData<List<Topic>> getTopicsForCurrentLocation() {
         return Transformations.switchMap(locationRepository.getCurrentLocation(), currentLocation -> {
-            Log.d("RAH", "Transformation called"+currentLocation);
             return topicDao.getTopicsForLocation(currentLocation);
         });
     }

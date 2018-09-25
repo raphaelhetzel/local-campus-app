@@ -1,9 +1,11 @@
-package de.tum.in.postcreater.Fragments;
+package de.tum.in.commentsextensionmodule.Fragments;
 
 import android.content.Context;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import de.tum.in.postcreater.Generator.ColorGenerator;
+
+import de.tum.in.commentsextensionmodule.Generator.ColorGenerator;
 import de.tum.localcampuslib.AddPostDataProvider;
 
 public class PostAddViewModel {

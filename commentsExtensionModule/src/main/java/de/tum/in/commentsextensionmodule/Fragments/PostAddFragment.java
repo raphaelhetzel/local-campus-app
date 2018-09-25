@@ -1,4 +1,4 @@
-package de.tum.in.postcreater.Fragments;
+package de.tum.in.commentsextensionmodule.Fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -1,8 +1,9 @@
-package de.tum.in.postcreater.Generator;
+package de.tum.in.commentsextensionmodule.Generator;
 
 import android.content.Context;
 import java.util.Random;
-import de.tum.in.postcreater.R;
+
+import de.tum.in.commentsextensionmodule.R;
 
 
 public class ColorGenerator {

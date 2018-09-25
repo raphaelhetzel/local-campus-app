@@ -15,6 +15,9 @@ import java.util.List;
 
 import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
 import de.tum.in.postcreater.Fragments.PostAddFragment;
+import de.tum.in.votingextension.ExtensionType.Voting;
+import de.tum.in.votingextension.Fragments.VotingPostAddFragment;
+import de.tum.in.votingextension.Fragments.VotingShowFragment;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
@@ -46,12 +49,20 @@ public class TopicsActivity extends AppCompatActivity {
         RepositoryLocator.init(getApplicationContext());
 
 
+        /*
         Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) PostAddFragment.class;
         Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) CommentShowFragment.class;
 
         RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"
                 , showPostFragmentClass, addPostFragmentClass, "");
+*/
 
+        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) VotingPostAddFragment.class;
+        Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) VotingShowFragment.class;
+
+        RepositoryLocator.getExtensionRepository().registerExtension("ab6acf96-24bd-4d7d-b9d0-0784e821090b","Voting Extension"
+                , showPostFragmentClass, addPostFragmentClass, "");
+       // ab6acf96-24bd-4d7d-b9d0-0784e821090b
 
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());

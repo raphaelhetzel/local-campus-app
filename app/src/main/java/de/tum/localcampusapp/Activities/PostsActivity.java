@@ -56,7 +56,7 @@ public class PostsActivity extends AppCompatActivity{
                 addPostIntent.putExtra("selectedTopicId", String.valueOf(topicId));
                 // TODO: replace with Real Type (needs a picker)
                 //addPostIntent.putExtra("selectedPostType", "ee5afd62-6e72-4728-8404-e91d7ea2c303"); //changed
-                addPostIntent.putExtra("selectedPostType","6ed88f3a-5895-4cac-b096-d260ecc9b71d");
+                addPostIntent.putExtra("selectedPostType","ab6acf96-24bd-4d7d-b9d0-0784e821090b");
                 this.startActivity(addPostIntent);
             });
 

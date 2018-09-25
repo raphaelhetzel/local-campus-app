@@ -72,6 +72,8 @@ public class CommentShowViewModel {
         return jsonObj.toString();
     }
 
+
+
     public void upVote(){
         //TODO: Call API method after it is available
     }

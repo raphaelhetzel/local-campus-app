@@ -55,7 +55,7 @@ public class PostMapperHelper {
 
     public LiveData<PostMapper> tranformPost(){
         return Transformations.map(livePost, (Post livePost) -> {
-            return PostMapper.getWorkingPostMapper(livePost);
+            return PostMapper.getValidPostMapper(livePost);
         });
     }
 
@@ -68,10 +68,9 @@ public class PostMapperHelper {
 
     public LiveData<List<PostMapper>> transformPosts(){
         return Transformations.map(listPosts, (List<Post> listPosts) -> {
-//            Log.d("ListPosts: ", Integer.toString(listPosts.size())+ " postMappersLisT: "+postMappers.size());
             List<PostMapper> postMappers= new ArrayList<>();
             for (Post post : listPosts) {
-                PostMapper pm = PostMapper.getWorkingPostMapper(post);
+                PostMapper pm = PostMapper.getValidPostMapper(post);
                 if(pm!=null){
                     postMappers.add(pm);
                 }

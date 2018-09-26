@@ -90,7 +90,7 @@ public class PostMapperTest {
         String sampleData = "Not Json data";
         Post post = new Post(uuid, typeId, topicName, creator, createdAt, sampleData);
 
-        PostMapper postMapper = PostMapper.getWorkingPostMapper(post);
+        PostMapper postMapper = PostMapper.getValidPostMapper(post);
         assert(Objects.equals(postMapper, null));
     }
 
@@ -106,7 +106,7 @@ public class PostMapperTest {
         String jsonText = PostMapper.makeJsonPostOutput(sampleData, context);
 
         Post post = new Post(uuid, typeId, topicName, creator, createdAt, jsonText);
-        PostMapper postMapper = PostMapper.getWorkingPostMapper(post);
+        PostMapper postMapper = PostMapper.getValidPostMapper(post);
         assertFalse(Objects.equals(postMapper, null));
     }
 
@@ -122,7 +122,7 @@ public class PostMapperTest {
         String jsonText = PostMapper.makeJsonPostOutput(sampleData, context);
 
         Post post = new Post(uuid, typeId, topicName, creator, createdAt, jsonText);
-        PostMapper postMapper = PostMapper.getWorkingPostMapper(post);
+        PostMapper postMapper = PostMapper.getValidPostMapper(post);
         assertEquals(postMapper.getTextComment(), sampleData);
 
     }
@@ -210,7 +210,7 @@ public class PostMapperTest {
         String jsonText = PostMapper.makeJsonPostOutput(sampleData, context);
 
         Post post = new Post(uuid, typeId, topicName, creator, createdAt, jsonText);
-        PostMapper postMapper = PostMapper.getWorkingPostMapper(post);
+        PostMapper postMapper = PostMapper.getValidPostMapper(post);
 
 
         Calendar calendar = Calendar.getInstance();

@@ -12,6 +12,7 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.generator.DateTransformer;
 
+
 public class PostMapper {
     private String text;
     private int color;
@@ -21,7 +22,7 @@ public class PostMapper {
     private static final String ATTR_DATA = "text";
 
 
-    public static PostMapper getWorkingPostMapper(Post post) {
+    public static PostMapper getValidPostMapper(Post post) {
         try {
             JSONObject obj = new JSONObject(post.getData());
             String text = obj.getString(ATTR_DATA);

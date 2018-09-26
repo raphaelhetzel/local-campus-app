@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
-import de.tum.in.postcreater.Fragments.PostAddFragment;
 import de.tum.in.votingextension.ExtensionType.Voting;
 import de.tum.in.votingextension.Fragments.VotingPostAddFragment;
 import de.tum.in.votingextension.Fragments.VotingShowFragment;

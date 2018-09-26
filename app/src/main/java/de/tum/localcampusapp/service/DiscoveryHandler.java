@@ -14,6 +14,19 @@ import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
+/**
+    Responsible for handling messages sent to the <code>discovery</code> Service,
+    which contain the topics available at a location.
+
+    Furthermore, it is responsible for handling the subscriptions
+    to all the Topics that are relevant to the current location. It handles those subscriptions
+    by attaching a {@link TopicHandler} for each relevant location to AppLib.
+
+    As the database provides LiveData about the Topics relevant to the current location
+    anyway (which are needed for the application layer), this Handler subscribes to the
+    LiveData as a single source of truth for the topics it should subscribe to.
+    (compared to subscribing to location changes and mixing received and stored data).
+ */
 public class DiscoveryHandler implements MessageReceivedCallback {
 
     public static final String TAG = DiscoveryHandler.class.getSimpleName();

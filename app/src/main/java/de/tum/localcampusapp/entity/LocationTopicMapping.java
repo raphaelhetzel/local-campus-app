@@ -22,8 +22,12 @@ public class LocationTopicMapping {
     @ColumnInfo(name = "topic_id")
     private long topicId;
 
-    // This is currently just the location string as we don't store other information about the location
-    // in the future this could be replaced with a reference to a location entity
+    /**
+        This is currently just the locationId (a String) as we don't store other information about
+        the location.
+        In the future this could be replaced with a reference to a location entity (e.g. if we need
+        to store more data on a location, like coordinates).
+     */
     @NonNull @ColumnInfo(name = "location_id")
     private String locationId;
 

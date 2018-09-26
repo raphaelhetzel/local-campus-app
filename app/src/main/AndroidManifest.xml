@@ -34,11 +34,6 @@
             android:name=".Activities.AddPostActivity"
             android:label="LocalCampusApp" />
 
-        <activity
-            android:name=".TestHostActivity"
-            android:label="LocalCampusApp">
-        </activity>
-
         <service
             android:name=".service.AppLibService"
             android:enabled="true"

@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.IOException;
 
 import de.tum.localcampusapp.PermissionManager;
-import de.tum.localcampusapp.entity.ExtensionInfo;
-import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.extensioninterface.ExtensionLoader;
 import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
@@ -19,6 +17,15 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 import static de.tum.localcampusapp.serializer.ScampiExtensionSerializer.BINARY_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiExtensionSerializer.UUID_FIELD;
 
+/**
+    Handler for the messages sent to the extensions channel.
+    Stores the messages in the extensions directory and informs the
+    extensionsLoader about the new extension.
+
+    Will cleanly handle missing storage permissions by ignoring Messages if
+    there are no permissions. Should therefore be started after the permissions have
+    been granted.
+ */
 public class ExtensionHandler implements MessageReceivedCallback {
 
     public static final String TAG = ExtensionHandler.class.getSimpleName();
@@ -37,7 +44,10 @@ public class ExtensionHandler implements MessageReceivedCallback {
                 new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS ), "localcampusjars"));
     }
 
-    public ExtensionHandler(ExtensionRepository extensionRepository, ExtensionLoader extensionLoader, PermissionManager permissionManager, File extensionFolder) {
+    public ExtensionHandler(ExtensionRepository extensionRepository,
+                            ExtensionLoader extensionLoader,
+                            PermissionManager permissionManager,
+                            File extensionFolder) {
         this.extensionRepository = extensionRepository;
         this.extensionLoader = extensionLoader;
         this.permissionManager = permissionManager;

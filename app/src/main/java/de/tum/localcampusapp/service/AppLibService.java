@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleService;
 import android.content.Intent;
@@ -22,23 +21,36 @@ import java.util.concurrent.TimeUnit;
 
 import de.tum.localcampusapp.Activities.TopicsActivity;
 import de.tum.localcampusapp.R;
-import de.tum.localcampusapp.repository.RepositoryLocator;
-import de.tum.localcampusapp.serializer.ScampiPostSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.AppLibLifecycleListener;
-import fi.tkk.netlab.dtn.scampi.applib.LocationUpdateCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
-import fi.tkk.netlab.dtn.scampi.applib.impl.parser.Protocol;
 
 import static de.tum.localcampusapp.service.ExtensionHandler.EXTENSION_SERVICE;
 
+/**
+    Service responsible for managing the AppLib connection.
+    Starts a persistent/automatically restarting AppLib instance that automatically subscribes to
+    the discovery services and the locations updates via the Handlers.
+
+    It allows Clients to Bind to it, which allows them to publish messages to Scampi and subscribe to
+    the extensions service (this is needed as the permissions are not immediately granted, but the service
+    is immediately started). The Service handles messages sent while it is not connected to scampi by caching
+    them inMemory.
+
+    The service is run as a Foreground Service as it needs to run and android is too aggressive
+    in killing background services. In a production version of this app, this could also be handled by restarting
+    the service if it got killed but the user is active again. However, this would result in reprocessing all messages.
+ */
 public class AppLibService extends LifecycleService implements AppLibLifecycleListener {
+
+    public static final String TAG = AppLibService.class.getSimpleName();
+
+
 
     public static final String DISCOVERY_SERVICE = "discovery";
 
     public static final long RECONNECT_PERIOD = 8000;
 
-    public static final String TAG = AppLibService.class.getSimpleName();
 
     private volatile AppLib appLib;
 
@@ -51,12 +63,18 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
     private LocationHandler locationHandler;
 
     private Binder binder;
-
-    private volatile String scampiId;
     private volatile boolean connected;
     private volatile List<Message> preconnect_buffer = new ArrayList<>();
 
+    private volatile boolean subscribedToExtensions = false;
+    private final Object extensionLock = new Object();
+
     /// API, called via the Binder
+
+    /**
+        Called by the Binder, immediately publishes the message while connecte to the router,
+        caches it (inMemory!) otherwise.
+     */
     public void publish(SCAMPIMessage message, String service) throws InterruptedException {
         if (this.connected) {
             publish_now(message, service);
@@ -67,9 +85,17 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
 
     }
 
+    /**
+        Called by the Binder, attaches the extensionHandler to the <code>extensions</code> Service.
+        Ignores duplicate calls.
+     */
     public void subscribeToExtensionService() {
         try {
-            appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
+            synchronized (extensionLock) {
+                if(subscribedToExtensions) return;
+                appLib.subscribe(EXTENSION_SERVICE, this.extensionHandler);
+                subscribedToExtensions = true;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -125,7 +151,6 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
     public void onConnected(String scampiId) {
         Log.v(TAG, "AppLib connected: " + scampiId);
         this.connected = true;
-        this.scampiId = scampiId;
         clear_preconnect_buffer();
     }
 
@@ -133,7 +158,6 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
     public void onDisconnected() {
         Log.v(TAG, "AppLib disconnected");
         this.connected = false;
-        this.scampiId = null;
         this.scheduleConnect(RECONNECT_PERIOD, TimeUnit.MILLISECONDS);
     }
 
@@ -147,7 +171,6 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
     public void onStopped() {
         Log.v(TAG, "AppLib stopped");
         this.connected = false;
-        this.scampiId = null;
     }
 
     // Helper class for buffering received Messages while Scampi is not connected
@@ -238,10 +261,18 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
     }
 
     public class ScampiBinder extends Binder {
+        /**
+            Immediately publishes the message while connecte to the router,
+            caches it (inMemory!) otherwise.
+         */
         public void publish(SCAMPIMessage scampiMessage, String service) throws InterruptedException {
             AppLibService.this.publish(scampiMessage, service);
         }
 
+        /**
+            Attaches the extensionHandler to the <code>extensions</code> Service.
+            Ignores duplicate calls.
+         */
         public void subscribeToExtensionService() {
             AppLibService.this.subscribeToExtensionService();
         }

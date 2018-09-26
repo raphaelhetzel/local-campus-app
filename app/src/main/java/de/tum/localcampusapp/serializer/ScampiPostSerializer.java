@@ -9,6 +9,9 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST;
 
+/**
+    Serializer and Deserializer for Posts.
+ */
 public class ScampiPostSerializer {
 
     public static final String TYPE_ID_FIELD = "type_id";
@@ -18,6 +21,12 @@ public class ScampiPostSerializer {
     public static final String DATA_FIELD = "data";
     public static final String TOPIC_FIELD = "topic";
 
+
+    /**
+        Deserialize a Post from a Scampi Message. Raises a {@link MissingFieldsException}
+        if the message is missing important fields and raises a {@link WrongParserException} if the methods was called with
+        a message that does not contain a Post (identified by the <code>MESSAGE_TYPE_FIELD</code>).
+     */
     public Post postFromMessage(SCAMPIMessage scampiMessage) throws MissingFieldsException, WrongParserException {
         if (!messageIsPost(scampiMessage)) throw new WrongParserException();
         if (messageIsMissingFields(scampiMessage)) throw new MissingFieldsException();
@@ -32,6 +41,10 @@ public class ScampiPostSerializer {
         return post;
     }
 
+    /**
+        Serialize a Post into a Scampi Message. Raises a {@link MissingFieldsException}
+        if the postExtension is missing fields.
+     */
     public SCAMPIMessage messageFromPost(Post post) throws MissingFieldsException{
         if(!postHasRequiredFields(post)) throw new MissingFieldsException();
         SCAMPIMessage message = SCAMPIMessage.builder()

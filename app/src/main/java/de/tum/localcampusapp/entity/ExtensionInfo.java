@@ -3,8 +3,11 @@ package de.tum.localcampusapp.entity;
 import java.io.File;
 import java.util.Objects;
 
-import de.tum.localcampusapp.repository.ExtensionRepository;
-
+/**
+    Simple Object to Store Information about an Extension (e.g. to show a list of extensions
+    or publish a list of Extensions). See the Extension Repository documentation for a Discussion on
+    why there is no Extension Entity.
+ */
 public class ExtensionInfo {
     private String extensionUUID;
     private String description;

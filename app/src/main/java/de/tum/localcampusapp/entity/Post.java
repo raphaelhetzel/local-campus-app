@@ -29,7 +29,7 @@ public class Post implements IPost {
     @ColumnInfo(name = "topic_id")
     private long topicId;
 
-     /*
+     /**
         This field is queried from the relation and not directly persisted.
         Unfortunately, room will still create a column. This could only be solved
         by separating the Room entities for the Database Creation from our actual entities.
@@ -43,7 +43,7 @@ public class Post implements IPost {
 
     private String data;
 
-    /*
+    /**
        This field is queried from the relation and not directly persisted.
        Unfortunately, room will still create a column. This could only be solved
        by separating the Room entities for the Database Creation from our actual entities.

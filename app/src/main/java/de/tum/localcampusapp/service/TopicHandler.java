@@ -10,7 +10,6 @@ import de.tum.localcampusapp.exception.MissingFieldsException;
 import de.tum.localcampusapp.exception.MissingRelatedDataException;
 import de.tum.localcampusapp.exception.WrongParserException;
 import de.tum.localcampusapp.repository.NetworkLayerPostRepository;
-import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.serializer.ScampiMessageTypes;
 import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
@@ -23,6 +22,15 @@ import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_P
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST_EXTENSION;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_VOTE;
 
+/**
+    Responsible for handling Messages sent to one Topic Service.
+    This messages can be Posts, Votes and PostExtensions.
+
+    This handler decides which kind of message is relevant by the help of the serializers,
+    deserializes the message and calls the Repository to try to insert the received data.
+    As duplicated are handled by the Repository, this class does not look into the content
+    of the messages.
+ */
 public class TopicHandler implements MessageReceivedCallback {
 
     public static final String TAG = TopicHandler.class.getSimpleName();
@@ -40,7 +48,10 @@ public class TopicHandler implements MessageReceivedCallback {
     }
 
 
-    public TopicHandler(NetworkLayerPostRepository postRepository, ScampiPostSerializer scampiPostSerializer, ScampiVoteSerializer scampiVoteSerializer, ScampiPostExtensionSerializer scampiPostExtensionSerializer) {
+    public TopicHandler(NetworkLayerPostRepository postRepository,
+                        ScampiPostSerializer scampiPostSerializer,
+                        ScampiVoteSerializer scampiVoteSerializer,
+                        ScampiPostExtensionSerializer scampiPostExtensionSerializer) {
         this.postRepository = postRepository;
         this.scampiPostSerializer = scampiPostSerializer;
         this.scampiVoteSerializer = scampiVoteSerializer;
@@ -67,7 +78,7 @@ public class TopicHandler implements MessageReceivedCallback {
                     Log.d(TAG, "Ignored unknown Message Type");
             }
         } catch (MissingFieldsException e) {
-            Log.d(TAG, "Igored Message with Missing Fields");
+            Log.d(TAG, "Ignored Message with Missing Fields");
         } catch (MissingRelatedDataException e) {
             Log.d(TAG, "Ignored message as the device does not know about required related Information (e.g. the Topic)");
         } catch (DatabaseException | WrongParserException e) {

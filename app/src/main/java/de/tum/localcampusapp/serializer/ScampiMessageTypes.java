@@ -11,6 +11,9 @@ public class ScampiMessageTypes {
     public static final String MESSAGE_TYPE_POST = "post";
     public static final String MESSAGE_TYPE_EXTENSION = "extension";
 
+    /**
+        Helper to determine the type of a Message sent to a Topic Service.
+     */
     public static String messageTypeOf(SCAMPIMessage scampiMessage) {
         if (ScampiPostSerializer.messageIsPost(scampiMessage)) return MESSAGE_TYPE_POST;
         if (ScampiVoteSerializer.messageIsVote(scampiMessage)) return MESSAGE_TYPE_VOTE;

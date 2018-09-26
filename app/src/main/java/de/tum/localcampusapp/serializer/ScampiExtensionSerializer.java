@@ -13,6 +13,13 @@ public class ScampiExtensionSerializer {
     public static String BINARY_FIELD = "binary";
     public static String UUID_FIELD = "uuid";
 
+    /**
+        Serialize a Extension (as there is no entity, an Extension consists is the  Extension File and the extensionUUID)
+        into a Scampi Message. Raises a {@link MissingFieldsException} if the file does not exist.
+
+        Currently does not copy the file to a safe location as there is no official way of deleting extensions from
+        the device anyway (the file needs to exist until the message has been sent)
+     */
     public SCAMPIMessage extensionToMessage(File extensionFile, String extensionUUID) throws MissingFieldsException {
         if(!extensionFile.exists() || !extensionFile.isFile()) throw new MissingFieldsException();
         SCAMPIMessage scampiMessage = SCAMPIMessage.builder().appTag(extensionUUID).build();

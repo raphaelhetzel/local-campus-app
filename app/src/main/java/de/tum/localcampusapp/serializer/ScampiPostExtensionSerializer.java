@@ -9,6 +9,9 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_POST_EXTENSION;
 
+/**
+    Serializer and Deserializer for PostExtensions.
+ */
 public class ScampiPostExtensionSerializer {
 
     public static final String UUID_FIELD = "uuid";
@@ -17,6 +20,10 @@ public class ScampiPostExtensionSerializer {
     public static final String CREATED_AT_FIELD = "created_at";
     public static final String DATA_FIELD = "data";
 
+    /**
+        Serialize a PostExtension into a Scampi Message. Raises a {@link MissingFieldsException}
+        if the postExtension is missing fields.
+     */
     public SCAMPIMessage postExtensionToMessage(PostExtension postExtension) throws MissingFieldsException {
         if (!postExtensionHasRequiredFields(postExtension)) throw new MissingFieldsException();
 
@@ -30,6 +37,11 @@ public class ScampiPostExtensionSerializer {
         return scampiMessage;
     }
 
+    /**
+        Deserialize a PostExtension from a Scampi Message. Raises a {@link MissingFieldsException}
+        if the message is missing important fields and raises a {@link WrongParserException} if the methods was called with
+        a message that does not contain a PostExtension (identified by the <code>MESSAGE_TYPE_FIELD</code>).
+     */
     public PostExtension messageToPostExtension(SCAMPIMessage scampiMessage) throws WrongParserException, MissingFieldsException {
         if (!messageIsPostExtension(scampiMessage)) throw new WrongParserException();
         if (!messageHasRequiredFields(scampiMessage)) throw new MissingFieldsException();

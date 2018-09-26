@@ -1,7 +1,5 @@
 package de.tum.localcampusapp.serializer;
 
-import java.util.UUID;
-
 import de.tum.localcampusapp.database.Converters;
 import de.tum.localcampusapp.entity.Vote;
 import de.tum.localcampusapp.exception.MissingFieldsException;
@@ -10,7 +8,9 @@ import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_FIELD;
 import static de.tum.localcampusapp.serializer.ScampiMessageTypes.MESSAGE_TYPE_VOTE;
-
+/**
+    Serializer and Deserializer for Votes.
+ */
 public class ScampiVoteSerializer {
 
     public static final String UUID_FIELD = "uuid";
@@ -19,6 +19,10 @@ public class ScampiVoteSerializer {
     public static final String CREATED_AT_FIELD = "created_at";
     public static final String SCORE_INFLUENCE_FIELD = "score_influence";
 
+    /**
+        Serialize a Vote into a Scampi Message. Raises a {@link MissingFieldsException}
+        if the Vote is missing fields.
+     */
     public SCAMPIMessage voteToMessage(Vote vote) throws MissingFieldsException {
         if (!voteHasRequiredFields(vote)) throw new MissingFieldsException();
 
@@ -32,6 +36,11 @@ public class ScampiVoteSerializer {
         return scampiMessage;
     }
 
+    /**
+        Deserialize a Vote from a Scampi Message. Raises a {@link MissingFieldsException}
+        if the message is missing important fields and raises a {@link WrongParserException} if the methods was called with
+        a message that does not contain a Vote (identified by the <code>MESSAGE_TYPE_FIELD</code>).
+     */
     public Vote messageToVote(SCAMPIMessage scampiMessage) throws WrongParserException, MissingFieldsException {
         if (!messageIsVote(scampiMessage)) throw new WrongParserException();
         if (!messageHasRequiredFields(scampiMessage)) throw new MissingFieldsException();

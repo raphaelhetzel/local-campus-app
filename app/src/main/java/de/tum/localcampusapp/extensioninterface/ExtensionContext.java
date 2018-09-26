@@ -10,6 +10,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+    Context for dynamically loaded apk extensions.
+    This context contains the android system resources and the resources present in the
+    apk, the resources of the host extension are not present in this context. This is to prevent
+    conflicting resource ids.
+ */
 public class ExtensionContext extends ContextWrapper {
 
     private AssetManager assetManager;

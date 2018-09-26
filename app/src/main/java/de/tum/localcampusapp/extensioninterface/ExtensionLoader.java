@@ -13,6 +13,20 @@ import de.tum.localcampusapp.repository.ExtensionRepository;
 import de.tum.localcampuslib.AddPostFragment;
 import de.tum.localcampuslib.ShowPostFragment;
 
+/**
+    Dynamically loads an Extension/PostType from local storage.
+    (Currently, the extensions are stored in the Downloads directory for easier adding of extensions.
+    This is a security risk as they could be replaced by malicious code by any other application)
+
+    This should be modified to only allow extensions signed by developers explicitly allowed by the user.
+
+    Expects the loaded apks to contain a class <code>Registry</code> in the package <code>de.tum.localcampusextension</code>,
+    which contains the static fields
+    <code>addPostFragmentClass</code> (the class of a Fragment to add a new Post based on the class AddPostFragment),
+    <code>showPostFragmentClass</code> (the class of a Fragment to show a new Post based on the class AddPostFragment),
+    <code>typeDescription</code> (A short, human-readable description of the Posts created by the extension, e.g. "Text Post")
+    and <code>typeId</code> (The UUID of one version of the extension).
+ */
 public class ExtensionLoader {
 
     static final String TAG = ExtensionLoader.class.getSimpleName();
@@ -29,6 +43,10 @@ public class ExtensionLoader {
         this.permissionManager = new PermissionManager(context);
     }
 
+    /**
+        (Try to) load one Extension apk and register it in the ExtensionRepository.
+        Should be used when a new extension has been added while the App is running.
+     */
     public void loadAPK(File apkFile) {
         if(! permissionManager.hasStoragePermission()) {
             Log.d(TAG,"Tried to load apk but the app does not have the permission to do so!");
@@ -71,6 +89,10 @@ public class ExtensionLoader {
         }
     }
 
+    /**
+        Load all Extensions in the Extensions folder.
+        Should only be used once (when the application is started).
+     */
     public void loadAPKFiles() {
         File extensionDirectory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "localcampusjars");
         if (loaded == true) return;

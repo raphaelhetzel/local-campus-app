@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 
 import java.util.List;
 
+import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampuslib.ShowPostDataProvider;
 import de.tum.localcampusapp.entity.Post;
@@ -12,24 +13,41 @@ import de.tum.localcampusapp.entity.PostExtension;
 public class RealShowPostDataProvider implements ShowPostDataProvider {
 
     private long postId;
+    private PostRepository postRepository;
 
 
     public RealShowPostDataProvider(long postId) {
+        this.postRepository = RepositoryLocator.getPostRepository();
         this.postId = postId;
     }
     @Override
     public LiveData<Post> getPost() {
-        return RepositoryLocator.getPostRepository().getPost(postId);
+        return postRepository.getPost(postId);
     }
 
     @Override
     public LiveData<List<PostExtension>> getPostExtensions() {
-        return RepositoryLocator.getPostRepository().getPostExtensionsForPost(postId);
+        return postRepository.getPostExtensionsForPost(postId);
     }
 
     @Override
     public void addPostExtension(String data) {
         PostExtension newPostExtension = new PostExtension(postId, data);
-        RepositoryLocator.getPostRepository().addPostExtension(newPostExtension);
+        postRepository.addPostExtension(newPostExtension);
+    }
+
+    @Override
+    public String getCurrentUser() {
+        return RepositoryLocator.getUserRepository().getId();
+    }
+
+    @Override
+    public void upVote() {
+        postRepository.upVote(postId);
+    }
+
+    @Override
+    public void downVote() {
+        postRepository.downVote(postId);
     }
 }

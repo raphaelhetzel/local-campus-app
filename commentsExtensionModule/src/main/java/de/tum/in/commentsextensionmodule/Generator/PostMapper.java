@@ -14,7 +14,7 @@ public class PostMapper {
     private static final String ATTR_DATA = "text";
 
 
-    public static PostMapper getWorkingPostMapper(IPost post) {
+    public static PostMapper getValidPostMapper(IPost post) {
         try {
             JSONObject obj = new JSONObject(post.getData());
             String text = obj.getString(ATTR_DATA);

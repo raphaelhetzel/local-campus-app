@@ -44,6 +44,7 @@ public class CommentShowFragment extends ShowPostFragment{
     private ImageView dislike;
     private TextView numLikes;
 
+    private FloatingActionButton btnAddComment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class CommentShowFragment extends ShowPostFragment{
         View view = newInflator.inflate(R.layout.comments_layout, container, false);
 
         setPostVariables(view);
+        setListeners();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_comments);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -70,7 +72,7 @@ public class CommentShowFragment extends ShowPostFragment{
         viewModel.getLivePost().observe(this, new Observer<IPost>() {
             @Override
             public void onChanged(@Nullable IPost post) {
-                PostMapper postMapper = PostMapper.getWorkingPostMapper(post);
+                PostMapper postMapper = PostMapper.getValidPostMapper(post);
                 if(postMapper != null){
                     mCommentsViewAdapter.setBackColor(postMapper.getColor());
                     updatePostVariables(postMapper);
@@ -98,8 +100,6 @@ public class CommentShowFragment extends ShowPostFragment{
         postText.setText(postMapper.getTextComment());
     }
 
-
-
     private void setPostVariables (View view) {
 
         rootLayout = view.findViewById(R.id.posts_comment_layout);
@@ -112,9 +112,11 @@ public class CommentShowFragment extends ShowPostFragment{
         like = view.findViewById(R.id.button_upvote);
         dislike = view.findViewById(R.id.button_downvote);
 
+        btnAddComment = view.findViewById(R.id.btn_add);
+    }
 
-        FloatingActionButton btnAddComment = view.findViewById(R.id.btn_add);
 
+    private void setListeners(){
         btnAddComment.setOnClickListener((View v) -> {
             final EditText editText = new EditText(getContext());
             AlertDialog dialog = new AlertDialog.Builder(getContext())
@@ -134,7 +136,6 @@ public class CommentShowFragment extends ShowPostFragment{
             dialog.show();
         });
 
-
         like.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,6 +149,6 @@ public class CommentShowFragment extends ShowPostFragment{
                 viewModel.downVote();
             }
         });
-
     }
+
 }

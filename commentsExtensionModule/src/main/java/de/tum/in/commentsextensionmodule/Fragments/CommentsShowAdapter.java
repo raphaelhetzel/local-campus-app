@@ -36,7 +36,7 @@ public class CommentsShowAdapter extends RecyclerView.Adapter<CommentsShowAdapte
     public void onBindViewHolder(CommentsShowAdapter.ViewHolder holder, final int position) {
         Comment comment = commentsList.get(position);
         holder.parentLayout.setBackgroundColor(color);
-        holder.dateText.setText(DateTransformer.getTimeDate(comment.getUpdatedComment()));
+        holder.dateText.setText(DateTransformer.getTimeDate(comment.getCreateDate()));
         holder.commentText.setText(comment.getData());
     }
 

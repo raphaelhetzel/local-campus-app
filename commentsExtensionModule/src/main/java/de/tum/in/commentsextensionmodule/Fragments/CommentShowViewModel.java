@@ -16,7 +16,6 @@ import de.tum.localcampuslib.entity.IPostExtension;
 
 public class CommentShowViewModel {
 
-    private static final String ATTR_DATA = "text";
     private ShowPostDataProvider showPostDataProvider;
 
     private LiveData<IPost> livePost;
@@ -52,7 +51,7 @@ public class CommentShowViewModel {
         return Transformations.map(livePostExtension, (List<IPostExtension> livePostExtension) -> {
             List<Comment> workingComments = new ArrayList<>();
             for (IPostExtension iPostExtension : livePostExtension){
-                Comment comment = Comment.getWorkingComment(iPostExtension.getPostId(), iPostExtension.getId(), iPostExtension.getData(), iPostExtension.getCreatedAt());
+                Comment comment = Comment.getValidComment(iPostExtension.getData(), iPostExtension.getCreatedAt());
                 if(comment!=null){
                     workingComments.add(comment);
                 }
@@ -65,7 +64,7 @@ public class CommentShowViewModel {
     private String makeJsonCommentOutput(String textInput) {
         JSONObject jsonObj = new JSONObject();
         try {
-            jsonObj.put(ATTR_DATA, textInput);
+            jsonObj.put(Comment.ATTR_DATA, textInput);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -18,22 +18,22 @@ public class VotingShowViewModel {
     private float currTempVote;
     private float tempAvg;
 
-    private LiveData<List<IPostExtension>> livePostExtension;
+    private LiveData<List<IPostExtension>> livePostExtensions;
 
     public VotingShowViewModel(ShowPostDataProvider showPostDataProvider){
         this.showPostDataProvider = showPostDataProvider;
-        this.livePostExtension = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
+        this.livePostExtensions = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
     }
 
-    public LiveData<List<IPostExtension>> getExtension(){
-        return livePostExtension;
+    public LiveData<List<IPostExtension>> getExtensions(){
+        return livePostExtensions;
     }
 
     public LiveData<List<Voting>> getLiveVotes() {
-        return Transformations.map(livePostExtension, (List<IPostExtension> livePostExtension) -> {
+        return Transformations.map(livePostExtensions, (List<IPostExtension> livePostExtension) -> {
             List<Voting> validVotes = new ArrayList<>();
             for (IPostExtension iPostExtension : livePostExtension){
-                Voting voting = Voting.getValidVote(iPostExtension.getPostId(), iPostExtension.getId(), iPostExtension.getData(), iPostExtension.getCreatorId());
+                Voting voting = Voting.getValidVote(iPostExtension.getData(), iPostExtension.getCreatorId());
                 if(voting!=null){
                     for(Voting vot : validVotes){
                         if(vot.getCreator().equals(voting.getCreator())){
@@ -48,14 +48,18 @@ public class VotingShowViewModel {
     }
 
 
-    public float getAvgTemp(List<Voting> votes){
+    private float getAvgTemp(List<Voting> votes){
         float totalValue = 0;
         if(votes.size()==0) return Voting.TEMP_INIT;
         for(Voting voting : votes){
                 totalValue = totalValue + voting.getTempValue();
         }
-        tempAvg = totalValue / votes.size();
-        return roundFloat(tempAvg);
+        tempAvg = roundFloat(totalValue / votes.size());
+        return tempAvg;
+    }
+
+    public String getAvgTempString(List<Voting> votes){
+        return Float.toString(getAvgTemp(votes));
     }
 
 

@@ -29,14 +29,8 @@ public class VotingShowFragment extends ShowPostFragment {
     private TextView txtDesciption;
     private TextView txtAboveTemp;
     private TextView txtTemp;
-    private TextView txtUnit;
-    private TextView txtChange;
 
     private EditText editText;
-
-    private float tempValue;
-    private float changeValue;
-    private float tempVoteValue;
 
     private ImageButton btnUp;
     private ImageButton btnDown;
@@ -63,8 +57,6 @@ public class VotingShowFragment extends ShowPostFragment {
         txtAboveTemp = view.findViewById(R.id.txt_above_temp);
         txtAboveTemp.setText(TEXT_ABOVE_TEMP);
         txtTemp = view.findViewById(R.id.txt_temp);
-        txtUnit = view.findViewById(R.id.txt_celcius);
-        txtChange = view.findViewById(R.id.txt_change);
 
         editText = view.findViewById(R.id.input);
 
@@ -76,8 +68,7 @@ public class VotingShowFragment extends ShowPostFragment {
         viewModel.getLiveVotes().observe(this, new Observer<List<Voting>>() {
             @Override
             public void onChanged(@Nullable List<Voting> votings) {
-                float tempAvg = viewModel.getAvgTemp(votings);
-                txtTemp.setText(Float.toString(tempAvg));
+                txtTemp.setText(viewModel.getAvgTempString(votings));
             }
         });
 

@@ -15,26 +15,22 @@ public class Voting {
     public static final float TEMP_MIN = -10;
     public static final float TEMP_CHANGE = (float) 0.5;
 
-    private long postId;
-    private long voteId;
     private float tempValue;
 
     private String creator;
 
-    public static Voting getValidVote(long postId, long voteId, String data, String creator) {
+    public static Voting getValidVote(String data, String creator) {
         try {
             JSONObject obj = new JSONObject(data);
             float value = (float) obj.getDouble(ATTR_DATA);
             Log.d("getValidData", "data "+data+" gotValue: "+value);
-            return new Voting(postId, voteId, value, creator);
+            return new Voting(value, creator);
         } catch (JSONException e) {
             return null;
         }
     }
 
-    private Voting(long postId, long voteId, float data, String creator) {
-        this.postId = postId;
-        this.voteId = voteId;
+    private Voting(float data, String creator) {
         this.tempValue = data;
         this.creator = creator;
     }

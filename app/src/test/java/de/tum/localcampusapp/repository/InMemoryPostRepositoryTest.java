@@ -85,31 +85,6 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void add_getByUUID() throws InterruptedException {
-        String uuid = UUID.randomUUID().toString();
-
-        Post post1 = new Post(1, "Type", "Data");
-        post1.setUuid(uuid);
-
-        repository.addPost(post1);
-
-        LiveData<Post> single_result = repository.getPostByUUID(uuid);
-        assert (LiveDataHelper.getValue(single_result).equals(post1));
-    }
-
-    @Test
-    public void add_getFinalByUUID() {
-
-        String uuid = UUID.randomUUID().toString();
-        Post post1 = new Post(1, "Type", "Data");
-        post1.setId(1);
-        post1.setUuid(uuid);
-        repository.addPost(post1);
-        assertEquals(repository.getFinalPostByUUID("foo"), null);
-        assertEquals(repository.getFinalPostByUUID(uuid), post1);
-    }
-
-    @Test
     public void add_getPostsForTopics() throws InterruptedException {
 
         Topic topic1 = new Topic(3, "/t1");
@@ -128,7 +103,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void upVote() {
+    public void upVote() throws InterruptedException {
 
         String uuid = UUID.randomUUID().toString();
         Post post1 = new Post(1, "Type", "Data");
@@ -136,7 +111,7 @@ public class InMemoryPostRepositoryTest {
         post1.setUuid(uuid);
         repository.addPost(post1);
         repository.upVote(1);
-        assertEquals(repository.getFinalPostByUUID(uuid).getScore(), 1);
+        assertEquals(LiveDataHelper.getValue(repository.getPost(1)).getScore(), 1);
     }
 
     @Test
@@ -148,7 +123,7 @@ public class InMemoryPostRepositoryTest {
         post1.setUuid(uuid);
         repository.addPost(post1);
 
-        LiveData<Post> resultPost = repository.getPostByUUID(uuid);
+        LiveData<Post> resultPost = repository.getPost(1);
         assertEquals(LiveDataHelper.getValue(resultPost).getScore(), 0);
         repository.upVote(1);
         assertEquals(LiveDataHelper.getValue(resultPost).getScore(), 1);
@@ -177,7 +152,7 @@ public class InMemoryPostRepositoryTest {
     }
 
     @Test
-    public void downVote() {
+    public void downVote() throws InterruptedException {
 
         String uuid = UUID.randomUUID().toString();
         Post post1= new Post(1, "Type", "Data1");
@@ -185,11 +160,11 @@ public class InMemoryPostRepositoryTest {
         post1.setUuid(uuid);
         repository.addPost(post1);
         repository.downVote(1);
-        assertEquals(repository.getFinalPostByUUID(uuid).getScore(), -1);
+        assertEquals(LiveDataHelper.getValue(repository.getPost(1)).getScore(), -1);
     }
 
     @Test
-    public void insertPostUsesPreviouslyCreatedVotes() throws DatabaseException {
+    public void insertPostUsesPreviouslyCreatedVotes() throws DatabaseException, InterruptedException {
 
         String post_uuid = UUID.randomUUID().toString();
         String vote_uuid = UUID.randomUUID().toString();
@@ -202,7 +177,7 @@ public class InMemoryPostRepositoryTest {
         repository.insertVote(vote1);
         repository.addPost(post1);
 
-        assertEquals(repository.getFinalPostByUUID(post_uuid).getScore(), 10);
+        assertEquals(LiveDataHelper.getValue(repository.getPost(1)).getScore(), 10);
     }
 
     @Test

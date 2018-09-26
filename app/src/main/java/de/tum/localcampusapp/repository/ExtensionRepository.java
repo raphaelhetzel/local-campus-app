@@ -13,6 +13,15 @@ import de.tum.localcampuslib.AddPostFragment;
 import de.tum.localcampusapp.extensioninterface.ExtensionContext;
 import de.tum.localcampuslib.ShowPostFragment;
 
+/**
+    Repository to manage the various post Types available to the System.
+    The Extension could either be bundled with the application and registed by the application itself,
+    or loaded from an Extension apk by the {@link de.tum.localcampusapp.extensioninterface.ExtensionLoader}.
+
+    As the users of this repositories should not care about the instantiation of the Fragments there is no Extension entity.
+    Instead, this repository provides the users with methods to directly receive relevant parts of the Extensions,
+    e,g. a new instance of the Fragments and a Context depending on the source of the Extension(included vs. loaded).
+ */
 public class ExtensionRepository {
 
 
@@ -22,7 +31,13 @@ public class ExtensionRepository {
         extensionStorage = new HashMap<>();
     }
 
-    // Accepts duplicate inserts
+    /**
+        Register an Extension, MUST also be called for local PostTypes.
+
+        Will allow duplicate inserts by only using the first registration of an Extension.
+
+        Local Extensions MUST provide <code>null</code> as their resourceApkPath.
+     */
     public void registerExtension(String extensionUUID,
                                    String description,
                                    Class<? extends ShowPostFragment> showPostFragmentClass,
@@ -33,7 +48,11 @@ public class ExtensionRepository {
         extensionStorage.put(extensionUUID, new Extension(addPostFragmentClass, showPostFragmentClass, description, resourceApkPath));
     }
 
-    // To be used with the create post extension type selection
+    /**
+        Get Information about all registered Extensions.
+        Will return a simple Object containing the extensions <code>uuid</code>, <code>description</code> and apkPath. In case of local extensions,
+        this apkPath will be set to <code>null</code>.
+     */
     public List<ExtensionInfo> getExtensions() {
         return extensionStorage.entrySet().stream().map((entry -> {
             File extensionFile = (entry.getValue().apkPath == null || entry.getValue().apkPath.isEmpty()) ? null : new File(entry.getValue().apkPath);
@@ -52,6 +71,11 @@ public class ExtensionRepository {
         return description;
     }
 
+    /**
+        Provides a Context for the Fragments of an Extension.
+        For dynamically loaded extensions, this context will contain the resources bundled
+        with the apk. Currently, loaded extensions don't have acess to the resources of the host application.
+     */
     public Context getContextFor(String extensionUUID, Context activityContext) {
         if(!extensionStorage.containsKey(extensionUUID)) return activityContext;
         String apkPath = extensionStorage.get(extensionUUID).apkPath;
@@ -62,6 +86,10 @@ public class ExtensionRepository {
         }
     }
 
+    /**
+        Instantiate the Fragment to show a Post of a certain Type.
+        This Fragment MUST only be used by a Activity extending {@link de.tum.localcampuslib.ShowPostHostActivity}
+     */
     public ShowPostFragment getShowPostFragmentFor(String extensionUUID) {
         if(!extensionStorage.containsKey(extensionUUID)) return null;
         try {
@@ -72,6 +100,10 @@ public class ExtensionRepository {
         }
     }
 
+    /**
+        Instantiate the Fragment to add a Post of a certain Type.
+        This Fragment MUST only be used by a Activity extending {@link de.tum.localcampuslib.AddPostHostActivity}
+     */
     public AddPostFragment getAddPostFragmentFor(String extensionUUID) {
         if(!extensionStorage.containsKey(extensionUUID)) return null;
         try {

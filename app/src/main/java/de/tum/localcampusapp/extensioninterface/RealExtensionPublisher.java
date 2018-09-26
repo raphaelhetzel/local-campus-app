@@ -54,11 +54,8 @@ public class RealExtensionPublisher implements ExtensionPublisher {
         this.permissionManager = permissionManager;
         this.extensionSerializer = extensionSerializer;
         this.executorService = executorService;
-    }
 
-    public void bindService() {
-        Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
-        applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
+        this.bindService();
     }
 
     @Override
@@ -95,6 +92,11 @@ public class RealExtensionPublisher implements ExtensionPublisher {
     }
 
     /// Service Connection
+
+    private void bindService() {
+        Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
+        applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
+    }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 

@@ -38,6 +38,7 @@ public class ExtensionRepositoryTest {
 
         assertEquals(extensionRepository.getAddPostFragmentFor("UUID").getClass(), MockAddPostFagment.class);
         assertEquals(extensionRepository.getShowPostFragmentFor("UUID").getClass(), MockShowPostFagment.class);
+        // This will print an exception due to mocking
         assertEquals(extensionRepository.getContextFor("UUID", mContext).getClass(), ExtensionContext.class);
         assertEquals(extensionRepository.getDescriptionFor("UUID"), "SampleExtension");
     }

@@ -33,7 +33,7 @@ import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import de.tum.localcampusapp.service.AppLibService;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
 
-public class RealPostRepository implements PostRepository, NetworkLayerPostRepository {
+public class RealPostRepository implements PostRepository {
 
     static final String TAG = RealPostRepository.class.getSimpleName();
 
@@ -54,7 +54,6 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
     private ScampiVoteSerializer scampiVoteSerializer;
     private ScampiPostExtensionSerializer scampiPostExtensionSerializer;
 
-    private final Object insertLock = new Object();
     private final Object voteLock = new Object();
 
     private final Set<String> voteBuffer;
@@ -100,11 +99,8 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
         this.userRepository = userRepository;
 
         this.voteBuffer = Collections.synchronizedSet(new HashSet<String>());
-    }
 
-    public void bindService() {
-        Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
-        applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
+        this.bindService();
     }
 
     /// Post
@@ -115,16 +111,6 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
     }
 
     @Override
-    public LiveData<Post> getPostByUUID(String uuid) {
-        return postDao.getPostByUUID(uuid);
-    }
-
-    @Override
-    public Post getFinalPostByUUID(String uuid) {
-        return postDao.getFinalPostByUUID(uuid);
-    }
-
-    @Override
     public void addPost(Post post) {
         executor.execute(new AddPostRunner(post));
     }
@@ -132,47 +118,6 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
     @Override
     public LiveData<List<Post>> getPostsforTopic(long topicId) {
         return postDao.getPostsforTopic(topicId);
-    }
-
-    @Override
-    public void insertPost(Post post) throws DatabaseException, MissingRelatedDataException {
-        try {
-            Topic relatedTopic = topicRepository.getFinalTopicByName(post.getTopicName());
-            if (relatedTopic == null) throw new MissingRelatedDataException();
-
-            post.setScore(0);
-            post.setTopicId(relatedTopic.getId());
-
-            synchronized (insertLock) {
-                long postId = postDao.insert(post);
-                post.setId(postId);
-                updateRelatedVotes(post);
-                updateRelatedPostExtensions(post);
-            }
-
-        } catch (android.database.sqlite.SQLiteConstraintException e) {
-            // Ignore duplicate inserts
-            if (e.getMessage().contains("posts.uuid")) {
-                return;
-            }
-            throw new DatabaseException();
-        }
-    }
-
-    private void updateRelatedVotes(Post post) {
-        List<Vote> unassignedVotes = voteDao.getVotesByPostUUID(post.getUuid());
-        for (Vote vote : unassignedVotes) {
-            vote.setPostId(post.getId());
-            voteDao.update(vote);
-        }
-    }
-
-    private void updateRelatedPostExtensions(Post post) {
-        List<PostExtension> unassignedPosts = postExtensionDao.getFinalPostExtensionsByPostUUID(post.getUuid());
-        for (PostExtension postExtension : unassignedPosts) {
-            postExtension.setPostId(post.getId());
-            postExtensionDao.update(postExtension);
-        }
     }
 
     private class AddPostRunner implements Runnable {
@@ -220,33 +165,6 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
 
     private void vote(long postId, long scoreInfluce) {
         executor.execute(new VoteRunner(postId, userRepository.getId(), scoreInfluce));
-    }
-
-    @Override
-    public void insertVote(Vote vote) throws DatabaseException {
-        try {
-            synchronized (insertLock) {
-
-                Vote existing_user_vote = voteDao.getUserVoteByUUID(vote.getPostUuid(), vote.getCreatorId());
-                if (existing_user_vote != null) return;
-
-                Post post = postDao.getFinalPostByUUID(vote.getPostUuid());
-                if (post == null) vote.setPostId(0L);
-                else vote.setPostId(post.getId());
-                voteDao.insert(vote);
-            }
-        }
-        // Catches both the case where the id and the uuid are duplicate
-        catch (android.database.sqlite.SQLiteConstraintException e) {
-            /*
-                Ignore duplicate votes, while matching a String isn't ideal
-                this should be fine as the string is verified by a test
-             */
-            if (e.getMessage().contains("votes.uuid")) {
-                return;
-            }
-            throw new DatabaseException();
-        }
     }
 
     private class VoteRunner implements Runnable {
@@ -312,26 +230,6 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
         return postExtensionDao.getPostExtensionsByPostId(postId);
     }
 
-    @Override
-    public void insertPostExtension(PostExtension postExtension) throws DatabaseException {
-        try {
-            synchronized (insertLock) {
-                Post relatedPost = postDao.getFinalPostByUUID(postExtension.getPostUuid());
-                if (relatedPost == null) postExtension.setPostId(0);
-                else postExtension.setPostId(relatedPost.getId());
-                postExtensionDao.insert(postExtension);
-            }
-        }
-        // Catches both the case where the id and the uuid are duplicate
-        catch (android.database.sqlite.SQLiteConstraintException e) {
-            // ignore duplicate inserts
-            if (e.getMessage().contains("post_extensions.uuid")) {
-                return;
-            }
-            throw new DatabaseException();
-        }
-    }
-
     private class AddPostExtensionRunner implements Runnable {
         private PostExtension postExtension;
 
@@ -369,6 +267,11 @@ public class RealPostRepository implements PostRepository, NetworkLayerPostRepos
     }
 
     /// Service Connection
+
+    private void bindService() {
+        Intent intent = new Intent(applicationContext.getApplicationContext(), AppLibService.class);
+        applicationContext.bindService(intent, serviceConnection, Context.BIND_IMPORTANT);
+    }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
 

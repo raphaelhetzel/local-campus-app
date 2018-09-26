@@ -67,9 +67,9 @@ public class RepositoryLocatorTest {
     }
 
     @Test
-    public void reInitCustom() {
+    public void initCustom() {
         // This would not work for the current implementation of the repositories
-        RepositoryLocator.reInitCustom(new UserRepository(mock(Context.class)),
+        RepositoryLocator.initCustom(new UserRepository(mock(Context.class)),
                 new RealTopicRepository( new PersistentLocationRepository(mock(Context.class)), mTopicDao, mock(LocationTopicMappingDao.class)),
                 new InMemoryPostRepository(new InMemoryTopicRepository(new PersistentLocationRepository(mock(Context.class)))),
                 new ExtensionRepository(),

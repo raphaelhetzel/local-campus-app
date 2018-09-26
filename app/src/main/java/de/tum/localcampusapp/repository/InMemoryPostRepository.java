@@ -83,35 +83,6 @@ public class InMemoryPostRepository implements PostRepository, NetworkLayerPostR
     }
 
     @Override
-    public LiveData<Post> getPostByUUID(String uuid) {
-        MediatorLiveData<Post> liveData = new MediatorLiveData<>();
-        liveData.addSource(posts, posts -> {
-            List<Post> items = posts.stream().filter(p -> p.getUuid().equals(uuid)).collect(Collectors.toList());
-            if (items.size() == 1) {
-                Post post = items.get(0);
-                post.setScore(calculateScore(post.getId(), votes.getValue()));
-                liveData.setValue(post);
-            }
-        });
-        liveData.addSource(votes, vote -> {
-            if (liveData.getValue() != null) {
-                Post post = liveData.getValue();
-                post.setScore(calculateScore(post.getId(), votes.getValue()));
-                liveData.setValue(post);
-            }
-        });
-        return liveData;
-    }
-
-    @Override
-    public Post getFinalPostByUUID(String uuid) {
-        Post result_post = posts.getValue().stream().filter(p -> p.getUuid().equals(uuid)).reduce(null, (concat, post) -> post);
-        if (result_post == null) return null;
-        result_post.setScore(calculateScore(result_post.getId(), votes.getValue()));
-        return result_post;
-    }
-
-    @Override
     public void addPost(Post post) {
         Topic related_topic = topicRepository.getFinalTopic(post.getTopicId());
         if (related_topic == null) {

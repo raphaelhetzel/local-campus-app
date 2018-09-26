@@ -103,57 +103,6 @@ public class RealPostRepositoryTest {
                 mScampiVoteSerializer,
                 mScampiPostExtensionSerializer,
                 mExecutor);
-        realPostRepository.bindService();
-    }
-
-    @Test
-    public void insertPost() throws DatabaseException, MissingRelatedDataException {
-        Topic topic = new Topic(1, "/tum");
-        Post post2 = new Post();
-        post2.setTopicName("/tum");
-        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
-
-        realPostRepository.insertPost(post2);
-        verify(mPostDao).insert(any(Post.class));
-    }
-
-
-    @Test(expected = DatabaseException.class)
-    public void insertPostWithDuplicateId() throws DatabaseException, MissingRelatedDataException {
-        Topic topic = new Topic(1, "/tum");
-        Post post2 = new Post();
-        post2.setTopicName("/tum");
-        when(mSqLiteConstraintException.getMessage()).thenReturn("primary key");
-        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
-        doThrow(mSqLiteConstraintException).when(mPostDao).insert(post2);
-
-        realPostRepository.insertPost(post2);
-    }
-
-    @Test(expected = MissingRelatedDataException.class)
-    public void insertPostWithMissingTopic() throws DatabaseException, MissingRelatedDataException {
-        Post post2 = new Post();
-        post2.setTopicName("/tum");
-
-        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(null);
-
-        realPostRepository.insertPost(post2);
-
-        verify(mPostDao, never()).insert(any(Post.class));
-    }
-
-    @Test
-    public void insertDuplicatePost() throws DatabaseException, MissingRelatedDataException {
-        Topic topic = new Topic(1, "/tum");
-        Post post2 = new Post();
-        post2.setTopicName("/tum");
-        when(mSqLiteConstraintException.getMessage()).thenReturn("posts.uuid");
-        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
-        doThrow(mSqLiteConstraintException).when(mPostDao).insert(post2);
-
-        realPostRepository.insertPost(post2);
-
-        verify(mPostDao).insert(post2);
     }
 
     @Test
@@ -201,25 +150,6 @@ public class RealPostRepositoryTest {
 
         verify(mTopicRepository).getFinalTopic(1);
         verify(mScampiBinder, never()).publish(any(), any());
-    }
-
-    @Test
-    public void insertVoteWithDuplicate() throws DatabaseException {
-
-        Vote vote = new Vote();
-        vote.setUuid("UUID");
-        vote.setScoreInfluence(-1);
-        Vote duplicateVote = new Vote();
-        duplicateVote.setUuid("UUID");
-        duplicateVote.setScoreInfluence(1);
-        doThrow(mSqLiteConstraintException).when(mVoteDao).insert(duplicateVote);
-        when(mSqLiteConstraintException.getMessage()).thenReturn("votes.uuid");
-
-        realPostRepository.insertVote(vote);
-        realPostRepository.insertVote(duplicateVote);
-
-        verify(mVoteDao).insert(vote);
-        verify(mVoteDao).insert(duplicateVote);
     }
 
     @Test
@@ -284,82 +214,6 @@ public class RealPostRepositoryTest {
     }
 
     @Test
-    public void insertVoteWithoutExistingPost() throws DatabaseException {
-
-        Vote vote = new Vote();
-        vote.setUuid("UUID");
-        vote.setPostUuid("UUID2");
-        vote.setScoreInfluence(-1);
-
-        when(mPostDao.getFinalPostByUUID("UUID2")).thenReturn(null);
-
-        realPostRepository.insertVote(vote);
-
-        assertEquals(0L, vote.getPostId());
-        verify(mVoteDao).insert(vote);
-    }
-
-    @Test
-    public void insertVoteWithExistingPost() throws DatabaseException {
-
-        Vote vote = new Vote();
-        vote.setUuid("UUID");
-        vote.setPostUuid("UUID2");
-        vote.setScoreInfluence(-1);
-
-        Post post = new Post();
-        post.setUuid("UUID2");
-        post.setId(1);
-
-        when(mPostDao.getFinalPostByUUID("UUID2")).thenReturn(post);
-
-        realPostRepository.insertVote(vote);
-        assertEquals(1L, vote.getPostId());
-        verify(mVoteDao).insert(vote);
-    }
-
-    @Test
-    public void insertExistingUserVote() throws DatabaseException {
-
-        Vote vote = new Vote();
-        vote.setUuid("UUID");
-        vote.setPostUuid("UUID2");
-        vote.setCreatorId("UUID3");
-        vote.setScoreInfluence(-1);
-
-        when(mVoteDao.getUserVoteByUUID("UUID2", "UUID3")).thenReturn(new Vote());
-
-        realPostRepository.insertVote(vote);
-        assertEquals(0L, vote.getPostId());
-        verify(mVoteDao).getUserVoteByUUID("UUID2", "UUID3");
-        verify(mVoteDao, never()).insert(vote);
-    }
-
-    @Test
-    public void updatesVotesOnPostInsert() throws MissingRelatedDataException, DatabaseException {
-        Topic topic = new Topic(1, "/foo");
-
-        Vote vote = mock(Vote.class);
-
-        List<Vote> votes = new ArrayList<>();
-        votes.add(vote);
-        when(mVoteDao.getVotesByPostUUID("UUID2")).thenReturn(votes);
-        when(mPostDao.insert(any(Post.class))).thenReturn(1L);
-        when(mTopicRepository.getFinalTopicByName("/tum")).thenReturn(topic);
-
-        Post post = new Post();
-        post.setId(1);
-        post.setUuid("UUID2");
-        post.setTopicName("/tum");
-
-
-        realPostRepository.insertPost(post);
-
-        verify(mVoteDao).getVotesByPostUUID("UUID2");
-        verify(vote).setPostId(1);
-    }
-
-    @Test
     public void addPostExtension() throws MissingFieldsException, InterruptedException {
 
         PostExtension testPostExtension = new PostExtension(1, "TestData");
@@ -410,68 +264,6 @@ public class RealPostRepositoryTest {
         verify(mTopicRepository, never()).getFinalTopic(1);
         verify(mScampiPostExtensionSerializer, never()).postExtensionToMessage(any());
         verify(mScampiBinder, never()).publish(any(), any());
-
-    }
-
-    @Test
-    public void insertPostExtensionRelatedPost() throws DatabaseException {
-
-        Post post = new Post();
-        post.setId(1);
-        post.setUuid("UUID-Post");
-
-        PostExtension testPostExtension = new PostExtension("UUID", "UUID-Post", "Creator", new Date(), "Data");
-
-        when(mPostDao.getFinalPostByUUID("UUID-Post")).thenReturn(post);
-
-        realPostRepository.insertPostExtension(testPostExtension);
-
-
-        verify(mPostDao).getFinalPostByUUID("UUID-Post");
-        verify(mPostExtensionDao).insert(argThat(argument -> {
-            return argument.getClass() == PostExtension.class &&
-                    argument.getPostId() == 1 &&
-                    argument.getUuid().equals("UUID");
-        }));
-
-    }
-
-    @Test
-    public void insertPostExtensionNoRelatedPost() throws DatabaseException {
-
-        Date date = new Date();
-
-        PostExtension testPostExtension = new PostExtension("UUID", "UUID-Post", "Creator", new Date(), "Data");
-
-        when(mPostDao.getFinalPostByUUID("UUID-Post")).thenReturn(null);
-
-        realPostRepository.insertPostExtension(testPostExtension);
-
-        verify(mPostDao).getFinalPostByUUID("UUID-Post");
-        verify(mPostExtensionDao).insert(argThat(argument -> {
-            return argument.getClass() == PostExtension.class &&
-                    argument.getPostId() == 0 &&
-                    argument.getUuid().equals("UUID");
-        }));
-
-    }
-
-    @Test
-    public void insertDuplicatePostExtensionIgnored() throws DatabaseException {
-
-        Date date = new Date();
-
-        PostExtension testPostExtension = new PostExtension("UUID", "UUID-Post", "Creator", new Date(), "Data");
-
-        when(mPostDao.getFinalPostByUUID("UUID-Post")).thenReturn(null);
-
-        when(mSqLiteConstraintException.getMessage()).thenReturn("post_extensions.uuid");
-        doThrow(mSqLiteConstraintException).when(mPostExtensionDao).insert(any(PostExtension.class));
-
-        realPostRepository.insertPostExtension(testPostExtension);
-
-        verify(mPostDao).getFinalPostByUUID("UUID-Post");
-        verify(mPostExtensionDao).insert(any());
 
     }
 

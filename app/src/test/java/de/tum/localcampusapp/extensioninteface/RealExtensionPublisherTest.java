@@ -79,7 +79,6 @@ public class RealExtensionPublisherTest {
                 mExtensionSerializer,
                 mExecutorService
         );
-        realExtensionPublisher.bindService();
 
         File mExtensionFile = new File("/foo/bar");
         SCAMPIMessage mScampiMessage = SCAMPIMessage.builder().build();

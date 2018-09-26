@@ -10,12 +10,10 @@ import java.util.stream.Collectors;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
-import de.tum.localcampusapp.serializer.ScampiPostExtensionSerializer;
-import de.tum.localcampusapp.serializer.ScampiPostSerializer;
-import de.tum.localcampusapp.serializer.ScampiVoteSerializer;
 import fi.tkk.netlab.dtn.scampi.applib.AppLib;
 import fi.tkk.netlab.dtn.scampi.applib.MessageReceivedCallback;
 import fi.tkk.netlab.dtn.scampi.applib.SCAMPIMessage;
+
 public class DiscoveryHandler implements MessageReceivedCallback {
 
     public static final String TAG = DiscoveryHandler.class.getSimpleName();
@@ -23,8 +21,6 @@ public class DiscoveryHandler implements MessageReceivedCallback {
     private final TopicRepository topicRepository;
     private final AppLib appLib;
     private final Set<String> subscriptions;
-
-    private final Object lock = new Object();
 
     public DiscoveryHandler(AppLib appLib, LifecycleOwner lifecycleOwner) {
         this(appLib, lifecycleOwner, RepositoryLocator.getTopicRepository());
@@ -69,7 +65,6 @@ public class DiscoveryHandler implements MessageReceivedCallback {
         try {
             synchronized (subscriptions) {
                 if(!this.subscriptions.contains(topicName)) {
-                    // TODO: change back to the short constructor
                     appLib.subscribe(topicName, new TopicHandler());
                     this.subscriptions.add(topicName);
                 }

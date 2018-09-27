@@ -3,7 +3,6 @@ package de.tum.localcampusapp.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import java.util.List;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
-import de.tum.localcampusapp.testhelper.FakeDataGenerator;
+
 
 public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.ViewHolder>{
 

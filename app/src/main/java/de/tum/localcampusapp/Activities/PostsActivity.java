@@ -3,11 +3,16 @@ package de.tum.localcampusapp.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.exception.DatabaseException;
@@ -15,6 +20,8 @@ import de.tum.localcampusapp.exception.DatabaseException;
 public class PostsActivity extends AppCompatActivity{
 
         static final String TAG = PostsActivity.class.getSimpleName();
+        static final String SELECTED_TOPIC_KEY = "selectedTopicId";
+        static final String SELECTED_POST_KEY = "selectedPostType";
 
         private RecyclerView mRecyclerView;
         private PostsViewModel viewModel;
@@ -30,9 +37,7 @@ public class PostsActivity extends AppCompatActivity{
             setContentView(R.layout.posts_activity);
 
             Intent intent = getIntent();
-
             long topicId = Long.valueOf(intent.getStringExtra("topicId"));
-            Log.d(TAG, "topic_id received: "+ String.valueOf(topicId));
 
             try {
                 viewModel = new PostsViewModel(topicId, getApplicationContext());
@@ -40,7 +45,6 @@ public class PostsActivity extends AppCompatActivity{
             } catch (DatabaseException e) {
                 e.printStackTrace();
             }
-
 
             mPostsViewAdapter = new PostsAdapter(adapterModel, getApplicationContext(), PostsActivity.this);
 
@@ -51,14 +55,43 @@ public class PostsActivity extends AppCompatActivity{
 
             FloatingActionButton fab = findViewById(R.id.fab);
 
+            View view = this.getLayoutInflater().inflate(R.layout.post_create, null);
+            PostSpinnerViewModel viewModel = new PostSpinnerViewModel();
+            MaterialSpinner spinner = (MaterialSpinner) view.findViewById(R.id.spinner);
+
+            Button mButton = (Button) view.findViewById(R.id.button_create);
+
+            mButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick uuid: "+viewModel.getUIID());
+
+                    Intent addPostIntent = new Intent(getApplicationContext(), AddPostActivity.class);
+                    addPostIntent.putExtra(SELECTED_TOPIC_KEY, String.valueOf(topicId));
+                    //addPostIntent.putExtra("selectedPostType","ab6acf96-24bd-4d7d-b9d0-0784e821090b");
+                    // TODO: delete outcommented
+
+                    addPostIntent.putExtra(SELECTED_POST_KEY, viewModel.getUIID());
+                    getApplicationContext().startActivity(addPostIntent);
+                }
+            });
+
+            spinner.setItems(viewModel.getExtensionDescriptions());
+            spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                    viewModel.setChosenPosition(position);
+                }
+            });
+
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setView(view)
+                    .create();
+
             fab.setOnClickListener((View v) -> {
-                Intent addPostIntent = new Intent(this, AddPostActivity.class);
-                addPostIntent.putExtra("selectedTopicId", String.valueOf(topicId));
-                // TODO: replace with Real Type (needs a picker)
-                //addPostIntent.putExtra("selectedPostType", "ee5afd62-6e72-4728-8404-e91d7ea2c303"); //changed
-                addPostIntent.putExtra("selectedPostType","ab6acf96-24bd-4d7d-b9d0-0784e821090b");
-                this.startActivity(addPostIntent);
+                dialog.show();
             });
 
         }
+
 }

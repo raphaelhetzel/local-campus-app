@@ -35,6 +35,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0-rc02'
     //for design viewer
     implementation 'com.android.support:design:28.0.0-rc02'
+    implementation 'com.jaredrummler:material-spinner:1.2.5'
 
     //Room Persistence Library
     def room_version = "1.1.1"
@@ -48,7 +49,6 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation "android.arch.lifecycle:common-java8:$lifecycle_version"
     testImplementation "android.arch.core:core-testing:$lifecycle_version"
-    testImplementation 'org.json:json:20140107'
 
     implementation project(':localcampuslib')
     implementation project(':commentsExtensionModule')

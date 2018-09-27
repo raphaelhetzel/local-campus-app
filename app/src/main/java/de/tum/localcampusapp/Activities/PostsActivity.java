@@ -24,10 +24,12 @@ public class PostsActivity extends AppCompatActivity{
         static final String SELECTED_POST_KEY = "selectedPostType";
 
         private RecyclerView mRecyclerView;
+        private PostsAdapter mPostsViewAdapter;
+
         private PostsViewModel viewModel;
         private PostsAdapterModel adapterModel;
 
-        private PostsAdapter mPostsViewAdapter;
+        private AlertDialog dialog;
 
 
         @Override
@@ -64,14 +66,12 @@ public class PostsActivity extends AppCompatActivity{
             mButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "onClick uuid: "+viewModel.getUIID());
-
                     Intent addPostIntent = new Intent(getApplicationContext(), AddPostActivity.class);
                     addPostIntent.putExtra(SELECTED_TOPIC_KEY, String.valueOf(topicId));
-                    //addPostIntent.putExtra("selectedPostType","ab6acf96-24bd-4d7d-b9d0-0784e821090b");
-                    // TODO: delete outcommented
-
                     addPostIntent.putExtra(SELECTED_POST_KEY, viewModel.getUIID());
+
+                    dialog.dismiss();
+
                     getApplicationContext().startActivity(addPostIntent);
                 }
             });
@@ -84,7 +84,7 @@ public class PostsActivity extends AppCompatActivity{
                 }
             });
 
-            AlertDialog dialog = new AlertDialog.Builder(this)
+            dialog = new AlertDialog.Builder(this)
                     .setView(view)
                     .create();
 

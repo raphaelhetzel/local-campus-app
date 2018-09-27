@@ -12,26 +12,28 @@ import de.tum.localcampuslib.AddPostDataProvider;
 
 public class VotingPostViewModel {
 
-    private static final String ATTR_DESCRIPTION = "text";
-    private static final String ATTR_COLOR = "color";
-    private static final String ATTR_DEVICE_ID = "device_id";
-    private static final String ATTR_TEMP_MIN = "temp_min";
-    private static final String ATTR_TEMP_MAX = "temp_max";
-    private static final String ATTR_TEMP_DEFAULT = "temp_default";
-    private static final String ATTR_TEMP_CHANGE = "temp_change";
+    public static final String ATTR_DATA = "text";
+
+    public static final String ATTR_DESCRIPTION = "description";
+    public static final String ATTR_COLOR = "color";
+    public static final String ATTR_DEVICE_ID = "device_id";
+    public static final String ATTR_TEMP_MIN = "temp_min";
+    public static final String ATTR_TEMP_MAX = "temp_max";
+    public static final String ATTR_TEMP_DEFAULT = "temp_default";
+    public static final String ATTR_TEMP_CHANGE = "temp_change";
 
     private final String VARIABLES_NOT_SET = "Please fill in all input fields!";
     private final String MAX_MIN_ERROR = "Your max value has to be higher than you min value!";
-    private final String TEMP_TOO_HIGH = "Your temperature is too high!";
-    private final String TEMP_TOO_LOW = "Your temperature is too low!";
+    private final String TEMP_TOO_HIGH = "Your max temperature is too high!";
+    private final String TEMP_TOO_LOW = "Your min temperature is too low!";
     private final String TEMP_DEFAULT_OUTBOUND = "Your default temperature is outbound";
-    private final String TEMP_CHANGE_WRONG = "Your temperature change value is inappropriate!";
+    private final String TEMP_CHANGE_WRONG = "Your +/- temperature change value is inappropriate!";
     private final String DEVICE_ID_WRONG = "No Device found for entered Device-ID!";
 
     private final float TEMP_MIN = -50;
-    private final float TEMP_MAX = 50;
+    private final float TEMP_MAX = 1000;
     private final float TEMP_CHANGE_MIN = 0;
-    private final float TEMP_CHANGE_MAX = 5;
+    private final float TEMP_CHANGE_MAX = 100;
 
 
     private AddPostDataProvider addPostDataProvider;
@@ -166,6 +168,7 @@ public class VotingPostViewModel {
 
         JSONObject jsonObj = new JSONObject();
         try {
+            jsonObj.put(ATTR_DATA, postDesciption);
             jsonObj.put(ATTR_DESCRIPTION, postDesciption);
             jsonObj.put(ATTR_COLOR, color);
 

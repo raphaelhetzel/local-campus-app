@@ -19,16 +19,16 @@ import java.util.List;
 import de.tum.in.votingextension.ExtensionType.Voting;
 import de.tum.in.votingextension.R;
 import de.tum.localcampuslib.ShowPostFragment;
+import de.tum.localcampuslib.entity.IPost;
 
 public class VotingShowFragment extends ShowPostFragment {
 
     static final String TAG = VotingShowFragment.class.getSimpleName();
-    static final String DESCRIPTION = "Here you can vote for temperature";
-    static final String TEXT_ABOVE_TEMP = "Current Temperature";
 
     private TextView txtDesciption;
-    private TextView txtAboveTemp;
     private TextView txtTemp;
+    private TextView txtDeviceId;
+    private TextView txtChange;
 
     private EditText editText;
 
@@ -53,17 +53,25 @@ public class VotingShowFragment extends ShowPostFragment {
         View view = newInflator.inflate(R.layout.voting_layout, null, false);
 
         txtDesciption =  view.findViewById(R.id.txt_desciption);
-        txtDesciption.setText(DESCRIPTION);
-        txtAboveTemp = view.findViewById(R.id.txt_above_temp);
-        txtAboveTemp.setText(TEXT_ABOVE_TEMP);
         txtTemp = view.findViewById(R.id.txt_temp);
-
+        txtDeviceId = view.findViewById(R.id.device_id);
+        txtChange = view.findViewById(R.id.txt_change);
         editText = view.findViewById(R.id.input);
 
         btnUp = view.findViewById(R.id.button_upvote);
         btnDown = view.findViewById(R.id.button_downvote);
 
         btnVote = view.findViewById(R.id.button_vote);
+
+        viewModel.getPost().observe(this, new Observer<IPost>() {
+            @Override
+            public void onChanged(@Nullable IPost post) {
+                viewModel.setPostVariables(post.getData());
+                txtDesciption.setText(viewModel.getDescription());
+                txtDeviceId.setText(viewModel.getDeviceId());
+                txtChange.setText(viewModel.getTempChange());
+            }
+        });
 
         viewModel.getLiveVotes().observe(this, new Observer<List<Voting>>() {
             @Override
@@ -79,7 +87,7 @@ public class VotingShowFragment extends ShowPostFragment {
 
     private void showWarning(){
         Toast.makeText(getContext()
-                , "Your entered value is outside of the range ["+ Voting.TEMP_MIN +" ; "+Voting.TEMP_MAX + "]"
+                , "Your entered value is outside of the range ["+ viewModel.getTempMin() +" ; "+ viewModel.getTempMax() + "]"
                 , Toast.LENGTH_LONG).show();
     }
 

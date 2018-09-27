@@ -2,33 +2,74 @@ package de.tum.in.votingextension.Fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.tum.in.votingextension.ExtensionType.Voting;
 import de.tum.localcampuslib.ShowPostDataProvider;
+import de.tum.localcampuslib.entity.IPost;
 import de.tum.localcampuslib.entity.IPostExtension;
 
 public class VotingShowViewModel {
 
     private ShowPostDataProvider showPostDataProvider;
-    private float tempValue;
-    private float tempChangeFactor;
+
     private float currTempVote;
     private float tempAvg;
 
+    public static final String ATTR_DESCRIPTION = "text";
+    public static final String ATTR_COLOR = "color";
+    public static final String ATTR_DEVICE_ID = "device_id";
+    public static final String ATTR_TEMP_MIN = "temp_min";
+    public static final String ATTR_TEMP_MAX = "temp_max";
+    public static final String ATTR_TEMP_DEFAULT = "temp_default";
+    public static final String ATTR_TEMP_CHANGE = "temp_change";
+
+
+    private String description;
+    private String deviceId;
+    private float tempMin;
+    private float tempMax;
+    private float tempDefault;
+    private float tempChange;
+
     private LiveData<List<IPostExtension>> livePostExtensions;
+    private LiveData<IPost> post;
 
     public VotingShowViewModel(ShowPostDataProvider showPostDataProvider){
         this.showPostDataProvider = showPostDataProvider;
+        this.post = (LiveData<IPost>) showPostDataProvider.getPost();
         this.livePostExtensions = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
+    }
+
+    public void setPostVariables(String data){
+            try {
+                JSONObject obj = new JSONObject(data);
+                description = obj.getString(VotingPostViewModel.ATTR_DESCRIPTION);
+                deviceId = obj.getString(VotingPostViewModel.ATTR_DEVICE_ID);
+                tempMin = Float.parseFloat(obj.getString(VotingPostViewModel.ATTR_TEMP_MIN));
+                tempMax = Float.parseFloat(obj.getString(VotingPostViewModel.ATTR_TEMP_MAX));
+                tempDefault = Float.parseFloat(obj.getString(VotingPostViewModel.ATTR_TEMP_DEFAULT));
+                tempChange = Float.parseFloat(obj.getString(VotingPostViewModel.ATTR_TEMP_CHANGE));
+            } catch (JSONException e) {
+               // return null
+        }
+    }
+
+    public LiveData<IPost> getPost(){
+        return post;
     }
 
     public LiveData<List<Voting>> getLiveVotes() {
         return Transformations.map(livePostExtensions, (List<IPostExtension> livePostExtension) -> {
             List<Voting> validVotes = new ArrayList<>();
             for (IPostExtension iPostExtension : livePostExtension){
+                Log.d("live", "getLiveVotes: "+ iPostExtension.getData());
                 Voting voting = Voting.getValidVote(iPostExtension.getData(), iPostExtension.getCreatorId());
                 if(voting!=null){
                     for(Voting vot : validVotes){
@@ -45,11 +86,17 @@ public class VotingShowViewModel {
 
 
     private float getAvgTemp(List<Voting> votes){
+
+        if(votes.size()==0){
+            tempAvg = tempDefault;
+            return tempDefault;
+        }
+
         float totalValue = 0;
-        if(votes.size()==0) return Voting.TEMP_INIT;
         for(Voting voting : votes){
                 totalValue = totalValue + voting.getTempValue();
         }
+
         tempAvg = roundFloat(totalValue / votes.size());
         return tempAvg;
     }
@@ -65,17 +112,17 @@ public class VotingShowViewModel {
     }
 
     public float getDownVoteValue(){
-        float voteNumber = tempAvg - Voting.TEMP_CHANGE;
+        float voteNumber = tempAvg - tempChange;
         return roundFloat(voteNumber);
     }
 
     public float getUpVoteValue(){
-        float voteNumber = tempAvg + Voting.TEMP_CHANGE;
+        float voteNumber = tempAvg + tempChange;
         return roundFloat(voteNumber);
     }
 
     public boolean vote(float voteNumber){
-        if(voteNumber > Voting.TEMP_MIN && voteNumber < Voting.TEMP_MAX){
+        if(voteNumber > tempMin && voteNumber < tempMax){
             currTempVote = roundFloat(voteNumber);
             addVote(currTempVote);
             return true;
@@ -86,5 +133,29 @@ public class VotingShowViewModel {
     public float roundFloat(float number){
         return (float) Math.round(number * 10f) / 10f;
     }
+
+
+    public String getTempMin() {
+        return Float.toString(tempMin);
+    }
+
+    public String getTempMax() {
+        return Float.toString(tempMax);
+    }
+
+
+    public String getTempChange() {
+        return Float.toString(tempChange);
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
 
 }

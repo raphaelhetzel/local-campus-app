@@ -10,20 +10,15 @@ import java.util.Date;
 public class Voting {
 
     public static final String ATTR_DATA = "vote";
-    public static final float TEMP_INIT = 20;
-    public static final float TEMP_MAX = 40;
-    public static final float TEMP_MIN = -10;
-    public static final float TEMP_CHANGE = (float) 0.5;
 
     private float tempValue;
-
     private String creator;
+
 
     public static Voting getValidVote(String data, String creator) {
         try {
             JSONObject obj = new JSONObject(data);
             float value = (float) obj.getDouble(ATTR_DATA);
-            Log.d("getValidData", "data "+data+" gotValue: "+value);
             return new Voting(value, creator);
         } catch (JSONException e) {
             return null;
@@ -40,19 +35,12 @@ public class Voting {
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put(ATTR_DATA, Float.toString(textInput));
-            Log.d("makeJsonCommentOutput", "makeJsonCommentOutput: "+Float.toString(textInput));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return jsonObj.toString();
     }
 
-    public static boolean checkIfValidValue(float value){
-        if(value > TEMP_MIN && value < TEMP_MAX ){
-            return true;
-        }
-        return false;
-    }
 
     public float getTempValue() {
         return tempValue;

@@ -4,16 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
 
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.exception.DatabaseException;
-import de.tum.localcampusapp.generator.JSONParser;
-import de.tum.localcampusapp.postTypes.Comment;
-import de.tum.localcampusapp.postTypes.CommentHelper;
 import de.tum.localcampusapp.repository.PostRepository;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
@@ -30,7 +25,6 @@ public class FakeDataGenerator {
     private ArrayList<Long> topicsIdList =new ArrayList<>();
     private ArrayList<Long> postsIdList = new ArrayList<>();
     private ArrayList<Long> typeIdList = new ArrayList<>();
-    private ArrayList<Long> commentIdList = new ArrayList<>();
 
     private static FakeDataGenerator instance = new FakeDataGenerator();
 
@@ -70,14 +64,6 @@ public class FakeDataGenerator {
         return num;
     }
 
-    public long getCommentId(){
-        long num = (long) (Math.random()* POST_ID_MAX) +1;
-        while (commentIdList.contains(num)){
-            num = (long) (Math.random()* POST_ID_MAX) +1;
-        }
-        commentIdList.add(num);
-        return num;
-    }
 
     public String getNameWithId(String elementsName, long id){
         return elementsName + Long.toString(id);
@@ -112,11 +98,6 @@ public class FakeDataGenerator {
         }
     }
 
-    public void createSeveralFakeComments(int count, CommentHelper commentHelper, long postId, long commentId){
-        for(int i=0; i<count; i++){
-            createNewFakeComment(postId, commentId++);
-        }
-    }
 
     public void createSeveralFakePosts(int count, long id, Context context) throws DatabaseException {
         for(int i=0; i<count; i++){
@@ -124,11 +105,6 @@ public class FakeDataGenerator {
         }
     }
 
-
-    public void createNewFakeComment(long postId, long commentId) {
-        // Comment Helper needs to be deleted as it serves no purpose
-        postRepository.addPostExtension(new PostExtension(postId, "Sample Comment - PostId: "+postId+", CommentId: "));
-    }
 
     public void createNewFakePost(long id, Context context) throws DatabaseException {
         long currPostId = getPostId();

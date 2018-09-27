@@ -74,14 +74,14 @@ public class PostMapperTest {
 
 
     @Test
-    public void test1(){
+    public void generateColor(){
         int color = ColorGenerator.getColor(context);
         Assert.assertNotNull(color);
     }
 
 
     @Test
-    public void test2() {
+    public void notValidPostMapper() {
         String uuid = UUID.randomUUID().toString();
         String typeId = "typeId";
         String topicName = "topicName";
@@ -95,7 +95,7 @@ public class PostMapperTest {
     }
 
     @Test
-    public void test3() {
+    public void validPostMapper() {
         String uuid = UUID.randomUUID().toString();
         String typeId = "typeId";
         String topicName = "topicName";
@@ -111,7 +111,7 @@ public class PostMapperTest {
     }
 
     @Test
-    public void test4(){
+    public void jsonDataParsing(){
         String uuid = UUID.randomUUID().toString();
         String typeId = "typeId";
         String topicName = "topicName";
@@ -128,7 +128,7 @@ public class PostMapperTest {
     }
 
     @Test
-    public void test6() throws InterruptedException {
+    public void liveDataTransformation() throws InterruptedException {
 
         String text = "Data";
         String jsonText = PostMapper.makeJsonPostOutput(text, context);
@@ -150,7 +150,7 @@ public class PostMapperTest {
     }
 
     @Test
-    public void test7() throws InterruptedException{
+    public void validLiveData() throws InterruptedException{
 
         int postsNumberValid = 5;
         int postsNumberNotValid = 3;
@@ -200,7 +200,7 @@ public class PostMapperTest {
     }
 
     @Test
-    public void test8(){
+    public void internalRatingComparison(){
         String uuid = UUID.randomUUID().toString();
         String typeId = "typeId";
         String topicName = "topicName";
@@ -292,13 +292,13 @@ public class PostMapperTest {
     }
 
     @Test
-    public void comparisonMethodTest(){
+    public void comparisonMethod(){
 
-    }
-    //public List<PostMapper> comparison(List<PostMapper> pm)
+        // methods which could be also tested
+        //public List<PostMapper> comparison(List<PostMapper> pm)
 
-    //tranformPost()
-    //transformPosts()
+        //tranformPost()
+        //transformPosts()
 
     /*
      public List<PostMapper> comparison(List<PostMapper> pm){
@@ -308,5 +308,6 @@ public class PostMapperTest {
         return pm;
     }
      */
+    }
 
 }

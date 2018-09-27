@@ -23,7 +23,7 @@ import fi.tkk.netlab.dtn.scampi.applib.impl.parser.Protocol;
     would lead to floating point precession problems). The System is designed around distinct locations
     (e.g. a room), however this is impossible with Scampi, so we use static coordinates to identify a room.
     This static identifier is also published by the service responsible for informing about the topics
-    available at a Location (currently, the field is called deviceId, needs to have the same form as
+    available at a location (currently, the field is called deviceId, needs to have the same form as
     the locationId described above).
 
     If the locations would be used as actual locations, this needs to be changed to allow some

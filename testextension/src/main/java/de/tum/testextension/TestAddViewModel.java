@@ -9,6 +9,6 @@ public class TestAddViewModel {
     }
 
     public void addEmptyPost() {
-        this.addPostDataProvider.addPost("{\"text\":\"sampleText\",\"color\":\"5144962\"}");
+        this.addPostDataProvider.addPost("{\"text\":\"sampleText\",\"color\":-10042222}");
     }
 }

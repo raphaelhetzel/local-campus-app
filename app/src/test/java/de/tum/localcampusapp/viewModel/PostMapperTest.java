@@ -185,8 +185,8 @@ public class PostMapperTest {
 
         assertEquals(postMappers2.size(), postsNumberValid, postMappers.size());
 
-
-        String text = "Data No: " + ( ++postsNumberValid );
+        postsNumberValid++;
+        String text = "Data No: " + postsNumberValid;
         String jsonText = PostMapper.makeJsonPostOutput(text, context);
         Post post = new Post(topicId, "Type", jsonText);
         post.setId(postsNumberValid + postsNumberNotValid);

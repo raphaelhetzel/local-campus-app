@@ -6,4 +6,9 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="smallTextWhite" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
 </resources>

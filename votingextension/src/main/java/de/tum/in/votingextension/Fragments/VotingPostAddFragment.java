@@ -26,6 +26,7 @@ public class VotingPostAddFragment extends AddPostFragment {
     private TextView txtDesciption;
     private TextView txtTempChange;
     private TextView txtTemp;
+    private TextView txtDeviceId;
 
 
     //Post
@@ -84,6 +85,7 @@ public class VotingPostAddFragment extends AddPostFragment {
         txtDesciption =  view.findViewById(R.id.txt_desciption);
         txtTempChange = view.findViewById(R.id.txt_change);;
         txtTemp = view.findViewById(R.id.txt_temp);
+        txtDeviceId = view.findViewById(R.id.txt_device_id);
 
         //Post Variables
         postDesciption = view.findViewById(R.id.post_description);
@@ -98,6 +100,7 @@ public class VotingPostAddFragment extends AddPostFragment {
         postDesciption.addTextChangedListener(new EditTextListener<TextView>(txtDesciption));
         tempCurr.addTextChangedListener(new EditTextListener<TextView>(txtTemp));
         tempChange.addTextChangedListener(new EditTextListener<TextView>(txtTempChange));
+        deviceId.addTextChangedListener(new EditTextListener<TextView>(txtDeviceId));
     }
 
 

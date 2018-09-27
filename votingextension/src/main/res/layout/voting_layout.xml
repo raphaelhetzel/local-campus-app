@@ -10,15 +10,44 @@
         android:id="@+id/voting_layout"
         android:orientation="vertical">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        style="@style/smallTextWhite"
+        android:text="Device-ID:"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        style="@style/smallTextWhite"
+        android:id="@+id/device_id"
+        android:layout_alignParentRight="true"
+        android:text="1234533" />
+
+    </RelativeLayout>
 
         <TextView
             android:id="@+id/txt_desciption"
             style="@style/normalTextWhite"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:text="Sample Voting for Temperature" />/>
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Sample Voting for cooler's Temperature" />
 
-
+</RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +64,6 @@
                 style="@style/normalTextWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="15dp"

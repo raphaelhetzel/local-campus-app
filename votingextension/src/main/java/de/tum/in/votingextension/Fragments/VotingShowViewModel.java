@@ -25,10 +25,6 @@ public class VotingShowViewModel {
         this.livePostExtensions = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
     }
 
-    public LiveData<List<IPostExtension>> getExtensions(){
-        return livePostExtensions;
-    }
-
     public LiveData<List<Voting>> getLiveVotes() {
         return Transformations.map(livePostExtensions, (List<IPostExtension> livePostExtension) -> {
             List<Voting> validVotes = new ArrayList<>();

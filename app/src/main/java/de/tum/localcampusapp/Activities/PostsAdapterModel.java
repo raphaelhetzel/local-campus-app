@@ -42,23 +42,4 @@ public class PostsAdapterModel extends ViewModel{
         return liveDataMapped;
     }
 
-    /*
-    public boolean hasLikedPost(long id){
-        if(itemsVoted.contains(id)){
-            return true;
-        }
-        return false;
-    }
-
-    public void likePost(PostMapper postMapper){
-        if(hasLikedPost(postMapper.getId())){
-            Toast.makeText(context, "You have already voted for this Post", Toast.LENGTH_LONG).show();
-        }
-        else{
-            //TODO: add to DB
-            itemsVoted.add(postMapper.getId());
-        }
-    }
-    */
-
 }

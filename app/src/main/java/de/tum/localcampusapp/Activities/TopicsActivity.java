@@ -60,13 +60,13 @@ public class TopicsActivity extends AppCompatActivity {
         Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) VotingPostAddFragment.class;
         Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) VotingShowFragment.class;
         RepositoryLocator.getExtensionRepository().registerExtension("ab6acf96-24bd-4d7d-b9d0-0784e821090b","Voting Extension"
-                , showPostFragmentClass, addPostFragmentClass, "");
+                , showPostFragmentClass, addPostFragmentClass, null);
 
 
         Class<? extends ShowPostFragment> showPostFragmentClass2 = CommentShowFragment.class;
         Class<? extends AddPostFragment> addPostFragmentClass2 = PostAddFragment.class;
         RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"
-                , showPostFragmentClass2, addPostFragmentClass2, "");
+                , showPostFragmentClass2, addPostFragmentClass2, null);
        // ab6acf96-24bd-4d7d-b9d0-0784e821090b
 
         // Fake Data

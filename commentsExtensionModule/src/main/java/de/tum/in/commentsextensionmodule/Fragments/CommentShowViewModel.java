@@ -73,11 +73,11 @@ public class CommentShowViewModel {
 
 
     public void upVote(){
-        //TODO: Call API method after it is available
+        showPostDataProvider.upVote();
     }
 
     public void downVote(){
-        //TODO: Call API method after it is available
+        showPostDataProvider.downVote();
     }
 
 }

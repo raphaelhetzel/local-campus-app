@@ -73,19 +73,6 @@ public class VotingPostViewModel {
         this.tempChange = tempChange;
     }
 
-    private boolean checkIfNoError(){
-        if(variablesNotEmpty() &&
-                 maxMinError() &&
-                 tempTooHigh() &&
-                 tempTooLow() &&
-                 tempChangeWrong() &&
-                 defaultTempOutbound() &&
-                 deviceNotFound()){
-            return false;
-        }
-           return true;
-    }
-
 
     private boolean variablesNotEmpty(){
         if(
@@ -143,15 +130,10 @@ public class VotingPostViewModel {
     }
 
     private boolean deviceNotFound(){
-        ArrayList<Integer> devices = new ArrayList<>();
-        devices.add(Integer.parseInt(deviceId));    //Change this and call API after devices are availale
-
-        if(!devices.contains(Integer.parseInt(deviceId))){
-            errorMessage = DEVICE_ID_WRONG;
-            return false;
-        }
+        //Change this and call API after devices are availale
         return true;
     }
+
 
     public boolean addPost() {
         if(checkIfNoError()) {
@@ -160,6 +142,20 @@ public class VotingPostViewModel {
 
         String jsonData = makeJsonPostOutput();
         this.addPostDataProvider.addPost(jsonData);
+        return true;
+    }
+
+
+    private boolean checkIfNoError(){
+        if(variablesNotEmpty() &&
+                maxMinError() &&
+                tempTooHigh() &&
+                tempTooLow() &&
+                tempChangeWrong() &&
+                defaultTempOutbound() &&
+                deviceNotFound()){
+            return false;
+        }
         return true;
     }
 

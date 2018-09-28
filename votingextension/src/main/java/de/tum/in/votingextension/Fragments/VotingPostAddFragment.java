@@ -104,7 +104,7 @@ public class VotingPostAddFragment extends AddPostFragment {
     }
 
 
-    public class EditTextListener<elemExtension> implements TextWatcher{
+    private static class EditTextListener<elemExtension> implements TextWatcher{
         private TextView elemExtension;
 
         public EditTextListener(elemExtension elem2){

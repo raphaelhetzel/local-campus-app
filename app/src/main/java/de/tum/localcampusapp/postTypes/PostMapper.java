@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.generator.ColorGenerator;
 import de.tum.localcampusapp.generator.DateTransformer;
+import de.tum.localcampusapp.repository.ExtensionRepository;
+import de.tum.localcampusapp.repository.RepositoryLocator;
 
 
 public class PostMapper {
@@ -18,6 +20,7 @@ public class PostMapper {
     private int color;
     private Post post;
     private float internalRating;
+    private ExtensionRepository extensionRepository;
     private static final String ATTR_COLOR = "color";
     private static final String ATTR_DATA = "text";
 
@@ -37,6 +40,7 @@ public class PostMapper {
         this.post = post;
         this.text = text;
         this.color = color;
+        extensionRepository = RepositoryLocator.getExtensionRepository();
     }
 
     public String getDate() {
@@ -68,7 +72,7 @@ public class PostMapper {
     }
 
     public String getType() {
-        return post.getTypeId();
+        return extensionRepository.getDescriptionFor(post.getTypeId());
     }
 
     public float getInternalRating() {

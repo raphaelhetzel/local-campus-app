@@ -48,14 +48,6 @@ public class PostAddViewModel {
         return errorMessage;
     }
 
-    public boolean noError(String data){
-        if(data.isEmpty()){
-            errorMessage = TEXT_EMPTY;
-            return false;
-        }
-        return true;
-    }
-
     public boolean addPost(String data) {
         if(noError(data)){
             String jsonData = makeJsonPostOutput(data, context);
@@ -63,6 +55,14 @@ public class PostAddViewModel {
             return true;
         }
         return false;
+    }
+
+    private boolean noError(String data){
+        if(data.isEmpty()){
+            errorMessage = TEXT_EMPTY;
+            return false;
+        }
+        return true;
     }
 
     private String makeJsonPostOutput(String textInput, Context context) {

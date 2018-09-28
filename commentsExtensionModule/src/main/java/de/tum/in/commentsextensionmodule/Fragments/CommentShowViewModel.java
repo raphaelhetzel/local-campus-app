@@ -72,7 +72,6 @@ public class CommentShowViewModel {
     }
 
 
-
     public void upVote(){
         //TODO: Call API method after it is available
     }

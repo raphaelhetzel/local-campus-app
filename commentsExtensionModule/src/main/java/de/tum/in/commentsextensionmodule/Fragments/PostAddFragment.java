@@ -1,42 +1,75 @@
 package de.tum.in.commentsextensionmodule.Fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import de.tum.in.commentsextensionmodule.R;
 import de.tum.localcampuslib.AddPostFragment;
 
 public class PostAddFragment extends AddPostFragment {
-    private PostAddViewModel viewModel;
 
     static final String TAG = PostAddFragment.class.getSimpleName();
+
+    private PostAddViewModel viewModel;
+
+
+    private RelativeLayout rootLayout;
+
+    private TextView postDate;
+    private TextView postType;
+
+    private EditText titleText;
+
+    private Button buttonSave;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new PostAddViewModel(getAddPostDataProvider(), getContext());
+    }
 
-        final EditText editText = new EditText(getContext());
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setTitle("New Post with Comment")
-                .setMessage("Add Posts text below")
-                .setView(editText)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "floating clicked");
-                        String textData = String.valueOf(editText.getText());
-                        viewModel.addPost(textData);
-                        finishActivity();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .create();
-        dialog.show();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LayoutInflater newInflator = inflater.cloneInContext(getContext());
+        View view = newInflator.inflate(R.layout.post_fragment_layout, null, false);
 
+        rootLayout = view.findViewById(R.id.root_layout);
+        rootLayout.setBackgroundColor(viewModel.getColor());
 
+        titleText = (EditText) view.findViewById(R.id.edit_title);
+
+        postDate = (TextView) view.findViewById(R.id.view_date);
+        postDate.setText(viewModel.getDate());
+
+        postType = (TextView)  view.findViewById(R.id.view_type);
+        postType.setText(viewModel.getTypePost());
+
+        buttonSave = (Button) view.findViewById(R.id.btnSave);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!viewModel.addPost(titleText.getText().toString())){
+                    String errorMessage = viewModel.getErrorMessage();
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
+                }
+
+                else{
+                    Toast.makeText(getContext(), "Post successfully added", Toast.LENGTH_LONG).show();
+                    finishActivity();
+                }
+
+            }
+        });
+
+        return view;
     }
 
 }

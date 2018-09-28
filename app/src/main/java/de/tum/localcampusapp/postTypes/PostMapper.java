@@ -20,7 +20,6 @@ public class PostMapper {
     private int color;
     private Post post;
     private float internalRating;
-    private ExtensionRepository extensionRepository;
     private static final String ATTR_COLOR = "color";
     private static final String ATTR_DATA = "text";
 
@@ -40,7 +39,6 @@ public class PostMapper {
         this.post = post;
         this.text = text;
         this.color = color;
-        extensionRepository = RepositoryLocator.getExtensionRepository();
     }
 
     public String getDate() {
@@ -72,7 +70,7 @@ public class PostMapper {
     }
 
     public String getType() {
-        return extensionRepository.getDescriptionFor(post.getTypeId());
+        return RepositoryLocator.getExtensionRepository().getDescriptionFor(post.getTypeId());
     }
 
     public float getInternalRating() {

@@ -1,5 +1,6 @@
 package de.tum.piechartsurvey.Fragments;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 
@@ -28,10 +29,18 @@ public class PieExtensionViewModel {
     private LiveData<List<IPostExtension>> livePostExtensions;
     private LiveData<IPost> livePost;
 
-    public PieExtensionViewModel(ShowPostDataProvider showPostDataProvider) {
+    private boolean databaseVoteExists = false;
+    private boolean inMemoryVoteExists = false;
+
+    public PieExtensionViewModel(ShowPostDataProvider showPostDataProvider, LifecycleOwner lifecycleOwner) {
         this.showPostDataProvider = showPostDataProvider;
         this.livePostExtensions = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
         this.livePost = (LiveData<IPost>) showPostDataProvider.getPost();
+
+        showPostDataProvider.getPostExtensions().observe(lifecycleOwner, postExtensions -> {
+            databaseVoteExists = postExtensions.stream()
+                    .anyMatch(postExtension -> postExtension.getCreatorId().equals(showPostDataProvider.getCurrentUser()));
+        });
     }
 
     public VotingOptions parseJsonPost(IPost post) {
@@ -68,8 +77,10 @@ public class PieExtensionViewModel {
 
 
     public void addVote(int id) {
+        if( inMemoryVoteExists || databaseVoteExists) return;
         String jsonString = Vote.makeJsonCommentOutput(id);
         showPostDataProvider.addPostExtension(jsonString);
+        inMemoryVoteExists = true;
     }
 
     public VotingOptions getVotingOptions(IPost post) {

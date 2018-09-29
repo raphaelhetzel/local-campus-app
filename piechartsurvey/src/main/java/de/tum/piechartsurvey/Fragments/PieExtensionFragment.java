@@ -38,7 +38,7 @@ public class PieExtensionFragment extends ShowPostFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = new PieExtensionViewModel(getDataProvider());
+        viewModel = new PieExtensionViewModel(getDataProvider(), this);
     }
 
     @Override

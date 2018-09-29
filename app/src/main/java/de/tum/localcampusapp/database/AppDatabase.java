@@ -12,7 +12,7 @@ import de.tum.localcampusapp.entity.PostExtension;
 import de.tum.localcampusapp.entity.Topic;
 import de.tum.localcampusapp.entity.Vote;
 
-@Database(version = 7, entities = {Topic.class, Post.class, Vote.class, PostExtension.class, LocationTopicMapping.class})
+@Database(version = 8, entities = {Topic.class, Post.class, Vote.class, PostExtension.class, LocationTopicMapping.class})
 @TypeConverters({Converters.class})
 abstract public class AppDatabase extends RoomDatabase {
     abstract public TopicDao getTopicDao();
@@ -25,14 +25,14 @@ abstract public class AppDatabase extends RoomDatabase {
 
     abstract public LocationTopicMappingDao getLocationTopicMappingDao();
 
-//    public static AppDatabase buildDatabase(Context applicationContext) {
-//        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")
-//                .fallbackToDestructiveMigration()
-//                .build();
-//    }
     public static AppDatabase buildDatabase(Context applicationContext) {
-        return Room.inMemoryDatabaseBuilder(applicationContext, AppDatabase.class)
+        return Room.databaseBuilder(applicationContext, AppDatabase.class, "local_campus_db")
                 .fallbackToDestructiveMigration()
                 .build();
     }
+//    public static AppDatabase buildDatabase(Context applicationContext) {
+//        return Room.inMemoryDatabaseBuilder(applicationContext, AppDatabase.class)
+//                .fallbackToDestructiveMigration()
+//                .build();
+//    }
 }

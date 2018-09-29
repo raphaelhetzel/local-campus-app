@@ -43,7 +43,7 @@ public class VotingShowFragment extends ShowPostFragment {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        viewModel = new VotingShowViewModel(getDataProvider());
+        viewModel = new VotingShowViewModel(getDataProvider(), this);
     }
 
     @Nullable
@@ -87,7 +87,7 @@ public class VotingShowFragment extends ShowPostFragment {
 
     private void showWarning(){
         Toast.makeText(getContext()
-                , "Your entered value is outside of the range ["+ viewModel.getTempMin() +" ; "+ viewModel.getTempMax() + "]"
+                , "You either voted already or entered value that is outside of the range ["+ viewModel.getTempMin() +" ; "+ viewModel.getTempMax() + "]"
                 , Toast.LENGTH_LONG).show();
     }
 

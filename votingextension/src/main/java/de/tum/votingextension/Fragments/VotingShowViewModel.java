@@ -1,5 +1,6 @@
 package de.tum.votingextension.Fragments;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.util.Log;
@@ -41,10 +42,18 @@ public class VotingShowViewModel {
     private LiveData<List<IPostExtension>> livePostExtensions;
     private LiveData<IPost> post;
 
-    public VotingShowViewModel(ShowPostDataProvider showPostDataProvider){
+    private boolean databaseVoteExists = false;
+    private boolean inMemoryVoteExists = false;
+
+    public VotingShowViewModel(ShowPostDataProvider showPostDataProvider, LifecycleOwner lifecycleOwner) {
         this.showPostDataProvider = showPostDataProvider;
         this.post = (LiveData<IPost>) showPostDataProvider.getPost();
         this.livePostExtensions = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
+
+        showPostDataProvider.getPostExtensions().observe(lifecycleOwner, postExtensions -> {
+            databaseVoteExists = postExtensions.stream()
+                    .anyMatch(postExtension -> postExtension.getCreatorId().equals(showPostDataProvider.getCurrentUser()));
+        });
     }
 
     public void setPostVariables(String data){
@@ -122,9 +131,11 @@ public class VotingShowViewModel {
     }
 
     public boolean vote(float voteNumber){
+        if(inMemoryVoteExists || databaseVoteExists) return false;
         if(voteNumber > tempMin && voteNumber < tempMax){
             currTempVote = roundFloat(voteNumber);
             addVote(currTempVote);
+            inMemoryVoteExists = true;
             return true;
         }
         return false;

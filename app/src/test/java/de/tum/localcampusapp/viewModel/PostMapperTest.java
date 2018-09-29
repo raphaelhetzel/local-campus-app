@@ -291,23 +291,4 @@ public class PostMapperTest {
                 rating1DayAgo > rating1DayAgo0 && rating1DayAgo0 > rating1DayAgoMinus5);
     }
 
-    @Test
-    public void comparisonMethod(){
-
-        // methods which could be also tested
-        //public List<PostMapper> comparison(List<PostMapper> pm)
-
-        //tranformPost()
-        //transformPosts()
-
-    /*
-     public List<PostMapper> comparison(List<PostMapper> pm){
-        Comparator<PostMapper> pmComparator = Comparator.comparingDouble(PostMapper::getInternalRating);
-        pm.sort(pmComparator);
-        Collections.reverse(pm);
-        return pm;
-    }
-     */
-    }
-
 }

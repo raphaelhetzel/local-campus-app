@@ -10,12 +10,12 @@ public class PostSpinnerViewModel {
 
     private ArrayList<String> extensionsDescription;
     private List<ExtensionInfo> extensions;
-    private int position=0;
+    private int position = 0;
 
-    public PostSpinnerViewModel(){
+    public PostSpinnerViewModel() {
         extensions = RepositoryLocator.getExtensionRepository().getExtensions();
         extensionsDescription = new ArrayList<>();
-        for(ExtensionInfo e : extensions){
+        for (ExtensionInfo e : extensions) {
             extensionsDescription.add(e.getDescription());
         }
     }
@@ -24,11 +24,11 @@ public class PostSpinnerViewModel {
         return extensionsDescription;
     }
 
-    public String getUIID(){
+    public String getUIID() {
         return extensions.get(position).getExtensionUUID();
     }
 
-    public void setChosenPosition(int pos){
+    public void setChosenPosition(int pos) {
         this.position = pos;
     }
 

@@ -22,7 +22,7 @@ public class PostsViewModel extends ViewModel {
     private LiveData<List<PostMapper>> liveDataMapped;
     private PostMapperHelper postMapperHelper;
 
-    public PostsViewModel(long topicId, Context context) throws DatabaseException{
+    public PostsViewModel(long topicId, Context context) throws DatabaseException {
         this.topicId = topicId;
 
         //FakeDataGenerator.getInstance().createSeveralFakePosts(4, topicId, context);
@@ -42,7 +42,7 @@ public class PostsViewModel extends ViewModel {
 
     }
 
-    public LiveData<List<PostMapper>> getLiveDataMapped(){
+    public LiveData<List<PostMapper>> getLiveDataMapped() {
         return liveDataMapped;
     }
 

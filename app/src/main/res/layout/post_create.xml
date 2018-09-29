@@ -1,35 +1,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="10dp"
     android:layout_width="fill_parent"
+    android:layout_height="match_parent"
     android:background="@color/colorCampusApp1"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
+        style="@style/normalTextWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:text="Choose Post type to be created"
-        android:textAlignment="center"
-        style="@style/normalTextWhite"
-        />
+        android:textAlignment="center" />
 
     <com.jaredrummler.materialspinner.MaterialSpinner
         android:id="@+id/spinner"
-        android:hint="Available Post Types"
-        android:textColorHint="#05ab9a"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="Available Post Types"
+        android:textColorHint="#05ab9a" />
 
     <Button
-        android:layout_marginTop="150dp"
-        android:layout_marginHorizontal="100dp"
         android:id="@+id/button_create"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#05ab9a"
-        android:text="Continue">
-    </Button>
+        android:layout_marginHorizontal="100dp"
+        android:layout_marginTop="150dp"
+        android:text="Continue"
+        android:textColor="#05ab9a"></Button>
 
 </LinearLayout>

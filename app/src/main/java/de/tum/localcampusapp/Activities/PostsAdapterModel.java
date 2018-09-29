@@ -12,33 +12,33 @@ import de.tum.localcampusapp.entity.Post;
 import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.postTypes.PostMapperHelper;
 
-public class PostsAdapterModel extends ViewModel{
+public class PostsAdapterModel extends ViewModel {
 
     private long topicId;
     private LiveData<List<PostMapper>> liveDataMapped;
     private Context context;
 
 
-    public PostsAdapterModel(long topicId, Context context){
+    public PostsAdapterModel(long topicId, Context context) {
         this.topicId = topicId;
         PostMapperHelper postMapperHelper = new PostMapperHelper(topicId);
         this.liveDataMapped = postMapperHelper.transformPosts();
         this.context = context;
     }
 
-    public PostsAdapterModel(LiveData<List<Post>> liveDataPosts){
+    public PostsAdapterModel(LiveData<List<Post>> liveDataPosts) {
         PostMapperHelper postMapperHelper = new PostMapperHelper(liveDataPosts);
         this.liveDataMapped = postMapperHelper.transformPosts();
     }
 
-    public List<PostMapper> comparison(List<PostMapper> pm){
+    public List<PostMapper> comparison(List<PostMapper> pm) {
         Comparator<PostMapper> pmComparator = Comparator.comparingDouble(PostMapper::getInternalRating);
         pm.sort(pmComparator);
         Collections.reverse(pm);
         return pm;
     }
 
-    public LiveData<List<PostMapper>> getLiveData(){
+    public LiveData<List<PostMapper>> getLiveData() {
         return liveDataMapped;
     }
 

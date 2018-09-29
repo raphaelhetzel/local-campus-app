@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="20dp"
     android:background="@drawable/border_bottom_black"
-    android:id="@+id/parent_layout"
-    >
+    android:padding="20dp">
 
     <TextView
+        android:id="@+id/topic_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sample"
 
-        android:layout_marginTop="20dp"
-        android:id="@+id/topic_name"
-        android:textColor="#000"
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Sample"
+        android:textColor="#000"
 
-        android:textSize="20sp"
-        />
+        android:textSize="20sp" />
 
 </RelativeLayout>

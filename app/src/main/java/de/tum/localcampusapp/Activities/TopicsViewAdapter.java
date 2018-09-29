@@ -15,7 +15,7 @@ import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
 
 
-public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.ViewHolder>{
+public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.ViewHolder> {
 
     private static final String TAG = TopicsViewAdapter.class.getSimpleName();
 
@@ -24,7 +24,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
     private Context context;
 
 
-    public TopicsViewAdapter(List<Topic> topicList, Context context){
+    public TopicsViewAdapter(List<Topic> topicList, Context context) {
         this.topicList = topicList;
         this.context = context;
     }
@@ -63,13 +63,13 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         return topicList.size();
     }
 
-    public void setItems(List<Topic> topics){
+    public void setItems(List<Topic> topics) {
         this.topicList = topics;
         notifyDataSetChanged();
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView topicName;
         RelativeLayout parentLayout;

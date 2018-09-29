@@ -19,7 +19,7 @@ import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.postTypes.PostMapper;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
+public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     private static final String TAG = PostsAdapter.class.getSimpleName();
 
@@ -27,8 +27,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     private long selectedPostId;
     private Context context;
     private LifecycleOwner lifecycleOwner;
-    
-    
+
+
     private PostsAdapterModel adapterModel;
 
     private PostMapper postMapper;
@@ -103,17 +103,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        if(postsList == null) return 0;
+        if (postsList == null) return 0;
         return postsList.size();
     }
 
-    public void setItems(List<PostMapper> posts){
+    public void setItems(List<PostMapper> posts) {
         this.postsList = posts;
         notifyDataSetChanged();
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout parentLayout;
         TextView postDate;

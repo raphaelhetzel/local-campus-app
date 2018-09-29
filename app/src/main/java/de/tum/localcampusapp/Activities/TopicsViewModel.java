@@ -11,12 +11,12 @@ import de.tum.localcampusapp.exception.DatabaseException;
 import de.tum.localcampusapp.repository.RepositoryLocator;
 import de.tum.localcampusapp.repository.TopicRepository;
 
-public class TopicsViewModel extends ViewModel{
+public class TopicsViewModel extends ViewModel {
 
     private LiveData<List<Topic>> liveDataTopics;
     TopicRepository topicRepository;
 
-    public TopicsViewModel(Context applicationContext) throws DatabaseException{
+    public TopicsViewModel(Context applicationContext) throws DatabaseException {
         // FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);
 
         topicRepository = RepositoryLocator.getTopicRepository();

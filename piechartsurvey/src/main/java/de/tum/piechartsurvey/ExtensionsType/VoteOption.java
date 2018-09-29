@@ -1,4 +1,4 @@
-package de.tum.in.piechartsurvey.ExtensionsType;
+package de.tum.piechartsurvey.ExtensionsType;
 
 public class VoteOption {
 

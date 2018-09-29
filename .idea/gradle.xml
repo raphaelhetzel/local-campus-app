@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/commentsExtensionModule" />
             <option value="$PROJECT_DIR$/localcampuslib" />
+            <option value="$PROJECT_DIR$/piechartsurvey" />
             <option value="$PROJECT_DIR$/testextension" />
             <option value="$PROJECT_DIR$/votingextension" />
           </set>

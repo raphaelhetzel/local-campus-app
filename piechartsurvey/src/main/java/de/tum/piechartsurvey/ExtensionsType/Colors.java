@@ -1,4 +1,4 @@
-package de.tum.in.piechartsurvey.ExtensionsType;
+package de.tum.piechartsurvey.ExtensionsType;
 
 public class Colors {
     public static final int[] colorsInternal = {0xFF0000FF, 0xFFFF0000, 0xFF444444, 0xFF888888,

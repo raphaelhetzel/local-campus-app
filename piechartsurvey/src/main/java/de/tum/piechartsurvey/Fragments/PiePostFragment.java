@@ -1,11 +1,8 @@
-package de.tum.in.piechartsurvey.Fragments;
+package de.tum.piechartsurvey.Fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import de.tum.in.piechartsurvey.ExtensionsType.Colors;
-import de.tum.in.piechartsurvey.ExtensionsType.Vote;
-import de.tum.in.piechartsurvey.ExtensionsType.VoteOption;
-import de.tum.in.piechartsurvey.R;
+import de.tum.piechartsurvey.ExtensionsType.VoteOption;
 import de.tum.localcampuslib.AddPostFragment;
-import im.dacer.androidcharts.PieHelper;
+import de.tum.piechartsurvey.R;
 
 public class PiePostFragment extends AddPostFragment {
 

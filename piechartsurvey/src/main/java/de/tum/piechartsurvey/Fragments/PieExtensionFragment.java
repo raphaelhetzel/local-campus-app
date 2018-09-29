@@ -1,4 +1,4 @@
-package de.tum.in.piechartsurvey.Fragments;
+package de.tum.piechartsurvey.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.graphics.Color;
@@ -8,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tum.in.piechartsurvey.ExtensionsType.Vote;
-import de.tum.in.piechartsurvey.ExtensionsType.VoteOption;
-import de.tum.in.piechartsurvey.ExtensionsType.VotingOptions;
-import de.tum.in.piechartsurvey.R;
+import de.tum.piechartsurvey.ExtensionsType.Vote;
+import de.tum.piechartsurvey.ExtensionsType.VoteOption;
+import de.tum.piechartsurvey.ExtensionsType.VotingOptions;
 import de.tum.localcampuslib.ShowPostFragment;
 import de.tum.localcampuslib.entity.IPost;
+import de.tum.piechartsurvey.R;
 import im.dacer.androidcharts.PieHelper;
 import im.dacer.androidcharts.PieView;
 
@@ -67,7 +68,9 @@ public class PieExtensionFragment extends ShowPostFragment {
 
     private void setUpLayout(View view) {
         buttonsLayout = (LinearLayout) view.findViewById(R.id.btnLayout);
-        pieView = (PieView) view.findViewById(R.id.pie_view);
+        FrameLayout placeholder = view.findViewById(R.id.pie_container);
+        pieView = new PieView(this.getContext());
+        placeholder.addView(pieView);
         textTitle = (TextView) view.findViewById(R.id.title);
     }
 

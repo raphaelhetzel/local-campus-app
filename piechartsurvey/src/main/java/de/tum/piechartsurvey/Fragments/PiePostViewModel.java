@@ -1,13 +1,13 @@
-package de.tum.in.piechartsurvey.Fragments;
+package de.tum.piechartsurvey.Fragments;
 
 import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-import de.tum.in.piechartsurvey.ExtensionsType.VoteOption;
-import de.tum.in.piechartsurvey.ExtensionsType.VotingOptions;
-import de.tum.in.piechartsurvey.Generator.ColorGenerator;
+import de.tum.piechartsurvey.ExtensionsType.VoteOption;
+import de.tum.piechartsurvey.ExtensionsType.VotingOptions;
+import de.tum.piechartsurvey.Generator.ColorGenerator;
 import de.tum.localcampuslib.AddPostDataProvider;
 
 public class PiePostViewModel {

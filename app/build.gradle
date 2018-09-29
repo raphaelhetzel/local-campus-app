@@ -53,6 +53,5 @@ dependencies {
 
     implementation project(':localcampuslib')
     implementation project(':commentsExtensionModule')
-    implementation project(':piechartsurvey')
 }
 

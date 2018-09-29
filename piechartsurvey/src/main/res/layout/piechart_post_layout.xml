@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="Enter survey's title.."
-            android:textColor="@color/colorPrimary"
+            android:textColor="#3F51B5"
             android:textSize="22dp" />
 
 
@@ -31,7 +31,7 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:hint="Add a new selection option"
-                android:textColor="@color/colorPrimary"
+                android:textColor="#3F51B5"
                 android:textSize="20dp" />
 
             <ImageButton
@@ -67,9 +67,9 @@
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/colorCampusApp3"
+                android:background="#f9031b"
                 android:text="Reset selection options"
-                android:textColor="@color/white" />
+                android:textColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/btn_save"
@@ -77,9 +77,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:background="@color/colorCampusApp1"
+                android:background="#1ca9a2"
                 android:text="Save Survey"
-                android:textColor="@color/white" />
+                android:textColor="#FFFFFF" />
 
         </RelativeLayout>
 

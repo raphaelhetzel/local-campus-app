@@ -1,4 +1,4 @@
-package de.tum.in.piechartsurvey.Fragments;
+package de.tum.piechartsurvey.Fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -13,9 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.tum.in.piechartsurvey.ExtensionsType.Vote;
-import de.tum.in.piechartsurvey.ExtensionsType.VoteOption;
-import de.tum.in.piechartsurvey.ExtensionsType.VotingOptions;
+import de.tum.piechartsurvey.ExtensionsType.Vote;
+import de.tum.piechartsurvey.ExtensionsType.VoteOption;
+import de.tum.piechartsurvey.ExtensionsType.VotingOptions;
 import de.tum.localcampuslib.ShowPostDataProvider;
 import de.tum.localcampuslib.entity.IPost;
 import de.tum.localcampuslib.entity.IPostExtension;

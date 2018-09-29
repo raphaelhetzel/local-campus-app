@@ -15,8 +15,6 @@ import java.util.List;
 
 import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
 import de.tum.in.commentsextensionmodule.Fragments.PostAddFragment;
-import de.tum.in.piechartsurvey.Fragments.PieExtensionFragment;
-import de.tum.in.piechartsurvey.Fragments.PiePostFragment;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
@@ -52,15 +50,6 @@ public class TopicsActivity extends AppCompatActivity {
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
 //        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 //        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
-
-
-        Class<? extends ShowPostFragment> showPostFragmentClass3 = PieExtensionFragment.class;
-        Class<? extends AddPostFragment> addPostFragmentClass3 = PiePostFragment.class;
-        String typeId = "36990489-5f2c-4ff8-aff7-84e9a881c7e8";
-        String typeDescription = "PieChart Survey Extension";
-        RepositoryLocator.getExtensionRepository().registerExtension(typeId, typeDescription
-                , showPostFragmentClass3, addPostFragmentClass3, null);
-        // ab6acf96-24bd-4d7d-b9d0-0784e821090b
 
         // Post Type Included by default
         RepositoryLocator.getExtensionRepository().registerExtension(

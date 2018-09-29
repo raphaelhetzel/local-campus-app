@@ -1,4 +1,4 @@
-package de.tum.in.piechartsurvey.Generator;
+package de.tum.piechartsurvey.Generator;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

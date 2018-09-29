@@ -1,7 +1,7 @@
-package de.tum.in.piechartsurvey.Registry;
+package de.tum.localcampusextension;
 
-import de.tum.in.piechartsurvey.Fragments.PieExtensionFragment;
-import de.tum.in.piechartsurvey.Fragments.PiePostFragment;
+import de.tum.piechartsurvey.Fragments.PieExtensionFragment;
+import de.tum.piechartsurvey.Fragments.PiePostFragment;
 import de.tum.localcampuslib.AddPostFragment;
 import de.tum.localcampuslib.ShowPostFragment;
 

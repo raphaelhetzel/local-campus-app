@@ -1,193 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/voting_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp"
         android:background="#1ca9a2"
-        android:id="@+id/voting_layout"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <RelativeLayout
-        android:layout_alignParentRight="true"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:textColorHint="?android:textColorHint"
-        android:textColorHighlight="?android:textColorHighlight"
-        android:textColorLink="?android:textColorLink"
-        android:textColor="#FFFFFF"
-        android:textSize="15sp"
-        android:text="Device-ID:"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="?android:textColorHint"
-        android:textColorHighlight="?android:textColorHighlight"
-        android:textColorLink="?android:textColorLink"
-        android:textSize="15sp"
-        android:id="@+id/device_id"
-        android:layout_alignParentRight="true"
-        android:text="1234533" />
-
-    </RelativeLayout>
-
-        <TextView
-            android:id="@+id/txt_desciption"
-            android:textColorHint="?android:textColorHint"
-            android:textColorHighlight="?android:textColorHighlight"
-            android:textColorLink="?android:textColorLink"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:layout_width="250dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sample Voting for cooler's Temperature" />
+            android:orientation="horizontal">
 
-</RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="275dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="Device-ID:"
+                    android:textColor="#FFFFFF"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorLink="?android:textColorLink"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/device_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="17dp"
+                    android:text="1234533"
+                    android:textColor="#FFFFFF"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorLink="?android:textColorLink"
+                    android:textSize="15sp" />
+
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/txt_above_temp"
-                android:textColorHint="?android:textColorHint"
-                android:textColorHighlight="?android:textColorHighlight"
-                android:textColorLink="?android:textColorLink"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
+                android:id="@+id/txt_desciption"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="15dp"
-                android:text="Current Temperature:">
+                android:text="Sample Voting for cooler's Temperature"
+                android:textColor="#FFFFFF"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorHint="?android:textColorHint"
+                android:textColorLink="?android:textColorLink"
+                android:textSize="18sp" />
 
-            </TextView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_temp"
-                    android:textColorHint="?android:textColorHint"
-                    android:textColorHighlight="?android:textColorHighlight"
-                    android:textColorLink="?android:textColorLink"
-                    android:textColor="#FFFFFF"
+                    android:id="@+id/txt_above_temp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="23"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/txt_celcius"
-                    android:textColorHint="?android:textColorHint"
-                    android:textColorHighlight="?android:textColorHighlight"
-                    android:textColorLink="?android:textColorLink"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="15dp"
+                    android:text="Current Temperature:"
                     android:textColor="#FFFFFF"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/txt_temp"
-                    android:text=" °C"
-                    android:textSize="30sp">
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorLink="?android:textColorLink"
+                    android:textSize="18sp">
 
                 </TextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/txt_temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="23"
+                        android:textColor="#FFFFFF"
+                        android:textColorHighlight="?android:textColorHighlight"
+                        android:textColorHint="?android:textColorHint"
+                        android:textColorLink="?android:textColorLink"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/txt_celcius"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/txt_temp"
+                        android:text=" °C"
+                        android:textColor="#FFFFFF"
+                        android:textColorHighlight="?android:textColorHighlight"
+                        android:textColorHint="?android:textColorHint"
+                        android:textColorLink="?android:textColorLink"
+                        android:textSize="30sp">
+
+                    </TextView>
+                </LinearLayout>
+
+
             </LinearLayout>
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/button_upvote"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@android:drawable/arrow_up_float" />
-
-            <TextView
-                android:id="@+id/txt_change"
-                android:textColorHint="?android:textColorHint"
-                android:textColorHighlight="?android:textColorHighlight"
-                android:textColorLink="?android:textColorLink"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
+            <LinearLayout
+                android:id="@+id/buttonLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="+/- 0.5" />
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/button_downvote"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@android:drawable/arrow_down_float" />
+                <ImageButton
+                    android:id="@+id/button_upvote"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/arrow_up_float" />
 
-        </LinearLayout>
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/txt_change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="+/- 0.5"
+                    android:textColor="#FFFFFF"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorLink="?android:textColorLink"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:id="@+id/button_downvote"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/arrow_down_float" />
+
+            </LinearLayout>
+        </RelativeLayout>
 
 
-    <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="50dp"
-    android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/input"
-            android:textColorHint="?android:textColorHint"
-            android:textColorHighlight="?android:textColorHighlight"
-            android:textColorLink="?android:textColorLink"
-            android:textColor="#FFFFFF"
-            android:layout_width="250dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:hint="Prefered temperature [°C]"
-            android:inputType="numberDecimal|numberSigned"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:hint="Prefered temperature [°C]"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:inputType="numberDecimal|numberSigned"
+                android:textColor="#FFFFFF"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorHint="?android:textColorHint"
+                android:textColorLink="?android:textColorLink"
+                android:textSize="20sp" />
 
 
-        <Button
-            android:id="@+id/button_vote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:text="Vote now"
-            android:textSize="15sp" />
+            <Button
+                android:id="@+id/button_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:text="Vote now"
+                android:textSize="15sp" />
 
-    </RelativeLayout>
+        </RelativeLayout>
 
     </LinearLayout>
+</ScrollView>

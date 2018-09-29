@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="12dp"
-        android:background="@color/colorCampusApp1"
+        android:background="#1ca9a2"
         android:id="@+id/voting_layout"
         android:orientation="vertical">
 
@@ -26,14 +26,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        style="@style/smallTextWhite"
+        android:textColorHint="?android:textColorHint"
+        android:textColorHighlight="?android:textColorHighlight"
+        android:textColorLink="?android:textColorLink"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
         android:text="Device-ID:"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        style="@style/smallTextWhite"
+        android:textColor="#FFFFFF"
+        android:textColorHint="?android:textColorHint"
+        android:textColorHighlight="?android:textColorHighlight"
+        android:textColorLink="?android:textColorLink"
+        android:textSize="15sp"
         android:id="@+id/device_id"
         android:layout_alignParentRight="true"
         android:text="1234533" />
@@ -42,7 +50,11 @@
 
         <TextView
             android:id="@+id/txt_desciption"
-            style="@style/normalTextWhite"
+            android:textColorHint="?android:textColorHint"
+            android:textColorHighlight="?android:textColorHighlight"
+            android:textColorLink="?android:textColorLink"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:text="Sample Voting for cooler's Temperature" />
@@ -61,7 +73,11 @@
 
             <TextView
                 android:id="@+id/txt_above_temp"
-                style="@style/normalTextWhite"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -77,7 +93,10 @@
 
                 <TextView
                     android:id="@+id/txt_temp"
-                    style="@style/normalTextWhite"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorLink="?android:textColorLink"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -86,7 +105,10 @@
 
                 <TextView
                     android:id="@+id/txt_celcius"
-                    style="@style/normalTextWhite"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorLink="?android:textColorLink"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/txt_temp"
@@ -116,7 +138,11 @@
 
             <TextView
                 android:id="@+id/txt_change"
-                style="@style/normalTextWhite"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -140,14 +166,16 @@
 
         <EditText
             android:id="@+id/input"
-            style="@style/normalTextWhite"
+            android:textColorHint="?android:textColorHint"
+            android:textColorHighlight="?android:textColorHighlight"
+            android:textColorLink="?android:textColorLink"
+            android:textColor="#FFFFFF"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:hint="Prefered temperature [°C]"
             android:inputType="numberDecimal|numberSigned"
-            android:textColor="@color/white"
             android:textSize="20sp" />
 
 

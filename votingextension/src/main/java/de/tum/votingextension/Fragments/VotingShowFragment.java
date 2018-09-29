@@ -1,4 +1,4 @@
-package de.tum.in.votingextension.Fragments;
+package de.tum.votingextension.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
@@ -16,10 +16,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import de.tum.in.votingextension.ExtensionType.Voting;
-import de.tum.in.votingextension.R;
+import de.tum.votingextension.ExtensionType.Voting;
 import de.tum.localcampuslib.ShowPostFragment;
 import de.tum.localcampuslib.entity.IPost;
+import de.tum.votingextension.R;
 
 public class VotingShowFragment extends ShowPostFragment {
 

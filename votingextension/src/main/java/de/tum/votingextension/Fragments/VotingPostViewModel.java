@@ -1,13 +1,11 @@
-package de.tum.in.votingextension.Fragments;
+package de.tum.votingextension.Fragments;
 
 import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-import de.tum.in.votingextension.Generator.ColorGenerator;
+import de.tum.votingextension.Generator.ColorGenerator;
 import de.tum.localcampuslib.AddPostDataProvider;
 
 public class VotingPostViewModel {
@@ -160,7 +158,7 @@ public class VotingPostViewModel {
     }
 
     private String makeJsonPostOutput() {
-        int color = ColorGenerator.getColor(context);
+        int color = ColorGenerator.getColor();
 
         JSONObject jsonObj = new JSONObject();
         try {

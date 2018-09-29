@@ -1,7 +1,7 @@
-package de.tum.in.votingextension.Registry;
+package de.tum.localcampusextension;
 
-import de.tum.in.votingextension.Fragments.VotingPostAddFragment;
-import de.tum.in.votingextension.Fragments.VotingShowFragment;
+import de.tum.votingextension.Fragments.VotingPostAddFragment;
+import de.tum.votingextension.Fragments.VotingShowFragment;
 import de.tum.localcampuslib.AddPostFragment;
 import de.tum.localcampuslib.ShowPostFragment;
 

@@ -1,4 +1,4 @@
-package de.tum.in.votingextension.Fragments;
+package de.tum.votingextension.Fragments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tum.in.votingextension.ExtensionType.Voting;
+import de.tum.votingextension.ExtensionType.Voting;
 import de.tum.localcampuslib.ShowPostDataProvider;
 import de.tum.localcampuslib.entity.IPost;
 import de.tum.localcampuslib.entity.IPostExtension;

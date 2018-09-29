@@ -17,9 +17,6 @@ import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
 import de.tum.in.commentsextensionmodule.Fragments.PostAddFragment;
 import de.tum.in.piechartsurvey.Fragments.PieExtensionFragment;
 import de.tum.in.piechartsurvey.Fragments.PiePostFragment;
-import de.tum.in.votingextension.ExtensionType.Voting;
-import de.tum.in.votingextension.Fragments.VotingPostAddFragment;
-import de.tum.in.votingextension.Fragments.VotingShowFragment;
 import de.tum.localcampusapp.PermissionManager;
 import de.tum.localcampusapp.R;
 import de.tum.localcampusapp.entity.Topic;
@@ -50,25 +47,11 @@ public class TopicsActivity extends AppCompatActivity {
         // Real Data
         RepositoryLocator.init(getApplicationContext());
 
-
-        /*
-        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) PostAddFragment.class;
-        Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) CommentShowFragment.class;
-
-        RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"
-                , showPostFragmentClass, addPostFragmentClass, "");
-*/
-
-        Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) VotingPostAddFragment.class;
-        Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) VotingShowFragment.class;
-        RepositoryLocator.getExtensionRepository().registerExtension("ab6acf96-24bd-4d7d-b9d0-0784e821090b", "Voting Extension"
-                , showPostFragmentClass, addPostFragmentClass, null);
-
-
-        Class<? extends ShowPostFragment> showPostFragmentClass2 = CommentShowFragment.class;
-        Class<? extends AddPostFragment> addPostFragmentClass2 = PostAddFragment.class;
-        RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d", "Comments Extension"
-                , showPostFragmentClass2, addPostFragmentClass2, null);
+        // Fake Data
+//        RepositoryLocator.initInMemory(getApplicationContext());
+//        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
+//        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
+//        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
 
 
         Class<? extends ShowPostFragment> showPostFragmentClass3 = PieExtensionFragment.class;
@@ -79,13 +62,15 @@ public class TopicsActivity extends AppCompatActivity {
                 , showPostFragmentClass3, addPostFragmentClass3, null);
         // ab6acf96-24bd-4d7d-b9d0-0784e821090b
 
-        // Fake Data
-//        RepositoryLocator.initInMemory(getApplicationContext());
-//        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
-//        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
-//        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
+        // Post Type Included by default
+        RepositoryLocator.getExtensionRepository().registerExtension(
+                "6ed88f3a-5895-4cac-b096-d260ecc9b71d",
+                "Comments Extension"
+                ,CommentShowFragment.class,
+                PostAddFragment.class, null
+        );
 
-        if (!new PermissionManager(this.getApplicationContext()).hasStoragePermission()) {
+        if(! new PermissionManager(this.getApplicationContext()).hasStoragePermission()) {
             requestStoragePermission();
         } else {
             enableAPKExtensions();

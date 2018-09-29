@@ -1,11 +1,7 @@
-package de.tum.in.votingextension.ExtensionType;
-
-import android.util.Log;
+package de.tum.votingextension.ExtensionType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Date;
 
 public class Voting {
 

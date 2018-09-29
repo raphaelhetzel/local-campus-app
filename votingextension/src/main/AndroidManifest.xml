@@ -1,2 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.tum.in.votingextension" />
+    package="de.tum.votingextension">
+</manifest>

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="12dp"
-        android:background="@color/colorCampusApp10">
+        android:background="#b17e7e">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:hint="Extension Description"
             android:inputType="text"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
     </LinearLayout>
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Device-ID"
                 android:inputType="number"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp" />
 
         </LinearLayout>
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Default Temperature [°C]"
                 android:inputType="numberDecimal|numberSigned"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp" />
 
             <EditText
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:hint="+/- Temperature"
                 android:inputType="numberDecimal|numberSigned"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:layout_alignParentRight="true" />
 
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Min Temperature"
                 android:inputType="numberDecimal|numberSigned"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp" />
 
             <EditText
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Max Temperature"
                 android:inputType="numberDecimal|numberSigned"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:layout_alignParentRight="true" />
 
@@ -125,7 +125,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="12dp"
-    android:background="@color/colorCampusApp1"
+    android:background="#1ca9a2"
     android:id="@+id/voting_layout"
     android:orientation="vertical">
 
@@ -146,14 +146,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                style="@style/smallTextWhite"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
                 android:text="Device-ID:"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="17dp"
-                style="@style/smallTextWhite"
+                android:textColor="#FFFFFF"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textSize="15sp"
                 android:id="@+id/txt_device_id"
                 android:layout_alignParentRight="true"
                 android:background="#66ffffff"
@@ -163,7 +171,11 @@
 
         <TextView
             android:id="@+id/txt_desciption"
-            style="@style/normalTextWhite"
+            android:textColorHint="?android:textColorHint"
+            android:textColorHighlight="?android:textColorHighlight"
+            android:textColorLink="?android:textColorLink"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:background="#66ffffff"
@@ -185,7 +197,11 @@
 
             <TextView
                 android:id="@+id/txt_above_temp"
-                style="@style/normalTextWhite"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -202,7 +218,10 @@
                 <TextView
                     android:id="@+id/txt_temp"
                     android:background="#66ffffff"
-                    style="@style/normalTextWhite"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorLink="?android:textColorLink"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -211,7 +230,10 @@
 
                 <TextView
                     android:id="@+id/txt_celcius"
-                    style="@style/normalTextWhite"
+                    android:textColorHint="?android:textColorHint"
+                    android:textColorHighlight="?android:textColorHighlight"
+                    android:textColorLink="?android:textColorLink"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/txt_temp"
@@ -244,7 +266,11 @@
             <TextView
                 android:id="@+id/txt_change"
                 android:background="#66ffffff"
-                style="@style/normalTextWhite"
+                android:textColorHint="?android:textColorHint"
+                android:textColorHighlight="?android:textColorHighlight"
+                android:textColorLink="?android:textColorLink"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -270,7 +296,9 @@
 
         <EditText
             android:id="@+id/input"
-            style="@style/normalTextWhite"
+            android:textColorHint="?android:textColorHint"
+            android:textColorHighlight="?android:textColorHighlight"
+            android:textColorLink="?android:textColorLink"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -278,7 +306,7 @@
             android:inputType="none"
             android:focusableInTouchMode="false"
             android:hint="Prefered temperature [°C]"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
 

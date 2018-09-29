@@ -15,6 +15,8 @@ import java.util.List;
 
 import de.tum.in.commentsextensionmodule.Fragments.CommentShowFragment;
 import de.tum.in.commentsextensionmodule.Fragments.PostAddFragment;
+import de.tum.in.piechartsurvey.Fragments.PieExtensionFragment;
+import de.tum.in.piechartsurvey.Fragments.PiePostFragment;
 import de.tum.in.votingextension.ExtensionType.Voting;
 import de.tum.in.votingextension.Fragments.VotingPostAddFragment;
 import de.tum.in.votingextension.Fragments.VotingShowFragment;
@@ -59,15 +61,23 @@ public class TopicsActivity extends AppCompatActivity {
 
         Class<? extends AddPostFragment> addPostFragmentClass = (Class<? extends AddPostFragment>) VotingPostAddFragment.class;
         Class<? extends ShowPostFragment> showPostFragmentClass = (Class<? extends ShowPostFragment>) VotingShowFragment.class;
-        RepositoryLocator.getExtensionRepository().registerExtension("ab6acf96-24bd-4d7d-b9d0-0784e821090b","Voting Extension"
+        RepositoryLocator.getExtensionRepository().registerExtension("ab6acf96-24bd-4d7d-b9d0-0784e821090b", "Voting Extension"
                 , showPostFragmentClass, addPostFragmentClass, null);
 
 
         Class<? extends ShowPostFragment> showPostFragmentClass2 = CommentShowFragment.class;
         Class<? extends AddPostFragment> addPostFragmentClass2 = PostAddFragment.class;
-        RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d","Comments Extension"
+        RepositoryLocator.getExtensionRepository().registerExtension("6ed88f3a-5895-4cac-b096-d260ecc9b71d", "Comments Extension"
                 , showPostFragmentClass2, addPostFragmentClass2, null);
-       // ab6acf96-24bd-4d7d-b9d0-0784e821090b
+
+
+        Class<? extends ShowPostFragment> showPostFragmentClass3 = PieExtensionFragment.class;
+        Class<? extends AddPostFragment> addPostFragmentClass3 = PiePostFragment.class;
+        String typeId = "36990489-5f2c-4ff8-aff7-84e9a881c7e8";
+        String typeDescription = "PieChart Survey Extension";
+        RepositoryLocator.getExtensionRepository().registerExtension(typeId, typeDescription
+                , showPostFragmentClass3, addPostFragmentClass3, null);
+        // ab6acf96-24bd-4d7d-b9d0-0784e821090b
 
         // Fake Data
 //        RepositoryLocator.initInMemory(getApplicationContext());
@@ -75,7 +85,7 @@ public class TopicsActivity extends AppCompatActivity {
 //        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());
 //        FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 4);
 
-        if(! new PermissionManager(this.getApplicationContext()).hasStoragePermission()) {
+        if (!new PermissionManager(this.getApplicationContext()).hasStoragePermission()) {
             requestStoragePermission();
         } else {
             enableAPKExtensions();
@@ -107,17 +117,17 @@ public class TopicsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(final int requestCode, final String permissions[], final int[] grantResults ) {
-        if ( requestCode == PERMISSIONS_REQUEST && grantResults.length > 0 && grantResults[ 0 ] == PackageManager.PERMISSION_GRANTED ) {
+    public void onRequestPermissionsResult(final int requestCode, final String permissions[], final int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             this.enableAPKExtensions();
         } else {
-            Toast.makeText( this, "Application does not have storage Permission," +
-                    " APK Extensions are now disabled", Toast.LENGTH_LONG ).show();
+            Toast.makeText(this, "Application does not have storage Permission," +
+                    " APK Extensions are now disabled", Toast.LENGTH_LONG).show();
         }
     }
 
     private void requestStoragePermission() {
-        requestPermissions( new String[] { PERMISSION_STORAGE }, PERMISSIONS_REQUEST );
+        requestPermissions(new String[]{PERMISSION_STORAGE}, PERMISSIONS_REQUEST);
     }
 
 }

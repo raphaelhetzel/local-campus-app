@@ -21,9 +21,6 @@ public class CommentShowViewModel {
     private LiveData<IPost> livePost;
     private LiveData<List<IPostExtension>> livePostExtension;
 
-    private LiveData<List<Comment>> liveDataComments;
-    private LiveData<List<Comment>> liveDataCommentsFiltered;
-
 
     public CommentShowViewModel(ShowPostDataProvider showPostDataProvider){
         this.showPostDataProvider = showPostDataProvider;
@@ -35,11 +32,6 @@ public class CommentShowViewModel {
     public LiveData<IPost> getLivePost() {
         return livePost;
     }
-
-    public LiveData<List<IPostExtension>> getExtension(){
-        return livePostExtension;
-    }
-
 
     public void addComment(String text){
         String jsonFormattedText = makeJsonCommentOutput(text);

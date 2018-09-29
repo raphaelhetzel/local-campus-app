@@ -37,7 +37,6 @@ public class ShowPostActivity extends ShowPostHostActivity {
         long postId = Long.valueOf(intent.getStringExtra("selectedPostId"));
 
 
-        // TODO: Evaluate whether a direct query on the main thread is better
         RepositoryLocator.getPostRepository().getPost(postId).observe(this, livePost -> {
             this.post = livePost;
             if (post == null) return;

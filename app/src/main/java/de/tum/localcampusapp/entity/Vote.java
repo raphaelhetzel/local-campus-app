@@ -13,7 +13,6 @@ import java.util.Objects;
         @Index(value = "post_uuid"),
         @Index(value = {"post_id", "creator_id"}),
         @Index(value = {"post_uuid", "creator_id"})})
-//TODO reduce indicies
 public class Vote {
 
     @PrimaryKey(autoGenerate = true)

@@ -74,7 +74,7 @@ public class VotingShowViewModel {
                 if(voting!=null){
                     for(Voting vot : validVotes){
                         if(vot.getCreator().equals(voting.getCreator())){
-                            validVotes.remove(vot);   //TODO:comment in for multiple users, comment out for testing!
+                            validVotes.remove(vot);
                         }
                     }
                     validVotes.add(voting);

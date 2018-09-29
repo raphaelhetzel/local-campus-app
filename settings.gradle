@@ -1,1 +1,1 @@
-include ':app', ':localcampuslib', ':testextension', ':commentsExtensionModule', ':votingextension'
+include ':app', ':localcampuslib', ':testextension', ':commentsExtensionModule', ':votingextension', ':piechartsurvey'

@@ -10,7 +10,8 @@ the router/hub which is responsible for broadcasting the topics available at a t
 location.
 
 ## Architecture Documentation
-TODO: move doc to repository
+
+[Architecture Documentation](documentation/architecture.md)
 
 ## Building & Installation (Base App)
 
@@ -111,8 +112,7 @@ fixes IP on which the Scampi Router is running.
 
 Wifi Settings:
 
-SSID: praktikumdiy
-
+SSID: praktikumdiy  
 Password: praktikumdiy
 
 Optionally configure any proxy settings needed for the network the Raspberry

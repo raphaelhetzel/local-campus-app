@@ -1,164 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/voting_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp"
         android:background="@color/colorCampusApp1"
-        android:id="@+id/voting_layout"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <RelativeLayout
-        android:layout_alignParentRight="true"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        style="@style/smallTextWhite"
-        android:text="Device-ID:"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        style="@style/smallTextWhite"
-        android:id="@+id/device_id"
-        android:layout_alignParentRight="true"
-        android:text="1234533" />
-
-    </RelativeLayout>
-
-        <TextView
-            android:id="@+id/txt_desciption"
-            style="@style/normalTextWhite"
-            android:layout_width="250dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sample Voting for cooler's Temperature" />
+            android:orientation="horizontal">
 
-</RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="275dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
+                <TextView
+                    style="@style/smallTextWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="Device-ID:" />
+
+                <TextView
+                    android:id="@+id/device_id"
+                    style="@style/smallTextWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="17dp"
+                    android:text="1234533" />
+
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/txt_above_temp"
+                android:id="@+id/txt_desciption"
                 style="@style/normalTextWhite"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="15dp"
-                android:text="Current Temperature:">
+                android:text="Sample Voting for cooler's Temperature" />
 
-            </TextView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_temp"
+                    android:id="@+id/txt_above_temp"
                     style="@style/normalTextWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="23"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/txt_celcius"
-                    style="@style/normalTextWhite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/txt_temp"
-                    android:text=" °C"
-                    android:textSize="30sp">
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="15dp"
+                    android:text="Current Temperature:">
 
                 </TextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/txt_temp"
+                        style="@style/normalTextWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="23"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/txt_celcius"
+                        style="@style/normalTextWhite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/txt_temp"
+                        android:text=" °C"
+                        android:textSize="30sp">
+
+                    </TextView>
+                </LinearLayout>
+
+
             </LinearLayout>
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:orientation="vertical">
-
-            <ImageButton
-                android:id="@+id/button_upvote"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@android:drawable/arrow_up_float" />
-
-            <TextView
-                android:id="@+id/txt_change"
-                style="@style/normalTextWhite"
+            <LinearLayout
+                android:id="@+id/buttonLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="+/- 0.5" />
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/button_downvote"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@android:drawable/arrow_down_float" />
+                <ImageButton
+                    android:id="@+id/button_upvote"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/arrow_up_float" />
 
-        </LinearLayout>
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/txt_change"
+                    style="@style/normalTextWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="+/- 0.5" />
+
+                <ImageButton
+                    android:id="@+id/button_downvote"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/arrow_down_float" />
+
+            </LinearLayout>
+        </RelativeLayout>
 
 
-    <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/input"
-            style="@style/normalTextWhite"
-            android:layout_width="250dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:hint="Prefered temperature [°C]"
-            android:inputType="numberDecimal|numberSigned"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/input"
+                style="@style/normalTextWhite"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:hint="Prefered temperature [°C]"
+                android:inputType="numberDecimal|numberSigned"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
 
 
-        <Button
-            android:id="@+id/button_vote"
-            android:layout_alignParentBottom="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:text="Vote now"
-            android:textSize="15sp" />
+            <Button
+                android:id="@+id/button_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:text="Vote now"
+                android:textSize="15sp" />
 
-    </RelativeLayout>
+        </RelativeLayout>
 
     </LinearLayout>
+
+</ScrollView>

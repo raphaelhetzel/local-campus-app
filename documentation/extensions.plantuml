@@ -1,0 +1,55 @@
+@startuml
+package "Extension Interface" <<Rectangle>> {
+	abstract class AddPostFragment {
+		Context getContext()
+		AddPostDataProvider getAddPostDataProvider()
+		void finishActivity()
+	}
+
+	abstract class ShowPostFragment {
+		Context getContext()
+		ShowPostDataProvider getDataProivider()
+	}
+
+	interface ShowPostDataProvider {
+		LiveData<Post> getPost();
+	  LiveData<List<PostExtension>> getPostExtensions();
+	  void addPostExtension(String data);
+	  String getCurrentUser();
+	  void upVote();
+	  void downVote();
+	}
+
+	interface AddPostDataProvider {
+		void addPost(String data);
+	}
+
+	ShowPostFragment --> ShowPostDataProvider
+
+	AddPostFragment --> AddPostDataProvider
+}
+
+package "Extension" <<Rectangle>> {
+	class Registry <<package de.tum.localcampusextension>> {
+		{static} Class<ShowPostFragment> showPostFragmentClass
+  	{static} Class<AddPostFragment> addPostFragmentClass
+  	{static} String typeId
+  	{static} String typeDescription
+	}
+
+	class ExtensionShowPostFragment {
+		void onCreateView()
+	}
+
+	class ExtensionAddPostFragment {
+		void onCreateView()
+	}
+
+	ExtensionShowPostFragment --|> ShowPostFragment
+	ExtensionAddPostFragment --|> AddPostFragment
+
+	Registry --> ExtensionShowPostFragment
+	Registry --> ExtensionAddPostFragment
+}
+
+@enduml

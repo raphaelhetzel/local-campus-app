@@ -1,6 +1,9 @@
-MarkdownSources=main.md architecture.md
+all: uml documentation
 
-all: documentation.pdf
+uml:
+	java -jar plantuml.jar dataflow.plantuml
+	java -jar plantuml.jar messages.plantuml
+	java -jar plantuml.jar extensions.plantuml
 	
-documentation.pdf: ${MarkdownSources}
-	pandoc ${MarkdownSources} -o $@
+documentation:
+	pandoc main.md architecture.md -o documentation.pdf

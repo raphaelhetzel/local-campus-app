@@ -1,0 +1,34 @@
+@startuml
+	class AppLogic
+
+	class PostRepository {
+		LiveData<List<Post>> getPostsforTopic(long topicId);
+		void addPost(Post post)
+	}
+
+	class NetworkLayerPostRepository {
+		void insertPost(Post post)
+	}
+
+	class AppLibService {
+		void publish(SCAMPIMessage message, String topic)
+	}
+
+	class TopicHandler <<MessageReceivedCallback>> {
+		void messageReceived(SCAMPIMessage message)
+	}
+
+	class Database {
+		LiveData<List<Post>> getPostsforTopic(long topicId);
+		void insertPost(Post post)
+	}
+
+	AppLogic --> PostRepository
+	PostRepository --> AppLibService
+	AppLibService --> TopicHandler
+	TopicHandler --> NetworkLayerPostRepository
+
+	NetworkLayerPostRepository --> Database
+	PostRepository --> Database
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+	class Topic {
+		String topicName
+		String deviceIdentifier
+	}
+
+	class Post {
+		String message_type = post
+		String topic
+		String uuid
+		String creator
+		Integer created_at
+		String data
+		String type_id
+	}
+
+	class PostExtension {
+		String message_type = post_extension
+		String uuid
+		String post_uuid
+		String creator
+		Integer created_at
+		String data
+	}
+
+	class Vote {
+		String message_type = vote
+		String uuid
+		String post_uuid
+		String creator
+		Integer created_at
+		Integer score_influence
+	}
+
+	class Extension {
+		String message_type = extension
+		String uuid
+		Binary binary
+	}
+@enduml

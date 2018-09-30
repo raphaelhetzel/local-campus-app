@@ -45,7 +45,8 @@ exisiting infrastructure.
 
 Our application has multiple important entities.
 
-## Topic
+## Topic 
+
 The most general entity is a Topic, which defines a channel of communication,
 e.g. `/tum` or `/tum/garching`. While there is a structure to this topic
 names, the system threats threated independently of each other (the logic for
@@ -54,7 +55,11 @@ the publishing application), as each of the represents a *Scampi service*, and
 those services don't support any tiering. Topics are shared over the
 `discovery` service, which is populated by a special publishing application
 running on every hub. They MUST not be shared by the android devices, they
-should only come directly from the hub the client is connected to.
+should only come directly from the hub the client is connected to. The Topic
+messages contain a field `deviceIdentifier` which identiefies the location the
+topic was broadcasted at. As the App will receive the LocationId of the hub
+using Scampis location service, this allows to identify all Topics relevant to
+the current location.
 
 ```
 String: topicName // e.g /tum or /tum/garching
@@ -157,7 +162,7 @@ updating the existing entity.
 
 The Android application is structured in such a way that every Post,
 PostExtension and Vote shown in the UI has beed received over the network,
-even the ones created by the app itself, ehich leads to a reproducible data
+even the ones created by the app itself, which leads to a reproducible data
 flow.
 
 The UI and application logic (e.g. parsing the various post types) side of the
@@ -179,17 +184,38 @@ service connected to the Scampi router application via the AppLib library. The
 Scampi router is in turn connected the the network. This Service is
 responsible for the whole communication with the network layer. On startup it
 subscribes to messages sent to the `discovery` service and after receiving
-Topics on this service, it dynamically subscribes to the services of this
-Topics in order to recive Posts, PostExtensions and Votes. Furthermore, if the
-Android app has permissions to acess data, it will receive the Extensions
-needed to show certain PostTypes from the network. The Service is also
-responsible for publishing messages to the network. To do this, the
+Topics relevant to the location, it dynamically subscribes to the services of
+this Topics in order to recive Posts, PostExtensions and Votes. The Service is
+also responsible for publishing messages to the network. To do this, the
 repositories bind to the service, and call messages provided by this binding,
 which then published messages to the network. Only after they have been
 received again by this service, they will be inserted into the database and
-therefore be shown in the UI. The Data and Network layer by desing don't know
-anything about the data contained in posts and post extensions, which allows
-quick modifications to the upper layers without modifing the lower layers.
+therefore be shown in the UI.
+
+Figure 1 shows a simplified diagram of the components involved in interacting
+with a post. The method `getPostsforTopic(long topicId)` in the Post
+Repository directly reads the data (as self-updating LiveData) from the
+Database. If the GUI layer wants to add a new Post using the `addPost(Post
+post)` method of the Post repository, the repository will call a Serializer
+(not shown in the Figure) to Serialize the Message into a Scampi Message, and
+publish that via it's binding to the AppLibService. As explained before, the
+AppLibService subscribes to all the Topics relevant to the Location. For this
+it attaches a TopicHandler to the TopicsService. If this Handler determines
+that a received Message contains a Post, it deserializes it using the
+ScampiPostSerializer (not shown in the Figure) and calls the insert Method of
+the NetworkLayerPostRepository. This Repository handles duplicates and
+relations and inserts it into the Database. It ensures that the Topic the Post
+belongs to existes and links any PostExtensions and Votes received before the
+Post that belong to the Post to the Post, which ensures fast read acess as
+there are real SQL relations with numeric indicies. As the data is inserted
+into the Database, the Database will trigger LiveData updates, so if the GUI
+is subscribed to the Posts for a Topic, it will receive an update.
+
+If the Android app has permissions to acess local data, it will share the
+Extensions needed to show certain PostTypes with the network. The data and
+network layer by design don't know anything about the data contained in Posts
+and PostExtensions, which allows quick modifications to the upper layers
+without changing the lower layers.
 
 # Extension System
 
@@ -217,9 +243,16 @@ provides the Fragment with a Modiefied context which contains the assets and
 resouces defined in the apk file (it only supports the assets defined by the
 extension, the extensions has no acess on the host applications resources.
 Furthermore, it provides it with a `ShowPostDataProvider` which allow the
-Fragment to acess the Post and it's PostExtensions and add aditional post
-extensions. As posts extensions contain e.g. a comment or a answer in a poll,
-they need to be added from the view to show the post itself.
+Fragment to acess the Post and it's PostExtensions, upvote and downvote it and
+add aditional post extensions.As posts extensions contain e.g. a comment or a
+answer in a poll, they need to be added from the view to show the post itself.
+The DataProvider allows the extension to acess the current userId to prevent
+the user from creating duplicate Extensions. As this is only a local safety
+messure (you cannot control the network), Extensions also need to take care of
+unwanted duplicate PostExtensions when reading them from the Data Provider.
+For example, a Voting Application could only use the latest vote of an user In
+that case, duplicate Votes will still exist in the network and the database,
+they are just ignored by the extension.
 
 The fragment to create a Post, which needs to extend the `AddPostFragment`
 class provided by the localcampuslib, is instantiated by the CreatePost
@@ -237,6 +270,9 @@ reference other resources. Furthermore, the Layout inflater passed to
 LayoutInflater newInflator = inflater.cloneInContext(getContext());
 ```
 
+The components described above can also be found in the diagram shown in
+Figure 2.
+
 This extension system currently contains multiple security problems, which
 would need to be solved before running such an application in production. The
 extensions system loads java code that is directly executed in the process of
@@ -248,3 +284,12 @@ secure this, the app would need to provide a way to verify extensions, for
 example the app could only load extensions that are signed by authors
 explicitly thrusted by the user. If this is not enough, the extension system
 could be moved to sandboxes webviews.
+
+
+
+# Appendix
+
+
+![Simplified diagram of the components involved in handling Posts](dataflow.png)
+
+![Anathomy of a minimal Extension & the Extension interface](extensions.png)

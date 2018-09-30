@@ -80,7 +80,7 @@ public class RealExtensionPublisher implements ExtensionPublisher {
             return;
         }
         for (ExtensionInfo extensionInfo : extensionRepository.getExtensions()) {
-            if (extensionInfo.getExtensionFile() == null) return;
+            if (extensionInfo.getExtensionFile() == null) continue;
             try {
                 SCAMPIMessage scampiMessage = extensionSerializer.extensionToMessage(extensionInfo.getExtensionFile(), extensionInfo.getExtensionUUID());
                 scampiBinder.publish(scampiMessage, EXTENSION_SERVICE);

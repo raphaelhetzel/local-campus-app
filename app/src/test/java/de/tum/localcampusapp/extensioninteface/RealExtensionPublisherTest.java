@@ -81,22 +81,29 @@ public class RealExtensionPublisherTest {
         );
 
         File mExtensionFile = new File("/foo/bar");
+        File mExtensionFile2 = new File("/foo/bar2");
         SCAMPIMessage mScampiMessage = SCAMPIMessage.builder().build();
+        SCAMPIMessage mScampiMessage2 = SCAMPIMessage.builder().build();
 
         when(mPermissionManager.hasStoragePermission()).thenReturn(true);
         ExtensionInfo extensionInfo = new ExtensionInfo("UUID", "Description", mExtensionFile);
         ExtensionInfo extensionInfo2 = new ExtensionInfo("UUID2", "Description", null);
+        ExtensionInfo extensionInfo3 = new ExtensionInfo("UUID3", "Description", mExtensionFile2);
         List<ExtensionInfo> extensionInfos = new ArrayList<>();
         extensionInfos.add(extensionInfo);
         extensionInfos.add(extensionInfo2);
+        extensionInfos.add(extensionInfo3);
         when(mExtensionRepository.getExtensions()).thenReturn(extensionInfos);
         when(mExtensionSerializer.extensionToMessage(mExtensionFile, "UUID")).thenReturn(mScampiMessage);
+        when(mExtensionSerializer.extensionToMessage(mExtensionFile2, "UUID3")).thenReturn(mScampiMessage2);
 
         realExtensionPublisher.enableSharing();
 
         verify(mScampiBinder).subscribeToExtensionService();
         verify(mExtensionSerializer).extensionToMessage(mExtensionFile, "UUID");
+        verify(mExtensionSerializer).extensionToMessage(mExtensionFile2, "UUID3");
         verify(mExtensionSerializer, never()).extensionToMessage(any(), eq("UUID2"));
         verify(mScampiBinder).publish(mScampiMessage, "extensions");
+        verify(mScampiBinder).publish(mScampiMessage2, "extensions");
     }
 }

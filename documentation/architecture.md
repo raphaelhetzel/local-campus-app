@@ -162,6 +162,22 @@ want to receive binary Posts, they also have to be sent to an additional service
 
 # Android Application Architecture
 
+For our Android App we decided to extensively use Android Jetpack. 
+Jetpack is the state of the art set of components, tools and guidance to 
+make Apps with modern Android features. Jetpack components are 
+self-containing libraries, so they don’t have be combined with other Jetpack 
+components necessarily. We used the following Jetpack components frequently:
+- ViewModel
+- LiveData
+- Navigation
+
+We decided not to use the Jetpack-Navigation component (which is recommended
+by Jetpack), because it doesn't fit into our use-case to dynamically load 
+different Post Extensions over the network. In the Navigation library you design
+the fragment transitions either over the GUI, which maps the input into a XML 
+file, or you do it directly in XML. Problem: the transitions become static, 
+because they are done in XML and not in Java/Kotlin code.
+
 The Android application is structured in such a way that every Post,
 PostExtension and Vote shown in the UI has been received over the network,
 even the ones created by the app itself, which leads to a reproducible data
@@ -180,6 +196,29 @@ respected. Furthermore, the repository layer with it's well defined interface
 allows easy replacement of the actual data implementation with a local in-
 memory variant which is not using the network for faster application logic and
 UI development.
+
+The following UML diagram discribes how we designed the interaction between
+the components in our frontend.
+![Frontend Architecture](FrontendArchitecture.png)
+
+The class MyFragment which is of the base-type fragment has some views which it 
+updates by calling the sample method updateView(Data data). In order to 
+encapsulate the Fragment from the logic it only makes the view without having 
+the knowledge about the data it sets. 
+The ViewModel is doing the job of mapping the data and giving it in the mapped 
+form to the view. Our system is designed according the MVVM pattern, 
+updating Views based on the ViewModel observing LiveData from the Repository
+which is implemented with Room library. Because all the logic (like parsing 
+JSON data, tranformations of LiveData, error handling etc.) is in the 
+ViewModel it can be tested separately and therefore promotes testing and is 
+exchangeable without touching other components. 
+
+LiveData is an observable data holder. LiveData lets the components of an app 
+(normally the View) observing LiveData objects for changes. A big plus about 
+LiveData is its lifecycle-awareness. Through the lifecycle-awareness it 
+respects the lifecycle state of the app’s components (activities, fragments). 
+So it ensures LiveData updates only if the observing component  is in an active 
+lifecycle state. It means the app never does more work than it should.
 
 In the real data layer and networking implementation, there is an *Android
 Service* connected to the Scampi Router application via the *AppLib* library.

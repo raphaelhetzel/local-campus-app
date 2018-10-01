@@ -45,7 +45,7 @@ public class TopicsActivity extends AppCompatActivity {
         // Real Data
         RepositoryLocator.init(getApplicationContext());
 
-        // Fake Data
+        // Fake Data - initially used before the Backend was up
 //        RepositoryLocator.initInMemory(getApplicationContext());
 //        FakeDataGenerator.getInstance().setTopicsRepo(RepositoryLocator.getTopicRepository());
 //        FakeDataGenerator.getInstance().setPostRepo(RepositoryLocator.getPostRepository());

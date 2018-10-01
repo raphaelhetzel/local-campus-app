@@ -17,12 +17,14 @@ public class TopicsViewModel extends ViewModel {
     TopicRepository topicRepository;
 
     public TopicsViewModel(Context applicationContext) throws DatabaseException {
-        // FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);
-
+        // FakeDataGenerator.getInstance().insertSeveralTopics("Fake Topic", 8);    //FakeDataGenerator was initially used to generate data before
+                                                                                    //the backend became available
         topicRepository = RepositoryLocator.getTopicRepository();
         liveDataTopics = topicRepository.getTopicsForCurrentLocation();
     }
 
+    //Needed method in order to be able to realize the observer via using LiveData
+    //as recommended by Jetpack
     public LiveData<List<Topic>> getLiveDataTopics() {
         return liveDataTopics;
     }

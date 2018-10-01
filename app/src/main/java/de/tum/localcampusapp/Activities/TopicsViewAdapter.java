@@ -21,7 +21,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
 
     private List<Topic> topicList;
     private long selectedTopicId;
-    private Context context;
+    private Context context;    //Necessarily needed in order to start an activity from the adapter and not directly from the activity class
 
 
     public TopicsViewAdapter(List<Topic> topicList, Context context) {
@@ -52,6 +52,9 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         holder.parentLayout.setOnClickListener((View v) -> {
             selectedTopicId = topic.getId();
             Intent intent = new Intent(context, PostsActivity.class);
+
+            //selectedId is casted to String here and recasted in the following Activity.
+            //This is done, because sending/receiving a long through the intent threw an error
             intent.putExtra("topicId", String.valueOf(selectedTopicId));
             context.startActivity(intent);
         });
@@ -63,6 +66,7 @@ public class TopicsViewAdapter extends RecyclerView.Adapter<TopicsViewAdapter.Vi
         return topicList.size();
     }
 
+    //Setups the items of the recyclerView after each change in the LiveData
     public void setItems(List<Topic> topics) {
         this.topicList = topics;
         notifyDataSetChanged();

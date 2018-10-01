@@ -8,6 +8,9 @@ import de.tum.localcampusapp.repository.RepositoryLocator;
 
 public class PostSpinnerViewModel {
 
+    //ViewModel for getting the needed extensions data
+    //which will be shown in the spinner for creating a extensions post
+
     private ArrayList<String> extensionsDescription;
     private List<ExtensionInfo> extensions;
     private int position = 0;

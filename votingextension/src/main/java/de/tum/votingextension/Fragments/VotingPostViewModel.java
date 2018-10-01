@@ -160,6 +160,8 @@ public class VotingPostViewModel {
     private String makeJsonPostOutput() {
         int color = ColorGenerator.getColor();
 
+        //All the following JSON data is needed in order to
+        // set the limits for voting
         JSONObject jsonObj = new JSONObject();
         try {
             jsonObj.put(ATTR_DATA, postDesciption);

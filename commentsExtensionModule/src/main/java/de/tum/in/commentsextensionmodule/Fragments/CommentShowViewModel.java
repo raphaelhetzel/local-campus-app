@@ -28,7 +28,7 @@ public class CommentShowViewModel {
         livePostExtension = (LiveData<List<IPostExtension>>) showPostDataProvider.getPostExtensions();
     }
 
-
+    //observing method for CommentShowFragment
     public LiveData<IPost> getLivePost() {
         return livePost;
     }
@@ -38,11 +38,13 @@ public class CommentShowViewModel {
         showPostDataProvider.addPostExtension(jsonFormattedText);
     }
 
-
+    //observing method for CommentShowAdapter
     public LiveData<List<Comment>> getLiveComments() {
         return Transformations.map(livePostExtension, (List<IPostExtension> livePostExtension) -> {
             List<Comment> workingComments = new ArrayList<>();
             for (IPostExtension iPostExtension : livePostExtension){
+                //All comments where the JSON data cannot be parsed properly
+                // will be null and not added to the workingComments list.
                 Comment comment = Comment.getValidComment(iPostExtension.getData(), iPostExtension.getCreatedAt());
                 if(comment!=null){
                     workingComments.add(comment);

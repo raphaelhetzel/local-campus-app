@@ -31,6 +31,8 @@ public class PostsAdapterModel extends ViewModel {
         this.liveDataMapped = postMapperHelper.transformPosts();
     }
 
+    //Sorts the list according to the internal rating which will be calculated in PostMapper
+    //according to the number of likes and the age of a post
     public List<PostMapper> comparison(List<PostMapper> pm) {
         Comparator<PostMapper> pmComparator = Comparator.comparingDouble(PostMapper::getInternalRating);
         pm.sort(pmComparator);

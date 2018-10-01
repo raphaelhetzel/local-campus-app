@@ -3,19 +3,19 @@
     android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_bottom_black"
+    android:background="#FF41D0FC"
     android:padding="20dp">
 
     <TextView
         android:id="@+id/topic_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:text="Sample"
-        android:textColor="#000"
+
+        android:textColor="@color/white"
 
         android:textSize="20sp" />
 

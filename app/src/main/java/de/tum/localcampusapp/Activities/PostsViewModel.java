@@ -36,8 +36,8 @@ public class PostsViewModel extends ViewModel {
     public void addPost(String dataText, Context context) throws DatabaseException {
         String typeId = "1";
 
-        String parsedJsonData = PostMapper.makeJsonPostOutput(dataText, context);
-
+        String parsedJsonData = PostMapper.makeJsonPostOutput(dataText, context);   //Context is needed, because PostMapper uses ColorGenerator which uses
+                                                                                    //colors defined in the colors.xml and needs context to access them
         postRepository.addPost(new Post(topicId, typeId, parsedJsonData));
 
     }

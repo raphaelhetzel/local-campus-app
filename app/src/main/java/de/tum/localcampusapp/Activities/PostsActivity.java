@@ -54,6 +54,11 @@ public class PostsActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mPostsViewAdapter);
 
 
+        //From here the spinner and the dialog are set up, so after a click on the floatingActionButton
+        //a sialog will be opened having the spinner inside which contains all available extensions,
+        //which are retrieved from the PostSpinnerViewModel
+        //After selecting an extension item and clicking on mButton the activity for creating a post of
+        //this extension type will start
         FloatingActionButton fab = findViewById(R.id.fab);
 
         View view = this.getLayoutInflater().inflate(R.layout.post_create, null);
@@ -69,7 +74,7 @@ public class PostsActivity extends AppCompatActivity {
                 addPostIntent.putExtra(SELECTED_TOPIC_KEY, String.valueOf(topicId));
                 addPostIntent.putExtra(SELECTED_POST_KEY, viewModel.getUIID());
 
-                dialog.dismiss();
+                dialog.dismiss();   //Needed otherwise after creating a post the dialog will still be opened
 
                 getApplicationContext().startActivity(addPostIntent);
             }

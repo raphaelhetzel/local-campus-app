@@ -87,7 +87,7 @@ public class PostMapperTest {
         String topicName = "topicName";
         String creator = "creator";
         Date createdAt = new Date();
-        String sampleData = "Not Json data";
+        String sampleData = "Not Json data";    // data is not a JSON so should fail
         Post post = new Post(uuid, typeId, topicName, creator, createdAt, sampleData);
 
         PostMapper postMapper = PostMapper.getValidPostMapper(post);
@@ -101,7 +101,7 @@ public class PostMapperTest {
         String topicName = "topicName";
         String creator = "creator";
         Date createdAt = new Date();
-        String sampleData = "not Json Data";
+        String sampleData = "not Json Data";    //data is a valid JSON so should not fail
 
         String jsonText = PostMapper.makeJsonPostOutput(sampleData, context);
 

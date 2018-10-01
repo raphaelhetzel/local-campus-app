@@ -68,7 +68,9 @@ public class CommentShowFragment extends ShowPostFragment{
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mCommentsViewAdapter);
 
-
+        //here 2 observing methods are used, because CommentShowFragment
+        //only needs data from the post and not from the extension
+        //the adapter needs only data from the extension (Comments) and not from the post
         viewModel.getLivePost().observe(this, new Observer<IPost>() {
             @Override
             public void onChanged(@Nullable IPost post) {

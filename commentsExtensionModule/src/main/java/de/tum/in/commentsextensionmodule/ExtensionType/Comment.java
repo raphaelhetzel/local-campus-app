@@ -11,9 +11,10 @@ public class Comment {
     private Date dateCreated;
 
     public static final String ATTR_DATA = "text";
-
+    //comment only needs one attribute: the textinput
 
     public static Comment getValidComment(String data, Date dateCreated) {
+        //checks if the JSON from the backend can be parsed properly
         try {
             JSONObject obj = new JSONObject(data);
             String text = obj.getString(ATTR_DATA);

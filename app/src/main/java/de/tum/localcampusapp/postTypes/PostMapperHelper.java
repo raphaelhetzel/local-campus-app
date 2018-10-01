@@ -30,7 +30,7 @@ public class PostMapperHelper {
         this.topicId = topicId;
     }
 
-    //Testing Contructor
+    //Testing contructor - only for unit tests
     public PostMapperHelper(PostRepository postRepository, long postId, boolean arg){
         this.postRepository = postRepository;
         livePost = postRepository.getPost(postId);

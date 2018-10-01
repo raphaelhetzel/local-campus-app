@@ -5,6 +5,9 @@ import org.json.JSONObject;
 
 public class Vote {
 
+    //This class is needed for the voter. It needs only to know the id of the
+    //button the user clicked. So the id of the button can be mapped to the option
+
     public static final String ATTR_ID = "id";
 
     private int id;

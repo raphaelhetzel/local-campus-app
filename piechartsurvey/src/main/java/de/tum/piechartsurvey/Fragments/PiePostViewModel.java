@@ -16,7 +16,7 @@ public class PiePostViewModel {
     public static final String ATTR_COLOR = "color";
 
     private String error = "The maximum number of possibilities is reached";
-    private static final String optionsError = "You must add at least 2 options";
+    private static final String optionsError = "You must add at least 2 options";   //less than 2 options make no sense for voting
     private static final String titleError = "Fill out all input fields";
 
     private AddPostDataProvider addPostDataProvider;
@@ -81,6 +81,7 @@ public class PiePostViewModel {
     }
 
     private org.json.simple.JSONArray createJsonArrayList() {
+        //parses the vote options of the survey
         org.json.simple.JSONArray list = new org.json.simple.JSONArray();
         for (VoteOption v : voteOptions) {
             list.add(v.getText());

@@ -48,7 +48,7 @@ public class PieExtensionFragment extends ShowPostFragment {
 
         setUpLayout(view);
 
-
+        //gets the data defined in the PiePostViewModel
         viewModel.getLivePost().observe(this, new Observer<IPost>() {
             @Override
             public void onChanged(@Nullable IPost post) {
@@ -56,6 +56,7 @@ public class PieExtensionFragment extends ShowPostFragment {
             }
         });
 
+        //gets the data if another user made a vote
         viewModel.getLiveVotes().observe(this, new Observer<List<Vote>>() {
             @Override
             public void onChanged(@Nullable List<Vote> votes) {
@@ -103,6 +104,7 @@ public class PieExtensionFragment extends ShowPostFragment {
                 }
             });
 
+            //Buttons are added programmatically into the container defined in the xml
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);

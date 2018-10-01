@@ -79,12 +79,13 @@ public class VotingShowViewModel {
             List<Voting> validVotes = new ArrayList<>();
             for (IPostExtension iPostExtension : livePostExtension){
                 Log.d("live", "getLiveVotes: "+ iPostExtension.getData());
+                //Checks if the JSON data can be parsed right
                 Voting voting = Voting.getValidVote(iPostExtension.getData(), iPostExtension.getCreatorId());
                 if(voting!=null){
                     for(Voting vot : validVotes){
                         if(vot.getCreator().equals(voting.getCreator())){
-                            validVotes.remove(vot);
-                        }
+                            validVotes.remove(vot);   //Important! Otherwise the user can vote multiple times!
+                        }                             //The last vote of a user will count and his prior votes are deleted from the list
                     }
                     validVotes.add(voting);
                 }
@@ -97,6 +98,7 @@ public class VotingShowViewModel {
     private float getAvgTemp(List<Voting> votes){
 
         if(votes.size()==0){
+            // no votes exist, so the tempAvg is set to the defined default value
             tempAvg = tempDefault;
             return tempDefault;
         }

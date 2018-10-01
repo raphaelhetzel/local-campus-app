@@ -78,6 +78,8 @@ public class PostMapper {
         return internalRating;
     }
 
+    //Calculates the rating of the post according to the age of the post and its score
+    //Further tests of this method are provided in test/viewModel/PostMapperTest
     public float calculateRating(Date createdAt, long score){
         float downSet = new Float(0.000003);
         long diff = createdAt.getTime() - new Date().getTime();

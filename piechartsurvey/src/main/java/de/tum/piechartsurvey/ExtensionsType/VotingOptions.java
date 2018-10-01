@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class VotingOptions {
 
+    //This class contains all VoteOptions defines
+    //and the title of the survey
+
     public static final String ATTR_DATA = "text";
     public static final String ATTR_VOTE_OPTIONS = "vote_options";
 

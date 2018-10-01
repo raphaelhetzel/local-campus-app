@@ -89,17 +89,17 @@ public class PieExtensionViewModel {
         return votingOptions;
     }
 
-
+    //data defined in the PiePostViewModel
     public LiveData<IPost> getLivePost() {
         return livePost;
     }
 
-
+    //data if another user made a vote
     public LiveData<List<Vote>> getLiveVotes() {
         return Transformations.map(livePostExtensions, (List<IPostExtension> livePostExtension) -> {
 
-            List<Vote> duplicateVotes = new ArrayList<>();
-            List<Vote> validVotes = new ArrayList<>();
+            List<Vote> duplicateVotes = new ArrayList<>();      //all votes in repo - can be multiple from a user
+            List<Vote> validVotes = new ArrayList<>();          //all last votes from every user
             int totalSum = 0;
 
             for (IPostExtension iPostExtension : livePostExtension) {
@@ -110,7 +110,8 @@ public class PieExtensionViewModel {
                     for (Vote vote : duplicateVotes) {
                         if (vote.getCreator().equals(voting.getCreator())) {
                             duplicateVotes.remove(vote);   //comment in for multiple users, comment out for single user multiple votes
-                        }
+                        }                                  //Only the last vote of a certain user counts, therefore all prior votes
+                                                           //of a certain user has to removed from the list
                     }
 
                     duplicateVotes.add(voting);
@@ -118,30 +119,31 @@ public class PieExtensionViewModel {
 
             }
 
-            HashMap<Integer, Integer> clickSum = new HashMap<>();
+            HashMap<Integer, Integer> clickSum = new HashMap<>();       //map for Vote-ID and Vote-ClickSum
 
             for (Vote v : duplicateVotes) {
-                int voteId = v.getId();
-                if (clickSum.containsKey(voteId)) {
+                int voteId = v.getId();                     //how often a certain vote possibility was clicked
+                if (clickSum.containsKey(voteId)) {         //as last vote of each user
                     int clicksTotal = clickSum.get(voteId) + 1;
                     clickSum.replace(voteId, clicksTotal);
                 } else {
-                    clickSum.put(voteId, 1);
-                }
+                    clickSum.put(voteId, 1);                //if vote pops up the first time it has no attribute for number of counts
+                }                                           //so the initial value has to be set up to 1
             }
 
             Iterator it = clickSum.entrySet().iterator();
             int totalClickSum = 0;
 
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
+            while (it.hasNext()) {                          //uses the Hashmap<Integer, Integer> clickSum with the Vote-ID and its e
+                Map.Entry pair = (Map.Entry) it.next();     //number of clicks to map it to the datasctructure Vote
                 Vote vote = new Vote((int) pair.getKey(), (int) pair.getValue());
                 totalClickSum = totalClickSum + (int) pair.getValue();
                 validVotes.add(vote);
                 it.remove();
             }
 
-            for (Vote v : validVotes) {
+            for (Vote v : validVotes) {             //maps total clicks sum of each Vote into percentage
+                                                    //so it can be presented in the PieChart
                 v.setScoreInPerctentage(v.getClicksSum() * new Float(100) / totalClickSum);
             }
 

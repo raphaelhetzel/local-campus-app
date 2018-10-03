@@ -1,13 +1,14 @@
 # Local Campus App
 
 Extensible App for campus communication. This Repository contains the Android
-app and the issue tracker. Please refer to our  [pi-gen](https://gitlab.com/diy-networking-team2/pi-gen)
-repository for our fork of [pi-
+app and the issue tracker. Please refer to our  [pi-gen](https://gitlab.com
+/diy-networking-team2/pi-gen) repository for our fork of [pi-
 gen](https://github.com/RPi-Distro/pi-gen), which is used to build our
-router/hub images and the [location-publisher](https://gitlab.com/diy-networking-team2/location-publisher)
-repository for the application running on
-the router/hub which is responsible for broadcasting the topics available at a this
-location.
+router/hub images (our master branch for the hub images is the *hub-master*
+branch, the branch called master contains the upstream master) and the
+[location-publisher](https://gitlab.com/diy-networking-team2/location-
+publisher) repository for the application running on the router/hub which is
+responsible for broadcasting the topics available at a this location.
 
 ## Architecture Documentation
 
@@ -42,7 +43,7 @@ connect to our hubs is included with this repository
 
 The app has a built in extension system that allows loading extensions at
 runtime. The extensions are spread over the network. If you don't wan't to use
-the extension system, don't allow the app to acess local storage. Extensions
+the extension system, don't allow the app to access local storage. Extensions
 are stored in `/sdcard/Downloads/localcampusjars/`). The extensions need to be
 stored in this directory to be picked up by the app. They must be named based on the
 the extension UUID, e.g. `ab6acf96-24bd-4d7d-b9d0-0784e821090b.apk`. Every
@@ -104,8 +105,9 @@ Architecture Documentation.
 ## Router / Hub
 
 The app needs a location dependent router / hub. In our Demo, this hubs are
-Raspberry Pis running an WIFI Acess Point, the [location-publisher](https://gitlab.com/diy-networking-team2/location-publisher)
-and an instance of the Scampi Router. The Android device needs to be connected
+Raspberry Pis running an WIFI access point, the [location-publisher](https://gitlab.com/diy-networking-team2/location-publisher)
+and an instance of the Scampi Router.
+The Android device needs to be connected
 to the WIFI Network provided created by the Raspberry.
 The Scampi config provided with this project will connect to the preconfigured,
 fixes IP on which the Scampi Router is running.
@@ -118,4 +120,4 @@ Password: praktikumdiy
 Optionally configure any proxy settings needed for the network the Raspberry
 is connected to on the android device, as the Raspberry will share this with
 the WIFI devives. This is not needed for the App to function correctly,
-only to provide the device with internet acess while it is connected to the hub.
+only to provide the device with internet access while it is connected to the hub.

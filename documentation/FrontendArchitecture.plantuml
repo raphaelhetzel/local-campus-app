@@ -1,0 +1,34 @@
+@startuml
+
+class View
+
+class ViewModel
+
+class MyFragment{
+- updateView(String message)
+}
+
+class Fragment{
+- onCreate()
+}
+
+class MyViewModel{
+- LiveData<String> headline
++ LiveData<String> getLiveMessage()
+}
+
+interface Repository{
++ LiveData<MessageModel> getMessageForCurrentLocation()
+}
+
+abstract class LiveData<String>{
++ void observe(LifecycleOwner activity, Observer<String> observer)
+}
+
+MyViewModel --|> ViewModel
+MyFragment --|> Fragment
+MyViewModel --> Repository
+MyFragment *-- "*" View : contains
+MyFragment --> MyViewModel
+
+@enduml

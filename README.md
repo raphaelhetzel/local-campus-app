@@ -158,5 +158,9 @@ The router on the Android device only needs to prevent sharing of discovery mess
 outgoingBlacklistFilter.class = fi.tkk.netlab.dtn.scampi.routing.filters.outgoing.ServiceBlacklistFilter
 outgoingBlacklistFilter.services = discovery
 
-epidemicRouting.outgoingContentVectorFilters = outgoingBlacklistFilter 
+epidemicRouting.outgoingContentVectorFilters = outgoingBlacklistFilter
 ```
+
+## License
+
+Local Campus App and the bundled extensions are released under the [MIT license](LICENSE).

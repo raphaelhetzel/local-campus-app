@@ -67,7 +67,7 @@
                     android:id="@+id/button_upvote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/image_thumb_up_64" />
+                    android:src="@drawable/image_placeholder_upvote" />
 
                 <TextView
                     android:id="@+id/num_likes"
@@ -81,7 +81,7 @@
                     android:id="@+id/button_downvote"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/image_thumb_down_64" />
+                    android:src="@drawable/image_placeholder_downvote" />
 
             </LinearLayout>
         </RelativeLayout>

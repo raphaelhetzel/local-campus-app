@@ -2,7 +2,6 @@ package de.tum.testextension;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class TestShowFragment extends ShowPostFragment {
         View view = newInflator.inflate(R.layout.fragment_test, null, false);
 
         ImageView img= (ImageView) view.findViewById(R.id.imageView);
-        img.setImageResource(R.drawable.ic_launcher_foreground);
+        img.setImageResource(R.drawable.ic_launcher_placeholder);
 
 
         TextView textView = view.findViewById(R.id.fragmentText);

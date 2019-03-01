@@ -20,8 +20,8 @@
     </style>
 
     <style name="CalendarIcon">
-        <item name="android:drawableLeft">@drawable/icon_calendar_white_12dp</item>
-        <item name="android:drawablePadding">5dp</item>
+        <!--<item name="android:drawableLeft">@drawable/icon_calendar_white_12dp</item>-->
+        <!--<item name="android:drawablePadding">5dp</item>-->
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">10sp</item>
     </style>

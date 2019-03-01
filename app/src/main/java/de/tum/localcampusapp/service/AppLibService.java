@@ -224,7 +224,7 @@ public class AppLibService extends LifecycleService implements AppLibLifecycleLi
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         Notification notification = new NotificationCompat.Builder(this, "LCA_CHANNEL_DEFAULT")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_placeholder_foreground)
             .setContentTitle("LocalCampusApp")
             .setContentText("Scampi Running")
             .setContentIntent(pendingIntent)
